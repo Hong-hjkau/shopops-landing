@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 export const runtime = "nodejs";
 
@@ -14,12 +16,18 @@ function isEmail(s: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 }
 
-// In-memory rate limit: 5 requests / 10 min per IP.
-// Best-effort — resets on serverless cold start; upgrade to Upstash Redis
-// (@upstash/ratelimit) if spam survives the cold-start gap.
-const RATE_WINDOW_MS = 10 * 60 * 1000;
-const RATE_MAX = 5;
-const ipHits = new Map<string, number[]>();
+// Upstash Redis sliding-window rate limit: 5 requests / 10 min per IP.
+// Persistent across serverless cold starts. Falls back to no-op if env vars
+// are missing (dev mode); fail-open if Upstash is unreachable.
+const ratelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(5, "10 m"),
+        prefix: "shopops-landing:contact",
+        analytics: true,
+      })
+    : null;
 
 function getClientIp(req: Request): string {
   const xff = req.headers.get("x-forwarded-for");
@@ -27,22 +35,23 @@ function getClientIp(req: Request): string {
   return req.headers.get("x-real-ip") ?? "unknown";
 }
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const cutoff = now - RATE_WINDOW_MS;
-  const fresh = (ipHits.get(ip) ?? []).filter((t) => t > cutoff);
-  if (fresh.length >= RATE_MAX) {
-    ipHits.set(ip, fresh);
-    return true;
+async function isRateLimited(ip: string): Promise<boolean> {
+  if (!ratelimit) {
+    console.warn("[contact] Upstash not configured — rate limit disabled");
+    return false;
   }
-  fresh.push(now);
-  ipHits.set(ip, fresh);
-  return false;
+  try {
+    const { success } = await ratelimit.limit(ip);
+    return !success;
+  } catch (e) {
+    console.error("[contact] Rate limit check failed (fail-open):", e);
+    return false;
+  }
 }
 
 export async function POST(req: Request) {
   const ip = getClientIp(req);
-  if (isRateLimited(ip)) {
+  if (await isRateLimited(ip)) {
     return NextResponse.json(
       { error: "Too many requests. Please try again in a few minutes." },
       { status: 429 }
