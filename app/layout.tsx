@@ -13,21 +13,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ShopOps — 餐廳點餐管理系統 | Restaurant Ordering System",
+  title:
+    "ShopOps — Edinburgh 餐廳 QR 點餐、員工 POS、後台訂單管理一站式系統",
   description:
-    "QR 自助點餐 + 員工 POS + 後台管理 + 離線運作，一站式餐廳系統。QR self-order, staff POS, kitchen dashboard, offline-ready.",
+    "為 Edinburgh 小型餐廳（堂食 / 外賣 / 雲廚房）而設嘅一站式系統。客人 scan QR 自助落單，員工 POS 一頁搞掂堂食外賣，後台即時睇訂單狀態。仲有本機後備，斷網都照樣做生意。",
   openGraph: {
-    title: "ShopOps — Edinburgh 餐廳點餐管理系統",
+    title:
+      "ShopOps — Edinburgh 餐廳 QR 點餐、員工 POS、後台訂單管理一站式系統",
     description:
-      "QR 自助點餐、員工 POS、後台訂單管理、離線運作。一個系統打通客人、樓面、廚房。",
+      "為 Edinburgh 小型餐廳（堂食 / 外賣 / 雲廚房）而設嘅一站式系統。客人 scan QR 自助落單，員工 POS 一頁搞掂堂食外賣，後台即時睇訂單狀態。仲有本機後備，斷網都照樣做生意。",
     type: "website",
     locale: "zh_HK",
     siteName: "ShopOps",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ShopOps — Edinburgh 餐廳點餐管理系統",
-    description: "QR ordering, staff POS, kitchen board, offline-ready.",
+    title:
+      "ShopOps — Restaurant POS, QR ordering & kitchen board for Edinburgh",
+    description:
+      "All-in-one ordering system for small Edinburgh restaurants. QR self-ordering, staff POS, live kitchen board, and offline backup so you keep trading when the cloud goes down.",
   },
 };
 
