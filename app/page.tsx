@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
+import SavingsCalculator from "@/components/SavingsCalculator";
 
 type Lang = "zh" | "en";
 type FormStatus = "idle" | "sending" | "sent" | "error";
@@ -11,7 +12,7 @@ const MOCKUPS = [MenuMockup, BoardMockup, OfflineMockup, AdminMockup];
 
 const dict = {
   zh: {
-    nav: { features: "功能", contact: "聯絡我們", cta: "預約 Demo" },
+    nav: { features: "功能", savings: "慳幾多", contact: "聯絡我們", cta: "預約 Demo" },
     hero: {
       eyebrow: "Edinburgh 餐廳專用",
       title: "一套 ShopOps，搞掂全店點餐",
@@ -64,7 +65,7 @@ const dict = {
     footer: "© 2026 ShopOps · Edinburgh",
   },
   en: {
-    nav: { features: "Features", contact: "Contact", cta: "Book a Demo" },
+    nav: { features: "Features", savings: "Savings", contact: "Contact", cta: "Book a Demo" },
     hero: {
       eyebrow: "Built for Edinburgh restaurants",
       title: "One ShopOps, every order handled",
@@ -161,6 +162,9 @@ export default function Home() {
           <nav className="hidden sm:flex items-center gap-6 text-sm text-gray-600">
             <a href="#features" className="hover:text-gray-900 transition">
               {t.nav.features}
+            </a>
+            <a href="#savings" className="hover:text-gray-900 transition">
+              {t.nav.savings}
             </a>
             <a href="#contact" className="hover:text-gray-900 transition">
               {t.nav.contact}
@@ -265,6 +269,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Savings calculator */}
+      <SavingsCalculator lang={lang} />
 
       {/* Contact */}
       <section id="contact" className="px-4 sm:px-6 py-16 sm:py-24">
