@@ -29,6 +29,11 @@ const ratelimit =
       })
     : null;
 
+// 未設定自家寄件域名時 fallback 去 Resend 測試 sender（email 仍會寄達，但易入 spam）— 開機提醒一次
+if (!process.env.CONTACT_FROM_EMAIL) {
+  console.warn("[contact] CONTACT_FROM_EMAIL 未設定，將用 Resend 測試寄件人 onboarding@resend.dev");
+}
+
 function getClientIp(req: Request): string {
   const xff = req.headers.get("x-forwarded-for");
   if (xff) return xff.split(",")[0].trim();

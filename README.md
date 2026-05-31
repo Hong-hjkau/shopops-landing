@@ -36,7 +36,7 @@ npm run dev
 1. 喺 [github.com/new](https://github.com/new) 開新 repo（e.g. `shopops-landing`），**唔好** init README
 2. 本地 commit + push（已 `git init`、staged 晒，仲未 commit）：
    ```powershell
-   cd D:\Claude\shopops-landing
+   cd D:\Claude\SHOPOPS\Landing
    git commit -m "Initial commit: ShopOps landing page MVP"
    git remote add origin https://github.com/<你 username>/shopops-landing.git
    git push -u origin main

@@ -118,7 +118,8 @@ const dict = {
   },
 } as const;
 
-const CONTACT_EMAIL = "hello@shopops.example";
+// 真實聯絡 email 由 NEXT_PUBLIC_CONTACT_EMAIL 提供（換域名唔使改 code）；未設先用 placeholder
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@shopops.example";
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("zh");
@@ -143,7 +144,8 @@ export default function Home() {
       setName("");
       setEmail("");
       setMessage("");
-    } catch {
+    } catch (err) {
+      console.error("[contact] 表單提交失敗：", err);
       setStatus("error");
     }
   }
