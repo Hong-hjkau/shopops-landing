@@ -276,8 +276,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section id="top" className="px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
+      {/* Hero — 刻意黑底，令發光 logo 同背景融為一體（唔係 dark-mode，下面 section 維持淺色）*/}
+      <section id="top" className="bg-black px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
         <div className="max-w-4xl mx-auto text-center">
           <Image
             src="/logo.png"
@@ -287,13 +287,13 @@ export default function Home() {
             priority
             className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
           />
-          <p className="text-sm font-semibold text-orange-600 uppercase tracking-wide mb-4">
+          <p className="text-sm font-semibold text-orange-400 uppercase tracking-wide mb-4">
             {t.hero.eyebrow}
           </p>
-          <h1 className="text-4xl sm:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
             {t.hero.title}
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-lg sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
             {t.hero.subtitle}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
@@ -305,7 +305,7 @@ export default function Home() {
             </a>
             <a
               href="#features"
-              className="px-6 py-4 border border-gray-300 text-gray-700 rounded-xl font-semibold text-base hover:bg-gray-50 transition"
+              className="px-6 py-4 border border-gray-600 text-gray-200 rounded-xl font-semibold text-base hover:bg-gray-800 transition"
             >
               {t.hero.ctaSecondary}
             </a>
