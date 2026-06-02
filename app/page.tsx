@@ -5,13 +5,13 @@ import Image from "next/image";
 import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
 import SavingsCalculator from "@/components/SavingsCalculator";
 
-type Lang = "zh" | "en";
+type Lang = "zh-Hant" | "zh-Hans" | "en";
 type FormStatus = "idle" | "sending" | "sent" | "error";
 
 const MOCKUPS = [MenuMockup, BoardMockup, OfflineMockup, AdminMockup];
 
 const dict = {
-  zh: {
+  "zh-Hant": {
     nav: { features: "功能", savings: "慳幾多", contact: "聯絡我們", cta: "預約 Demo" },
     hero: {
       eyebrow: "Edinburgh 餐廳專用",
@@ -61,6 +61,59 @@ const dict = {
       submitError: "發送失敗，請直接 email 或稍後再試",
       orEmail: "或直接 email：",
       note: "目前只服務 Edinburgh 區小型餐廳（堂食、外賣、雲廚房）。",
+    },
+    footer: "© 2026 ShopOps · Edinburgh",
+  },
+  "zh-Hans": {
+    nav: { features: "功能", savings: "省多少", contact: "联系我们", cta: "预约 Demo" },
+    hero: {
+      eyebrow: "Edinburgh 餐厅专用",
+      title: "一套 ShopOps，搞定全店点餐",
+      subtitle:
+        "QR 自助点餐、员工 POS、后台订单管理、桌位划单，一个系统打通顾客、前厅、厨房。还有离线方案，断网也能继续做生意。",
+      ctaPrimary: "预约 Demo",
+      ctaSecondary: "看看有什么功能",
+    },
+    features: {
+      title: "为餐厅实战而设的 4 大功能",
+      items: [
+        {
+          icon: "🍽️",
+          title: "三合一点餐",
+          desc: "顾客扫 QR 自助下单、员工 POS 一页搞定堂食 + 外卖、顾客手机自取预订。三个入口，同一个后台。",
+        },
+        {
+          icon: "📊",
+          title: "实时订单看板",
+          desc: "订单按进度自动分三组显示 —— 待处理、制作中、已完成，厨房一眼看清每张单到哪个阶段。桌位页还能逐道菜划单，前厅即时知道哪桌出齐。",
+        },
+        {
+          icon: "🔌",
+          title: "断网继续做生意",
+          desc: "就算云端宕机、WiFi 断了，本机备援即时顶上，餐厅照样下单、厨房照样出菜。别人云端 POS 全挂的时候，你照样赚。",
+        },
+        {
+          icon: "📝",
+          title: "弹性菜单管理",
+          desc: "套餐选项组、午晚市时段切换、即时上下架，全部在后台一键搞定，不用等工程师。",
+        },
+      ],
+    },
+    contact: {
+      title: "想看 demo 或了解更多？",
+      subtitle: "留下资料我们会联系你，安排一次免费 30 分钟 demo。",
+      nameLabel: "你的名字 / 餐厅名",
+      namePlaceholder: "例：陈先生 / Joy Kitchen",
+      emailLabel: "Email",
+      emailPlaceholder: "you@example.com",
+      messageLabel: "想了解什么？",
+      messagePlaceholder: "例：我们是 10 桌的 cafe，想看看 POS 和 QR 点餐怎么运作...",
+      submitIdle: "发送咨询",
+      submitSending: "发送中...",
+      submitSent: "已收到！我们会尽快联系你",
+      submitError: "发送失败，请直接 email 或稍后再试",
+      orEmail: "或直接 email：",
+      note: "目前只服务 Edinburgh 区小型餐厅（堂食、外卖、云厨房）。",
     },
     footer: "© 2026 ShopOps · Edinburgh",
   },
@@ -123,7 +176,7 @@ const dict = {
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@shopops.example";
 
 export default function Home() {
-  const [lang, setLang] = useState<Lang>("zh");
+  const [lang, setLang] = useState<Lang>("zh-Hant");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -156,7 +209,14 @@ export default function Home() {
       {/* Nav */}
       <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <a href="#top" className="flex items-center">
+          <a href="#top" className="flex items-center gap-2">
+            <Image
+              src="/logo-icon.png"
+              alt=""
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-lg"
+            />
             <span className="font-bold text-gray-900 text-lg tracking-tight">ShopOps</span>
           </a>
           <nav className="hidden sm:flex items-center gap-6 text-sm text-gray-600">
@@ -173,13 +233,22 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <div className="flex items-center bg-gray-100 rounded-full p-0.5 text-xs font-medium">
               <button
-                onClick={() => setLang("zh")}
+                onClick={() => setLang("zh-Hant")}
                 className={`px-3 py-1 rounded-full transition ${
-                  lang === "zh" ? "bg-gray-900 text-white" : "text-gray-600 hover:text-gray-900"
+                  lang === "zh-Hant" ? "bg-gray-900 text-white" : "text-gray-600 hover:text-gray-900"
                 }`}
-                aria-pressed={lang === "zh"}
+                aria-pressed={lang === "zh-Hant"}
               >
-                中
+                繁
+              </button>
+              <button
+                onClick={() => setLang("zh-Hans")}
+                className={`px-3 py-1 rounded-full transition ${
+                  lang === "zh-Hans" ? "bg-gray-900 text-white" : "text-gray-600 hover:text-gray-900"
+                }`}
+                aria-pressed={lang === "zh-Hans"}
+              >
+                简
               </button>
               <button
                 onClick={() => setLang("en")}
@@ -348,7 +417,11 @@ export default function Home() {
               {t.contact.orEmail}{" "}
               <a
                 href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
-                  lang === "zh" ? "ShopOps Demo 查詢" : "ShopOps Demo Enquiry"
+                  lang === "en"
+                    ? "ShopOps Demo Enquiry"
+                    : lang === "zh-Hans"
+                      ? "ShopOps Demo 咨询"
+                      : "ShopOps Demo 查詢"
                 )}`}
                 className="font-semibold text-gray-700 hover:text-gray-900 underline"
               >

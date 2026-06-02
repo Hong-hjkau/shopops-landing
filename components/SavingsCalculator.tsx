@@ -9,7 +9,7 @@ import { useState } from "react";
 // 對比對象係「外賣平台抽佣」(Deliveroo/Uber Eats 25–35%、Just Eat 14–18%)，
 // 唔係卡機過卡費 —— ShopOps 唔做卡機，過卡費轉咗都照俾，講卡機會誤導。
 // ShopOps 慳到嘅係：引導熟客 / 回頭客去自家 QR / 外賣網落單，嗰部分唔使俾平台抽。
-type Lang = "zh" | "en";
+type Lang = "zh-Hant" | "zh-Hans" | "en";
 
 // ShopOps 固定月費（per venue）。改價只需要改呢一個常數。
 const SHOPOPS_MONTHLY = 49;
@@ -26,7 +26,7 @@ const RATE_MAX = 35;
 const RATE_STEP = 1;
 
 const copy = {
-  zh: {
+  "zh-Hant": {
     eyebrow: "慳返平台抽佣",
     title: "外賣平台每張單抽你兩三成？計下一年俾咗幾多",
     subtitle:
@@ -43,6 +43,24 @@ const copy = {
     cta: "預約 Demo，慳返呢筆",
     disclaimer:
       "數字只供參考，按你輸入嘅金額同抽佣率即時估算；實際平台收費以各自合約為準，亦視乎你有幾多生意可以轉去自家落單。ShopOps 以 £49／間／月計，不抽交易佣金（卡機過卡費仍由你嘅收單機構收取，與 ShopOps 無關）。",
+  },
+  "zh-Hans": {
+    eyebrow: "省回平台抽佣",
+    title: "外卖平台每张单抽你两三成？算算一年付了多少",
+    subtitle:
+      "Deliveroo、Uber Eats 一张单抽 25–35%，Just Eat 也要 14–18%。熟客、回头客其实不需要经平台 —— 用 ShopOps 自家 QR 和外卖网下单，这部分生意一分佣金都不用付。拉下面的滑块，看看你一年省多少。",
+    turnoverLabel: "每月外卖平台营业额（可以转去自家下单的部分）",
+    rateLabel: "平台抽佣率",
+    rateHint: "Deliveroo / Uber Eats 约 25–35%，Just Eat 约 14–18%",
+    resultLead: "你一年可以省回",
+    perYear: "／年",
+    breakdownPlatform: "这部分经平台一年抽走",
+    breakdownShopops: "ShopOps 一年固定月费",
+    noSaving:
+      "就算这个金额，ShopOps 也是一个固定月费、零交易抽佣 —— 账单可预测，还有 QR 点餐、员工 POS、离线备援一起用。",
+    cta: "预约 Demo，省回这笔",
+    disclaimer:
+      "数字仅供参考，按你输入的金额和抽佣率即时估算；实际平台收费以各自合约为准，也视乎你有多少生意可以转去自家下单。ShopOps 以 £49／间／月计，不抽交易佣金（刷卡手续费仍由你的收单机构收取，与 ShopOps 无关）。",
   },
   en: {
     eyebrow: "Cut delivery commission",

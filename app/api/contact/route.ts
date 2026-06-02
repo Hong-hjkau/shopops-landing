@@ -9,7 +9,7 @@ type ContactBody = {
   name?: string;
   email?: string;
   message?: string;
-  lang?: "zh" | "en";
+  lang?: "zh-Hant" | "zh-Hans" | "en";
 };
 
 function isEmail(s: string) {
@@ -84,7 +84,8 @@ export async function POST(req: Request) {
   const name = (body.name ?? "").trim();
   const email = (body.email ?? "").trim();
   const message = (body.message ?? "").trim();
-  const lang = body.lang === "en" ? "en" : "zh";
+  const lang =
+    body.lang === "en" ? "en" : body.lang === "zh-Hans" ? "zh-Hans" : "zh-Hant";
 
   if (!name || !email || !message) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
@@ -97,7 +98,12 @@ export async function POST(req: Request) {
   }
 
   const resend = new Resend(apiKey);
-  const subjectPrefix = lang === "zh" ? "ShopOps Demo 查詢" : "ShopOps Demo Enquiry";
+  const subjectPrefix =
+    lang === "en"
+      ? "ShopOps Demo Enquiry"
+      : lang === "zh-Hans"
+        ? "ShopOps Demo 咨询"
+        : "ShopOps Demo 查詢";
 
   const { error } = await resend.emails.send({
     from,
