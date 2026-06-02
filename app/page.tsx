@@ -204,6 +204,12 @@ export default function Home() {
     }
   }
 
+  // 用戶喺送出失敗 / 成功後再改任何欄位，清走舊狀態 banner（紅色錯誤 / 綠色成功）
+  function handleFieldChange(setter: (v: string) => void, value: string) {
+    setter(value);
+    if (status === "error" || status === "sent") setStatus("idle");
+  }
+
   return (
     <main className="flex flex-col">
       {/* Nav */}
@@ -362,7 +368,7 @@ export default function Home() {
                 type="text"
                 required
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => handleFieldChange(setName, e.target.value)}
                 placeholder={t.contact.namePlaceholder}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
               />
@@ -375,7 +381,7 @@ export default function Home() {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleFieldChange(setEmail, e.target.value)}
                 placeholder={t.contact.emailPlaceholder}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
               />
@@ -388,7 +394,7 @@ export default function Home() {
                 required
                 rows={4}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => handleFieldChange(setMessage, e.target.value)}
                 placeholder={t.contact.messagePlaceholder}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 resize-none"
               />
