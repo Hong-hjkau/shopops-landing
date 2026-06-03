@@ -219,9 +219,9 @@ export default function Home() {
             <Image
               src="/logo-icon.png"
               alt=""
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-lg"
+              width={512}
+              height={496}
+              className="h-8 w-auto"
             />
             <span className="font-bold text-gray-900 text-lg tracking-tight">ShopOps</span>
           </a>
