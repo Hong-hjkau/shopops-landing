@@ -235,6 +235,9 @@ export default function Home() {
             <a href="#contact" className="hover:text-gray-900 transition">
               {t.nav.contact}
             </a>
+            <a href="/blog" className="hover:text-gray-900 transition">
+              Blog
+            </a>
           </nav>
           <div className="flex items-center gap-2">
             <div className="flex items-center bg-gray-100 rounded-full p-0.5 text-xs font-medium">

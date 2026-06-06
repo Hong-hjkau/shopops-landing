@@ -1,0 +1,99 @@
+import LeadMagnet from "@/components/blog/LeadMagnet";
+import ArticleJsonLd from "@/components/blog/ArticleJsonLd";
+import { getPost } from "@/lib/posts";
+
+export const post = getPost("deliveroo-uber-eats-just-eat-commission-uk-2026");
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+  alternates: { canonical: `/blog/${post.slug}` },
+  openGraph: {
+    title: post.title,
+    description: post.description,
+    type: "article",
+    url: `/blog/${post.slug}`,
+    siteName: "ShopOps",
+  },
+};
+
+<div className="px-4 sm:px-6 py-10 sm:py-14">
+<article className="max-w-3xl mx-auto">
+
+<ArticleJsonLd post={post} />
+
+<p className="text-sm text-gray-500 mb-2">6 June 2026 · 9 min read</p>
+
+# Deliveroo, Uber Eats & Just Eat Commission Explained (2026 UK Guide)
+
+If you run a UK restaurant or takeaway, the delivery apps are probably your busiest "member of staff" — and your most expensive one. The headline commission rate is only part of the story. Once you add VAT, customer-side fees and the orders you'd have got anyway, the real cost of every delivery order is higher than most owners think.
+
+This guide breaks down what Deliveroo, Uber Eats and Just Eat actually charge in 2026, shows what's left of a £10 dish after the apps take their cut, and explains the practical ways smaller restaurants are clawing some of that margin back.
+
+## What each platform actually charges
+
+Commission is negotiated per restaurant and varies by city, cuisine and whether the platform does the delivery for you, so treat these as typical ranges rather than fixed numbers:
+
+| Platform | Typical commission (order value) | Who delivers | Notes |
+| --- | --- | --- | --- |
+| Uber Eats | ~30% + VAT | Uber couriers | Lower "lite" tiers exist if you self-deliver or take collection only |
+| Deliveroo | ~25–35% + VAT | Deliveroo riders | Marketplace+ (their riders) sits at the top of the range |
+| Just Eat | ~14–17% + VAT (order-only) | You or Just Eat couriers | Historically cheapest because many restaurants do their own delivery; rises when Just Eat delivers |
+
+The pattern is consistent: the more of the work the platform does (delivery, marketing, payment), the bigger the slice it takes. A full "they deliver everything" setup on Uber Eats or Deliveroo commonly lands around **30% of the order value, before VAT**.
+
+## The bits that aren't in the headline rate
+
+The commission percentage is what gets quoted. These are the costs that quietly sit on top:
+
+- **VAT on the commission.** The apps charge 20% VAT on their fee. If your business is VAT-registered you can usually reclaim it, but it's still cash that leaves your account first — and plenty of small cafes sit under the VAT threshold and can't reclaim it at all.
+- **Customer-side fees.** Diners typically pay a service fee plus a delivery fee (often around £2.50 in total). That doesn't come out of your pocket, but it does raise the total price your customer sees — which quietly pushes them toward bigger, less frequent orders.
+- **Card / processing.** On most "they-handle-payment" plans this is bundled into the commission, so you rarely see it as a line item. It's still being paid; it's just hidden inside the percentage.
+- **Promotions and ads.** "Buy one get one", featured placement and in-app ads are extra, on top of commission. Many owners feel pressured into them just to stay visible.
+
+## A worked example: what's left of a £10 dish
+
+Take a £10 main on Uber Eats or Deliveroo at roughly 30% commission:
+
+- Order value: **£10.00**
+- Platform commission (~30%): **−£3.00** (plus £0.60 VAT, reclaimable if you're VAT-registered)
+- You're left with roughly **£7.00** — *before* you've paid for ingredients, packaging, gas, labour and rent.
+
+For a typical food-cost of 30% (£3) and packaging of 50p, that £10 order can leave you with **under £3.50 of contribution** — and that's on a good day with no promo discount applied. On Just Eat at ~15%, the same dish keeps about £8.50 before costs, which is why so many takeaways push customers there.
+
+> The uncomfortable truth: on the delivery apps you're often making more money for the platform than for your own kitchen.
+
+## So should you ditch the apps?
+
+No — and any guide that tells you to is being lazy. The platforms genuinely bring three things that are hard to replace overnight:
+
+1. **Discovery.** New customers who'd never have found you scroll the app and order.
+2. **A delivery fleet** you don't have to hire, insure or manage.
+3. **Trust and payment** handled end to end.
+
+For a brand-new site with no following, that reach is worth paying for. The mistake isn't *using* the apps — it's letting them own your **repeat** customers, where you're paying 30% to deliver food to someone who already knows and likes you.
+
+## How to cut your commission bill
+
+The goal isn't zero apps. It's shifting your **regulars** off them, so you only pay commission to win genuinely new customers. The levers that work:
+
+- **Own ordering channel.** Give repeat customers a direct way to order — a QR menu for the table and your own takeaway/collection site for at-home orders. Orders placed direct carry **no marketplace commission**: you keep the full £10, minus only standard card fees.
+- **A reason to come direct.** A small loyalty perk, a flyer in the delivery bag, or "order direct next time and skip the service fee" converts app customers into direct ones over time.
+- **Collection over delivery** where it suits you. Collection orders dodge the delivery portion of the fee entirely.
+- **Review your tier.** If you do (or could do) your own delivery, an order-only or "lite" plan can roughly halve your commission.
+
+This is exactly the gap [ShopOps](/) is built for: it's an all-in-one ordering system for small UK restaurants — QR self-ordering at the table, a staff POS, and your own branded takeaway site — so the customers who already love you can order direct instead of through a 30% middleman. You still run the apps to find new faces; you just stop paying commission on the regulars.
+
+<LeadMagnet />
+
+## Key takeaways
+
+- Full-service delivery on Uber Eats and Deliveroo commonly costs **~30% of the order, plus VAT**; Just Eat's order-only plans are cheaper at **~14–17%**.
+- The real cost is higher than the headline once you count VAT, promos and the orders you'd have won anyway.
+- A £10 app order can leave **under £3.50 of contribution** after the cut and your own costs.
+- Keep the apps for **discovery**, but move your **repeat** customers to a direct, commission-free ordering channel — that's where the margin is.
+
+*Rates quoted are typical 2026 UK ranges and are negotiated per restaurant; check your own platform agreement for the figures that apply to you.*
+
+</article>
+</div>
