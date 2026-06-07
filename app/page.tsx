@@ -328,7 +328,7 @@ export default function Home() {
                   className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6 hover:shadow-md transition"
                 >
                   <div className="mb-5 bg-gray-50 rounded-xl p-3 sm:p-4 border border-gray-100">
-                    <Mockup />
+                    <Mockup lang={lang} />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
                     <span className="text-2xl">{item.icon}</span>
