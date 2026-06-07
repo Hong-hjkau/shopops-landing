@@ -14,7 +14,6 @@ const dict = {
   "zh-Hant": {
     nav: { features: "功能", savings: "慳幾多", contact: "聯絡我們", cta: "預約 Demo" },
     hero: {
-      eyebrow: "Edinburgh 餐廳專用",
       title: "一套 ShopOps，搞掂全店點餐",
       subtitle:
         "QR 自助點餐、員工 POS、後台訂單管理、桌況打剔，一個系統打通客人、樓面、廚房。仲有離線方案，斷網都繼續做生意。",
@@ -67,7 +66,6 @@ const dict = {
   "zh-Hans": {
     nav: { features: "功能", savings: "省多少", contact: "联系我们", cta: "预约 Demo" },
     hero: {
-      eyebrow: "Edinburgh 餐厅专用",
       title: "一套 ShopOps，搞定全店点餐",
       subtitle:
         "QR 自助点餐、员工 POS、后台订单管理、桌位划单，一个系统打通顾客、前厅、厨房。还有离线方案，断网也能继续做生意。",
@@ -120,7 +118,6 @@ const dict = {
   en: {
     nav: { features: "Features", savings: "Savings", contact: "Contact", cta: "Book a Demo" },
     hero: {
-      eyebrow: "Built for Edinburgh restaurants",
       title: "One ShopOps, every order handled",
       subtitle:
         "QR self-ordering, staff POS, kitchen Kanban, table tracking — one system connecting your customers, floor and kitchen. Plus an offline backup that keeps you trading when the cloud goes down.",
@@ -290,9 +287,6 @@ export default function Home() {
             priority
             className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
           />
-          <p className="text-sm font-semibold text-orange-400 uppercase tracking-wide mb-4">
-            {t.hero.eyebrow}
-          </p>
           <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
             {t.hero.title}
           </h1>
