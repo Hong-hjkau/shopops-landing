@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { Lang } from "@/lib/i18n";
 
 // 呢個 block 係自包含嘅功能塊（slider + 即時計算 + 結算 UI，> 40 行），
 // 跟 component-first 原則抽成獨立檔。佢只食 `lang` prop，自帶 zh/en 文案，
@@ -9,7 +10,6 @@ import { useState } from "react";
 // 對比對象係「外賣平台抽佣」(Deliveroo/Uber Eats 25–35%、Just Eat 14–18%)，
 // 唔係卡機過卡費 —— ShopOps 唔做卡機，過卡費轉咗都照俾，講卡機會誤導。
 // ShopOps 慳到嘅係：引導熟客 / 回頭客去自家 QR / 外賣網落單，嗰部分唔使俾平台抽。
-type Lang = "zh-Hant" | "zh-Hans" | "en";
 
 // ShopOps 固定月費（per venue）。改價只需要改呢一個常數。
 const SHOPOPS_MONTHLY = 49;

@@ -1,4 +1,4 @@
-type Lang = "zh-Hant" | "zh-Hans" | "en";
+import type { Lang } from "@/lib/i18n";
 
 export function MenuMockup({ lang }: { lang: Lang }) {
   const t = {

@@ -4,8 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
 import SavingsCalculator from "@/components/SavingsCalculator";
+import type { Lang } from "@/lib/i18n";
 
-type Lang = "zh-Hant" | "zh-Hans" | "en";
 type FormStatus = "idle" | "sending" | "sent" | "error";
 
 const MOCKUPS = [MenuMockup, BoardMockup, OfflineMockup, AdminMockup];
