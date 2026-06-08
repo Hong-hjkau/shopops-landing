@@ -8,7 +8,8 @@ Marketing site，對外推廣 ShopOps（核心 POS 產品）。Live: [shopops-la
 ## 自家域名 + Email（2026-06-07 已建立）
 
 - **域名 `shopops.co.uk`** —— 喺 Cloudflare 註冊（自動續期），已綁落呢個 Vercel 網站。
-  - ⚠️ 網站而家係 **Coming Soon 暫時下架**（`proxy.ts` gate，未 ready 對外）。`shopops.co.uk` / `*.vercel.app` 打開都係 Coming Soon。上線解封見下面 LIST。
+  - 🟢 **2026-06-08 已正式上線**（`shopops.co.uk` + `www.shopops.co.uk` 308→apex）。`NEXT_PUBLIC_SITE_URL=https://shopops.co.uk` 已設，sitemap/canonical/og 全指新域名；GSC Domain property 已驗證 + 交 sitemap。
+  - （歷史：2026-06-07 曾用 `proxy.ts` Coming Soon gate 暫時下架，06-08 已移除。）
 - **SHOPOPS Email（Google Workspace）** —— 主址 `hong@shopops.co.uk` + 免費 alias `hello@shopops.co.uk`（客用，同一 inbox）。SPF / DKIM / DMARC 全開。入信箱：[mail.google.com](https://mail.google.com)。
 - 詳情同完整未完成 LIST 見 OneDrive memory `shopops_landing_followups.md`。
 
@@ -47,11 +48,12 @@ Marketing site，對外推廣 ShopOps（核心 POS 產品）。Live: [shopops-la
 
 ## 待動工 phase
 
-詳見 OneDrive memory `shopops_landing_followups.md`（完整 LIST）。域名 / Email 未完成項：
+詳見 OneDrive memory `shopops_landing_followups.md`（完整 LIST）。域名 / Email：
 
-- [ ] **用 `hello@` 身份回信** —— Gmail → 設定 → 帳戶 → Send mail as 加 `hello@shopops.co.uk`
-- [ ] **`www.shopops.co.uk`** —— Cloudflare 加 CNAME（+ 可選 redirect 轉去 apex）
-- [ ] **網站上線解封時** —— 刪 `proxy.ts` Coming Soon gate + push、設 Vercel env `NEXT_PUBLIC_SITE_URL=https://shopops.co.uk`、Google Search Console 加 `shopops.co.uk` 新 property 重交 sitemap
+- [x] ✅ **`hello@` send-as**（2026-06-08，Workspace 自動加，Gmail 可揀 from `hello@`）
+- [x] ✅ **`www.shopops.co.uk`**（2026-06-08，308 永久轉去 apex）
+- [x] ✅ **上線解封**（2026-06-08，刪 gate + `NEXT_PUBLIC_SITE_URL` + GSC property/sitemap）
+- [ ] DMARC 收緊（`p=none` → `p=quarantine`，穩定幾個月後）；contact form 寄件升級用 `noreply@shopops.co.uk`（可選，需 Resend 設定）
 
 ## 定位與職責
 
