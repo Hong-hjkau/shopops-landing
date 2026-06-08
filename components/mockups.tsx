@@ -7,8 +7,8 @@ export function MenuMockup({ lang }: { lang: Lang }) {
       session: "🌞 午市",
       tabs: ["套餐", "主菜", "飲品"],
       items: [
-        { name: "招牌叉燒飯", desc: "蜜汁叉燒配絲苗白飯", price: "£8.50" },
-        { name: "海南雞飯", desc: "嫩雞配香茅雞汁飯", price: "£7.80" },
+        { name: "經典牛肉漢堡", desc: "炭烤牛肉配車打芝士薯條", price: "£8.50" },
+        { name: "炸魚薯條", desc: "脆漿鱈魚配青豆蓉", price: "£7.80" },
       ],
     },
     "zh-Hans": {
@@ -16,8 +16,8 @@ export function MenuMockup({ lang }: { lang: Lang }) {
       session: "🌞 午市",
       tabs: ["套餐", "主菜", "饮品"],
       items: [
-        { name: "招牌叉烧饭", desc: "蜜汁叉烧配丝苗白饭", price: "£8.50" },
-        { name: "海南鸡饭", desc: "嫩鸡配香茅鸡汁饭", price: "£7.80" },
+        { name: "经典牛肉汉堡", desc: "炭烤牛肉配车打芝士薯条", price: "£8.50" },
+        { name: "炸鱼薯条", desc: "脆浆鳕鱼配青豆蓉", price: "£7.80" },
       ],
     },
     en: {
@@ -25,8 +25,8 @@ export function MenuMockup({ lang }: { lang: Lang }) {
       session: "🌞 Lunch",
       tabs: ["Sets", "Mains", "Drinks"],
       items: [
-        { name: "Char Siu Rice", desc: "Honey BBQ pork, jasmine rice", price: "£8.50" },
-        { name: "Hainan Chicken Rice", desc: "Tender chicken, lemongrass rice", price: "£7.80" },
+        { name: "Classic Beef Burger", desc: "Chargrilled beef, cheddar, fries", price: "£8.50" },
+        { name: "Fish & Chips", desc: "Beer-battered cod, mushy peas", price: "£7.80" },
       ],
     },
   }[lang];
@@ -216,9 +216,9 @@ export function AdminMockup({ lang }: { lang: Lang }) {
       on: "● 上架",
       off: "○ 下架",
       items: [
-        { name: "招牌叉燒飯", price: "£8.50", on: true },
-        { name: "海南雞飯", price: "£7.80", on: true },
-        { name: "例湯（限午市）", price: "£3.50", on: false },
+        { name: "經典牛肉漢堡", price: "£8.50", on: true },
+        { name: "炸魚薯條", price: "£7.80", on: true },
+        { name: "是日例湯（限午市）", price: "£3.50", on: false },
       ],
     },
     "zh-Hans": {
@@ -227,9 +227,9 @@ export function AdminMockup({ lang }: { lang: Lang }) {
       on: "● 上架",
       off: "○ 下架",
       items: [
-        { name: "招牌叉烧饭", price: "£8.50", on: true },
-        { name: "海南鸡饭", price: "£7.80", on: true },
-        { name: "例汤（限午市）", price: "£3.50", on: false },
+        { name: "经典牛肉汉堡", price: "£8.50", on: true },
+        { name: "炸鱼薯条", price: "£7.80", on: true },
+        { name: "是日例汤（限午市）", price: "£3.50", on: false },
       ],
     },
     en: {
@@ -238,8 +238,8 @@ export function AdminMockup({ lang }: { lang: Lang }) {
       on: "● Live",
       off: "○ Hidden",
       items: [
-        { name: "Char Siu Rice", price: "£8.50", on: true },
-        { name: "Hainan Chicken Rice", price: "£7.80", on: true },
+        { name: "Classic Beef Burger", price: "£8.50", on: true },
+        { name: "Fish & Chips", price: "£7.80", on: true },
         { name: "Soup of the Day (lunch)", price: "£3.50", on: false },
       ],
     },
