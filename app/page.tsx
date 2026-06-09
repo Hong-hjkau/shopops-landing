@@ -16,7 +16,7 @@ const HERO_VARIANT: "A" | "B" = "B";
 
 const dict = {
   "zh-Hant": {
-    nav: { features: "功能", savings: "慳幾多", pricing: "定價", contact: "聯絡我們", cta: "預約 Demo" },
+    nav: { features: "功能", savings: "慳幾多", pricing: "定價", blog: "網誌", contact: "聯絡我們", cta: "預約 Demo" },
     hero: {
       titleA: "外賣平台抽走你三成生意，係時候攞返。",
       titleB: "唔使再畀三成佣金，一套 ShopOps 搞掂全店點餐。",
@@ -127,7 +127,7 @@ const dict = {
     footer: "© 2026 ShopOps · Edinburgh",
   },
   "zh-Hans": {
-    nav: { features: "功能", savings: "省多少", pricing: "定价", contact: "联系我们", cta: "预约 Demo" },
+    nav: { features: "功能", savings: "省多少", pricing: "定价", blog: "博客", contact: "联系我们", cta: "预约 Demo" },
     hero: {
       titleA: "外卖平台抽走你三成生意，是时候拿回来。",
       titleB: "不用再付三成佣金，一套 ShopOps 搞定全店点餐。",
@@ -238,7 +238,7 @@ const dict = {
     footer: "© 2026 ShopOps · Edinburgh",
   },
   en: {
-    nav: { features: "Features", savings: "Savings", pricing: "Pricing", contact: "Contact", cta: "Book a Demo" },
+    nav: { features: "Features", savings: "Savings", pricing: "Pricing", blog: "Blog", contact: "Contact", cta: "Book a Demo" },
     hero: {
       titleA: "Delivery apps take a third of your sales. Time to take it back.",
       titleB: "Stop paying a third in commission. One ShopOps runs every order.",
@@ -424,7 +424,7 @@ export default function Home() {
               {t.nav.contact}
             </a>
             <a href="/blog" className="hover:text-gray-900 transition">
-              Blog
+              {t.nav.blog}
             </a>
           </nav>
           <div className="flex items-center gap-2">

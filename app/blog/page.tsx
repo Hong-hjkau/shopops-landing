@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { SITE_URL } from "@/lib/site";
-import { postsByDate, langLabel } from "@/lib/posts";
+import { postsByDate } from "@/lib/posts";
+import BlogList from "@/components/blog/BlogList";
 
 export const metadata: Metadata = {
   title: "ShopOps Blog — Running a UK Restaurant Smarter",
@@ -17,17 +17,6 @@ export const metadata: Metadata = {
     siteName: "ShopOps",
   },
 };
-
-// 月份名（日期顯示），避免 toLocaleDateString 喺 server/client locale 唔一致
-const MONTHS = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
-
-function formatDate(iso: string): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  return `${d} ${MONTHS[m - 1]} ${y}`;
-}
 
 export default function BlogIndex() {
   const posts = postsByDate();
@@ -46,33 +35,7 @@ export default function BlogIndex() {
           getting customers to come back direct.
         </p>
 
-        <div className="mt-10 space-y-4">
-          {posts.map((post) => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="block rounded-2xl border border-gray-200 p-5 sm:p-6 hover:shadow-md hover:border-gray-300 transition"
-            >
-              <div className="flex items-center gap-3 text-xs text-gray-500">
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-600">
-                  {langLabel(post.lang)}
-                </span>
-                <time dateTime={post.date}>{formatDate(post.date)}</time>
-                <span aria-hidden>·</span>
-                <span>{post.readingMinutes} min read</span>
-              </div>
-              <h2 className="mt-2 text-xl sm:text-2xl font-bold text-gray-900 leading-snug">
-                {post.title}
-              </h2>
-              <p className="mt-2 text-gray-600 leading-relaxed">
-                {post.description}
-              </p>
-              <span className="mt-3 inline-block text-sm font-semibold text-orange-600">
-                Read guide →
-              </span>
-            </Link>
-          ))}
-        </div>
+        <BlogList posts={posts} />
       </div>
     </section>
   );

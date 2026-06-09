@@ -48,6 +48,16 @@ export const POSTS: Post[] = [
     group: "delivery-commission",
   },
   {
+    slug: "move-regulars-to-direct-ordering-uk",
+    title: "How to Move Your Regulars to Direct Ordering (UK Restaurant Guide)",
+    description:
+      "Delivery apps take 25–35% of every order — and the biggest waste is your regulars ordering through them. Here's how to move repeat customers to your own ordering with QR menus, a takeaway site and small incentives.",
+    date: "2026-06-10",
+    readingMinutes: 8,
+    lang: "en",
+    group: "direct-ordering",
+  },
+  {
     slug: "move-regulars-to-direct-ordering-uk-zh-hant",
     title: "如何把熟客帶回自家落單，不再被外賣平台抽成",
     description:

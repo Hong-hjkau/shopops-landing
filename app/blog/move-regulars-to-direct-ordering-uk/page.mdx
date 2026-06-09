@@ -1,0 +1,97 @@
+import LeadMagnet from "@/components/blog/LeadMagnet";
+import ArticleJsonLd from "@/components/blog/ArticleJsonLd";
+import { getPost, languageAlternates } from "@/lib/posts";
+
+export const post = getPost("move-regulars-to-direct-ordering-uk");
+
+export const metadata = {
+  title: post.title,
+  description: post.description,
+  alternates: {
+    canonical: `/blog/${post.slug}`,
+    languages: languageAlternates(post.slug),
+  },
+  openGraph: {
+    title: post.title,
+    description: post.description,
+    type: "article",
+    url: `/blog/${post.slug}`,
+    siteName: "ShopOps",
+  },
+};
+
+<div lang="en" className="px-4 sm:px-6 py-10 sm:py-14">
+<article className="max-w-3xl mx-auto">
+
+<ArticleJsonLd post={post} />
+
+<p className="text-sm text-gray-500 mb-2">10 June 2026 · 8 min read</p>
+
+# How to move your regulars to direct ordering (and stop paying commission on them)
+
+Delivery apps take 25–35% of every order, and the least justifiable part of that bill is the slice paid on your **regulars**. When a new customer finds you through the app, that commission is effectively an advertising cost — fair enough. But when someone who already knows you, and orders every week, still goes through Deliveroo or Uber Eats, you're paying around 30% each time to reach a person you don't need to pay to "find".
+
+In a [previous post we worked out exactly how much the apps take](/blog/deliveroo-uber-eats-just-eat-commission-uk-2026). This one is the *how*: practical steps to move repeat customers onto your own ordering channel and keep the commission that would otherwise go to the platform.
+
+## First, be clear: move your regulars, not everything
+
+Don't start by thinking "leave the apps". For most small restaurants the platforms are still worth keeping for one thing — **finding new customers**. The real job is shifting your **repeat** customers to direct ordering, because this group:
+
+- already knows and trusts you, so you don't need commission to buy their attention;
+- orders most often and most predictably, so every order's commission saved adds up fastest;
+- is the most willing to help — regulars are usually happy to save you money, as long as you give them an easy route and a small reason.
+
+In other words, let the platform be your shop window, but take your regulars' business yourself.
+
+## Five practical moves
+
+### 1. Put a "order direct" route in every delivery bag
+
+This is the cheapest, most direct tactic. In every order that goes out through a platform, drop in a small card or flyer with your own ordering site's address and a QR code, with a line like "next time, order direct — faster and better value". A customer who's just received your food and enjoyed it is at the best possible moment to switch.
+
+### 2. Give a reason to come direct
+
+"You can order direct" isn't enough on its own — there needs to be an incentive. It could be:
+
+- no service fee on direct orders (the customer-side fee the apps charge simply isn't there when they order direct);
+- a simple loyalty perk, e.g. "a free drink on your fifth order";
+- a small discount code for their first direct order.
+
+The point is to let the customer see that ordering direct is better for *them* too — that's when the switch happens naturally.
+
+### 3. Use QR ordering for dine-in, and capture regulars as you go
+
+Your dine-in customers are your most ready-made source of regulars. A QR code on the table for self-ordering keeps the order flow smooth — and doubles as the entry point into your own system. Next time they want a takeaway, they already recognise your ordering page instead of reaching for Deliveroo.
+
+### 4. Encourage collection where it suits
+
+Collection orders avoid the whole delivery portion of the platform fee, and they suit regulars who live nearby or are in a hurry. Offer collection clearly on your own ordering page — maybe with a small collection perk — to nudge the right customers from "platform delivery" to "collect direct".
+
+### 5. With consent, keep a way to reach them
+
+The biggest long-term value of direct ordering is that the customer's details come back to you — exactly what the platforms never hand over. With the customer's consent, capture an email or phone number, and you can send an offer on a quiet day or push a menu at a holiday — actively pulling business back in, rather than passively waiting for the app to send customers your way.
+
+## A quick sum: what moving regulars saves
+
+Say you do £8,000 of delivery a month, of which roughly 40% (£3,200) is repeat customers, and the platform takes about 30%:
+
+- That repeat business loses, over a year, through the platform: £3,200 × 12 × 30% ≈ **£11,520**
+- Even if you only move half of it to direct ordering, that's about **£5,760 saved a year** — and after a flat monthly fee, still a big chunk kept in your own pocket.
+
+The numbers will differ with your own turnover and commission rate — use the [savings calculator on the homepage](/#savings) to run yours.
+
+## Tie the steps together with one system
+
+The risk with the five steps above is that they end up scattered across different tools, none talking to each other. [ShopOps](/) brings them into one system: QR self-ordering for dine-in, a staff POS, and your own branded takeaway/collection site — so regulars order direct through a single entry point, with zero platform commission, and the orders and customer details stay with you. Keep the apps for finding new faces, but keep as much of your regulars' spend as you can.
+
+<LeadMagnet lang="en" />
+
+## Key takeaways
+
+- The goal is moving your **regulars**, not leaving the apps — keep platforms for discovery, take repeat business yourself.
+- The best entry points: an order-direct card + QR in every delivery bag, a reason to come direct, QR dine-in ordering, encouraging collection, and capturing contact details with consent.
+- Even moving half your regulars to direct ordering typically saves **thousands of pounds a year** in commission.
+- Use one system that joins dine-in, delivery and collection so these steps become a single smooth ordering path — that's what makes the switch stick.
+
+</article>
+</div>
