@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE_URL } from "@/lib/site";
-import { postsByDate } from "@/lib/posts";
+import { postsByDate, langLabel } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "ShopOps Blog — Running a UK Restaurant Smarter",
@@ -54,6 +54,9 @@ export default function BlogIndex() {
               className="block rounded-2xl border border-gray-200 p-5 sm:p-6 hover:shadow-md hover:border-gray-300 transition"
             >
               <div className="flex items-center gap-3 text-xs text-gray-500">
+                <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-600">
+                  {langLabel(post.lang)}
+                </span>
                 <time dateTime={post.date}>{formatDate(post.date)}</time>
                 <span aria-hidden>·</span>
                 <span>{post.readingMinutes} min read</span>

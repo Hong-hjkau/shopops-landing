@@ -9,9 +9,9 @@ export default function BlogLayout({
   children: React.ReactNode;
 }) {
   return (
-    // lang="en"：blog 內容係英文，但 root <html> 係 zh-Hant；
-    // 喺度 scope 返英文，畀 Google / screen reader 正確語言訊號（呢個係 SEO 功能，語言要啱）
-    <div lang="en" className="flex flex-col min-h-full">
+    // blog 外殼語言中性：語言由每篇文章自己 scope（<article lang={post.lang}>），
+    // 因為 blog 而家有英文 + 中文版，唔可以喺外殼硬寫一種語言
+    <div className="flex flex-col min-h-full">
       <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

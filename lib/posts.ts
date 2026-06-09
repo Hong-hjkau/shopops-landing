@@ -9,8 +9,10 @@ export type Post = {
   date: string;
   /** 閱讀時間（分鐘），index 卡片顯示 */
   readingMinutes: number;
-  /** 內容語言，畀 <article lang> + hreflang 用；目前 blog 英文行先 */
-  lang: "en" | "zh-Hant";
+  /** 內容語言，畀 <article lang> + hreflang + JSON-LD inLanguage 用 */
+  lang: "en" | "zh-Hant" | "zh-Hans";
+  /** 翻譯群組 id：同一篇文嘅唔同語言版共用同一個 group，畀 hreflang 互相連結 */
+  group: string;
 };
 
 export const POSTS: Post[] = [
@@ -23,6 +25,17 @@ export const POSTS: Post[] = [
     date: "2026-06-06",
     readingMinutes: 9,
     lang: "en",
+    group: "delivery-commission",
+  },
+  {
+    slug: "deliveroo-uber-eats-just-eat-commission-uk-2026-zh-hant",
+    title: "Deliveroo、Uber Eats、Just Eat 佣金拆解（2026 英國餐廳指南）",
+    description:
+      "Deliveroo、Uber Eats、Just Eat 在英國每張訂單實際抽走多少 —— 連同隱藏的 VAT 與各項費用、一個 £10 菜式的實算例子，以及如何減少對外賣平台的依賴。",
+    date: "2026-06-06",
+    readingMinutes: 9,
+    lang: "zh-Hant",
+    group: "delivery-commission",
   },
 ];
 
@@ -32,3 +45,25 @@ export const postsByDate = (): Post[] =>
 
 export const getPost = (slug: string): Post | undefined =>
   POSTS.find((p) => p.slug === slug);
+
+// 同一 group 嘅所有語言版本（包括自己）
+export const getTranslations = (slug: string): Post[] => {
+  const p = getPost(slug);
+  if (!p) return [];
+  return POSTS.filter((x) => x.group === p.group);
+};
+
+// 畀 Next metadata `alternates.languages` 用：BCP-47 lang code → URL path。
+// 額外加 x-default 指返英文版（搜尋引擎搵唔到合適語言時 fallback）。
+export const languageAlternates = (slug: string): Record<string, string> => {
+  const group = getTranslations(slug);
+  const langs: Record<string, string> = {};
+  for (const p of group) langs[p.lang] = `/blog/${p.slug}`;
+  const en = group.find((p) => p.lang === "en");
+  if (en) langs["x-default"] = `/blog/${en.slug}`;
+  return langs;
+};
+
+// index 卡片語言標籤
+export const langLabel = (lang: Post["lang"]): string =>
+  lang === "en" ? "EN" : lang === "zh-Hant" ? "繁" : "簡";

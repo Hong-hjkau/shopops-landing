@@ -1,13 +1,16 @@
 import LeadMagnet from "@/components/blog/LeadMagnet";
 import ArticleJsonLd from "@/components/blog/ArticleJsonLd";
-import { getPost } from "@/lib/posts";
+import { getPost, languageAlternates } from "@/lib/posts";
 
 export const post = getPost("deliveroo-uber-eats-just-eat-commission-uk-2026");
 
 export const metadata = {
   title: post.title,
   description: post.description,
-  alternates: { canonical: `/blog/${post.slug}` },
+  alternates: {
+    canonical: `/blog/${post.slug}`,
+    languages: languageAlternates(post.slug),
+  },
   openGraph: {
     title: post.title,
     description: post.description,
@@ -17,7 +20,7 @@ export const metadata = {
   },
 };
 
-<div className="px-4 sm:px-6 py-10 sm:py-14">
+<div lang="en" className="px-4 sm:px-6 py-10 sm:py-14">
 <article className="max-w-3xl mx-auto">
 
 <ArticleJsonLd post={post} />
@@ -84,7 +87,7 @@ The goal isn't zero apps. It's shifting your **regulars** off them, so you only 
 
 This is exactly the gap [ShopOps](/) is built for: it's an all-in-one ordering system for small UK restaurants — QR self-ordering at the table, a staff POS, and your own branded takeaway site — so the customers who already know you can order direct rather than through a commission-charging marketplace. You can still run the apps to find new faces, while keeping more of what your regulars spend.
 
-<LeadMagnet />
+<LeadMagnet lang="en" />
 
 ## Key takeaways
 
