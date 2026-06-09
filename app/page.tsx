@@ -605,11 +605,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <Faq title={t.faq.title} items={t.faq.items} />
+      {/* FAQ — schema 固定出英文版（本地 SEO 價值最大），畫面顯示跟當前語言 */}
+      <Faq title={t.faq.title} items={t.faq.items} schemaItems={dict.en.faq.items} />
 
       {/* Contact */}
-      <section id="contact" className="px-4 sm:px-6 py-16 sm:py-24 bg-gray-50 border-y border-gray-100">
+      <section id="contact" className="px-4 sm:px-6 py-16 sm:py-24">
         <div className="max-w-xl mx-auto">
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.contact.title}</h2>
@@ -619,7 +619,7 @@ export default function Home() {
 
           <form
             onSubmit={handleSubmit}
-            className="mt-10 bg-white border border-gray-200 rounded-2xl p-6 sm:p-8 space-y-4"
+            className="mt-10 bg-gray-50 border border-gray-200 rounded-2xl p-6 sm:p-8 space-y-4"
           >
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">

@@ -6,15 +6,24 @@ import { useState } from "react";
 // 維持「dict 喺 page、可重用 UI 抽 component」嘅現有 pattern。
 export type FaqItem = { q: string; a: string };
 
-export default function Faq({ title, items }: { title: string; items: readonly FaqItem[] }) {
+export default function Faq({
+  title,
+  items,
+  schemaItems,
+}: {
+  title: string;
+  items: readonly FaqItem[];
+  // FAQPage schema 用嘅題目／答案。固定傳英文版入嚟（英文對本地 SEO 價值最大），
+  // 同畫面顯示嘅 items（跟當前語言）分開。唔傳就 fallback 用顯示版。
+  schemaItems?: readonly FaqItem[];
+}) {
   const [open, setOpen] = useState<number | null>(0);
 
-  // SEO：FAQPage schema。client component render 出嘅 DOM Google 照爬，
-  // 跟住目前語言出（英文版有最大本地搜尋價值）。
+  // SEO：FAQPage schema。client component render 出嘅 DOM Google 照爬。
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: items.map((it) => ({
+    mainEntity: (schemaItems ?? items).map((it) => ({
       "@type": "Question",
       name: it.q,
       acceptedAnswer: { "@type": "Answer", text: it.a },
@@ -22,7 +31,7 @@ export default function Faq({ title, items }: { title: string; items: readonly F
   };
 
   return (
-    <section id="faq" className="px-4 sm:px-6 py-16 sm:py-24">
+    <section id="faq" className="px-4 sm:px-6 py-16 sm:py-24 bg-gray-50 border-y border-gray-100">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-10 sm:mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{title}</h2>
