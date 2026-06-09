@@ -24,7 +24,7 @@ const dict = {
         "Deliveroo、Uber Eats 每張單抽 25–35%。ShopOps 一個固定月費、零抽佣 —— QR 自助點餐、員工 POS、後台訂單、斷網照做，一個系統打通客人、樓面、廚房。",
       ctaPrimary: "預約 Demo",
       ctaSecondary: "睇下有咩功能",
-      reassure: "免費試用 1 天 · 無合約 · 免費幫你搬餐單 · 唔使信用卡",
+      reassure: "免費試用 1 天 (無合約 · 唔使信用卡登記)",
     },
     pains: {
       title: "外賣平台冇講你知嘅三件事",
@@ -135,7 +135,7 @@ const dict = {
         "Deliveroo、Uber Eats 每张单抽 25–35%。ShopOps 一个固定月费、零抽佣 —— QR 自助点餐、员工 POS、后台订单、断网照做，一个系统打通顾客、前厅、厨房。",
       ctaPrimary: "预约 Demo",
       ctaSecondary: "看看有什么功能",
-      reassure: "免费试用 1 天 · 无合约 · 免费帮你搬菜单 · 不用信用卡",
+      reassure: "免费试用 1 天 (无合约 · 不用信用卡登记)",
     },
     pains: {
       title: "外卖平台没告诉你的三件事",
@@ -246,7 +246,7 @@ const dict = {
         "Deliveroo and Uber Eats take 25–35% of every order. ShopOps is one flat monthly fee with zero commission — QR self-ordering, staff POS, back-office orders and an offline backup, connecting your customers, floor and kitchen.",
       ctaPrimary: "Book a Demo",
       ctaSecondary: "See features",
-      reassure: "Free 1-day trial · No contract · Free menu migration · No credit card",
+      reassure: "Free 1-day trial (no contract · no card needed)",
     },
     pains: {
       title: "Three things delivery apps don't tell you",
