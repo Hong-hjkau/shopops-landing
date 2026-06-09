@@ -85,7 +85,7 @@ const dict = {
         "免費 setup + 幫你搬餐單",
       ],
       cta: "預約免費 Demo",
-      note: "卡機過卡費由你自己嘅收單機構收取，與 ShopOps 無關。",
+      note: "客人碌卡畀錢時嗰個手續費，係你嘅收款公司收，唔關 ShopOps 事。",
     },
     faq: {
       title: "常見問題",
@@ -99,7 +99,7 @@ const dict = {
         },
         {
           q: "你哋收唔收交易佣金？",
-          a: "零抽佣，你淨係俾固定月費。卡機過卡費係你自己收單機構收，同我哋無關。",
+          a: "零抽佣，你淨係俾固定月費。至於客人碌卡嗰個手續費，係你嘅收款公司收，唔關我哋事。",
         },
         {
           q: "而家邊度有得用？",
@@ -196,7 +196,7 @@ const dict = {
         "免费 setup + 帮你搬菜单",
       ],
       cta: "预约免费 Demo",
-      note: "刷卡手续费由你自己的收单机构收取，与 ShopOps 无关。",
+      note: "顾客刷卡付款时的手续费，是你的收款公司收取，与 ShopOps 无关。",
     },
     faq: {
       title: "常见问题",
@@ -210,7 +210,7 @@ const dict = {
         },
         {
           q: "你们收交易佣金吗？",
-          a: "零抽佣，你只付固定月费。刷卡手续费是你自己的收单机构收，跟我们无关。",
+          a: "零抽佣，你只付固定月费。至于顾客刷卡的那个手续费，是你的收款公司收，跟我们无关。",
         },
         {
           q: "现在哪里能用？",
@@ -307,7 +307,7 @@ const dict = {
         "Free setup and menu migration",
       ],
       cta: "Book a free demo",
-      note: "Card-processing fees are charged by your own acquirer, separate from ShopOps.",
+      note: "When customers pay by card, that fee comes from your own card-payment provider, not ShopOps.",
     },
     faq: {
       title: "FAQ",
@@ -327,7 +327,7 @@ const dict = {
         },
         {
           q: "Do you charge transaction commission?",
-          a: "Zero commission — you only pay the flat monthly fee. Card-processing fees are charged by your own acquirer, nothing to do with us.",
+          a: "Zero commission — you only pay the flat monthly fee. The fee on customers' card payments comes from your own card-payment provider, nothing to do with us.",
         },
         {
           q: "Where is it available?",

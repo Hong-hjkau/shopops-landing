@@ -42,7 +42,7 @@ const copy = {
       "就算呢個金額，ShopOps 都係一個固定月費、零交易抽佣 —— 賬單可預測，仲有 QR 點餐、員工 POS、離線後備一齊用。",
     cta: "預約 Demo，慳返呢筆",
     disclaimer:
-      "數字只供參考，按你輸入嘅金額同抽佣率即時估算；實際平台收費以各自合約為準，亦視乎你有幾多生意可以轉去自家落單。ShopOps 以 £49／間／月計，不抽交易佣金（卡機過卡費仍由你嘅收單機構收取，與 ShopOps 無關）。",
+      "數字只供參考，按你輸入嘅金額同抽佣率即時估算；實際平台收費以各自合約為準，亦視乎你有幾多生意可以轉去自家落單。ShopOps 以 £49／間／月計，不抽交易佣金（客人碌卡嗰個手續費仍由你嘅收款公司收，與 ShopOps 無關）。",
   },
   "zh-Hans": {
     eyebrow: "省回平台抽佣",
@@ -60,7 +60,7 @@ const copy = {
       "就算这个金额，ShopOps 也是一个固定月费、零交易抽佣 —— 账单可预测，还有 QR 点餐、员工 POS、离线备援一起用。",
     cta: "预约 Demo，省回这笔",
     disclaimer:
-      "数字仅供参考，按你输入的金额和抽佣率即时估算；实际平台收费以各自合约为准，也视乎你有多少生意可以转去自家下单。ShopOps 以 £49／间／月计，不抽交易佣金（刷卡手续费仍由你的收单机构收取，与 ShopOps 无关）。",
+      "数字仅供参考，按你输入的金额和抽佣率即时估算；实际平台收费以各自合约为准，也视乎你有多少生意可以转去自家下单。ShopOps 以 £49／间／月计，不抽交易佣金（顾客刷卡的手续费仍由你的收款公司收取，与 ShopOps 无关）。",
   },
   en: {
     eyebrow: "Cut delivery commission",
@@ -78,7 +78,7 @@ const copy = {
       "Even at this amount, ShopOps is one flat monthly fee with zero per-order commission — predictable billing, plus QR ordering, staff POS and offline backup included.",
     cta: "Book a demo & keep this",
     disclaimer:
-      "Estimate only, based on the amount and rate you enter; actual platform fees depend on each contract and on how much business you can move to your own ordering. ShopOps is £49/venue/month with no transaction commission (card-processing fees are still charged by your own acquirer, separate from ShopOps).",
+      "Estimate only, based on the amount and rate you enter; actual platform fees depend on each contract and on how much business you can move to your own ordering. ShopOps is £49/venue/month with no transaction commission (any card fee on customer payments still comes from your own card-payment provider, separate from ShopOps).",
   },
 } as const;
 
