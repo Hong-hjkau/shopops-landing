@@ -18,7 +18,6 @@ const dict = {
   "zh-Hant": {
     nav: { features: "功能", savings: "慳幾多", pricing: "定價", contact: "聯絡我們", cta: "預約 Demo" },
     hero: {
-      eyebrow: "Edinburgh 餐廳專用 · 零交易抽佣",
       titleA: "外賣平台抽走你三成生意，係時候攞返。",
       titleB: "唔使再畀三成佣金，一套 ShopOps 搞掂全店點餐。",
       subtitle:
@@ -127,7 +126,6 @@ const dict = {
   "zh-Hans": {
     nav: { features: "功能", savings: "省多少", pricing: "定价", contact: "联系我们", cta: "预约 Demo" },
     hero: {
-      eyebrow: "Edinburgh 餐厅专用 · 零交易抽佣",
       titleA: "外卖平台抽走你三成生意，是时候拿回来。",
       titleB: "不用再付三成佣金，一套 ShopOps 搞定全店点餐。",
       subtitle:
@@ -236,7 +234,6 @@ const dict = {
   en: {
     nav: { features: "Features", savings: "Savings", pricing: "Pricing", contact: "Contact", cta: "Book a Demo" },
     hero: {
-      eyebrow: "Built for Edinburgh restaurants · Zero transaction commission",
       titleA: "Delivery apps take a third of your sales. Time to take it back.",
       titleB: "Stop paying a third in commission. One ShopOps runs every order.",
       subtitle:
@@ -475,9 +472,6 @@ export default function Home() {
             priority
             className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
           />
-          <p className="mb-4 text-sm font-semibold text-orange-400 uppercase tracking-wide">
-            {t.hero.eyebrow}
-          </p>
           <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
             {heroTitle}
           </h1>
