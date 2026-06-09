@@ -85,7 +85,7 @@ const dict = {
         "免費 setup + 幫你搬餐單",
       ],
       cta: "預約免費 Demo",
-      note: "卡機過卡費由你自己嘅收單機構收取，與 ShopOps 無關。目前只服務 Edinburgh 區。",
+      note: "卡機過卡費由你自己嘅收單機構收取，與 ShopOps 無關。",
     },
     faq: {
       title: "常見問題",
@@ -101,7 +101,10 @@ const dict = {
           q: "你哋收唔收交易佣金？",
           a: "零抽佣，你淨係俾固定月費。卡機過卡費係你自己收單機構收，同我哋無關。",
         },
-        { q: "而家邊度有得用？", a: "目前只服務 Edinburgh 區嘅小型餐廳（堂食、外賣、雲廚房）。" },
+        {
+          q: "而家邊度有得用？",
+          a: "適合做堂食、外賣同雲廚房嘅小型餐廳。想知你嗰區啱唔啱，直接聯絡我哋傾下。",
+        },
       ],
     },
     contact: {
@@ -119,7 +122,7 @@ const dict = {
       submitSent: "已收到！我哋會盡快聯絡你",
       submitError: "發送失敗，請直接 email 或稍後再試",
       orEmail: "或直接 email：",
-      note: "目前只服務 Edinburgh 區小型餐廳（堂食、外賣、雲廚房）。",
+      note: "適合做堂食、外賣同雲廚房嘅小型餐廳。",
     },
     footer: "© 2026 ShopOps · Edinburgh",
   },
@@ -193,7 +196,7 @@ const dict = {
         "免费 setup + 帮你搬菜单",
       ],
       cta: "预约免费 Demo",
-      note: "刷卡手续费由你自己的收单机构收取，与 ShopOps 无关。目前只服务 Edinburgh 区。",
+      note: "刷卡手续费由你自己的收单机构收取，与 ShopOps 无关。",
     },
     faq: {
       title: "常见问题",
@@ -209,7 +212,10 @@ const dict = {
           q: "你们收交易佣金吗？",
           a: "零抽佣，你只付固定月费。刷卡手续费是你自己的收单机构收，跟我们无关。",
         },
-        { q: "现在哪里能用？", a: "目前只服务 Edinburgh 区的小型餐厅（堂食、外卖、云厨房）。" },
+        {
+          q: "现在哪里能用？",
+          a: "适合做堂食、外卖和云厨房的小型餐厅。想知道你那区合不合适，直接联系我们聊聊。",
+        },
       ],
     },
     contact: {
@@ -227,7 +233,7 @@ const dict = {
       submitSent: "已收到！我们会尽快联系你",
       submitError: "发送失败，请直接 email 或稍后再试",
       orEmail: "或直接 email：",
-      note: "目前只服务 Edinburgh 区小型餐厅（堂食、外卖、云厨房）。",
+      note: "适合做堂食、外卖和云厨房的小型餐厅。",
     },
     footer: "© 2026 ShopOps · Edinburgh",
   },
@@ -301,7 +307,7 @@ const dict = {
         "Free setup and menu migration",
       ],
       cta: "Book a free demo",
-      note: "Card-processing fees are charged by your own acquirer, separate from ShopOps. Currently serving the Edinburgh area only.",
+      note: "Card-processing fees are charged by your own acquirer, separate from ShopOps.",
     },
     faq: {
       title: "FAQ",
@@ -325,7 +331,7 @@ const dict = {
         },
         {
           q: "Where is it available?",
-          a: "Currently for small restaurants in the Edinburgh area (dine-in, takeaway, cloud kitchens).",
+          a: "Built for small restaurants doing dine-in, takeaway and cloud-kitchen orders. Get in touch and we'll check whether it fits your area.",
         },
       ],
     },
@@ -344,7 +350,7 @@ const dict = {
       submitSent: "Got it! We'll be in touch shortly.",
       submitError: "Send failed. Please email us directly or try again.",
       orEmail: "Or email directly:",
-      note: "Currently serving small Edinburgh restaurants (dine-in, takeaway, cloud kitchens).",
+      note: "Built for small restaurants doing dine-in, takeaway and cloud-kitchen orders.",
     },
     footer: "© 2026 ShopOps · Edinburgh",
   },
