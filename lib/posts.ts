@@ -37,6 +37,36 @@ export const POSTS: Post[] = [
     lang: "zh-Hant",
     group: "delivery-commission",
   },
+  {
+    slug: "deliveroo-uber-eats-just-eat-commission-uk-2026-zh-hans",
+    title: "Deliveroo、Uber Eats、Just Eat 佣金拆解（2026 英国餐厅指南）",
+    description:
+      "Deliveroo、Uber Eats、Just Eat 在英国每张订单实际抽走多少 —— 连同隐藏的 VAT 与各项费用、一个 £10 菜式的实算例子，以及如何减少对外卖平台的依赖。",
+    date: "2026-06-06",
+    readingMinutes: 9,
+    lang: "zh-Hans",
+    group: "delivery-commission",
+  },
+  {
+    slug: "move-regulars-to-direct-ordering-uk-zh-hant",
+    title: "如何把熟客帶回自家落單，不再被外賣平台抽成",
+    description:
+      "外賣平台抽走每張單兩三成，最浪費的是連熟客也經平台。這篇教你用 QR 點餐、自家外賣網與小優惠，把回頭客一步步轉回直接落單，省下本來付給平台的佣金。",
+    date: "2026-06-10",
+    readingMinutes: 8,
+    lang: "zh-Hant",
+    group: "direct-ordering",
+  },
+  {
+    slug: "move-regulars-to-direct-ordering-uk-zh-hans",
+    title: "如何把熟客带回自家下单，不再被外卖平台抽成",
+    description:
+      "外卖平台抽走每张单两三成，最浪费的是连熟客也经平台。这篇教你用 QR 点餐、自家外卖网与小优惠，把回头客一步步转回直接下单，省下本来付给平台的佣金。",
+    date: "2026-06-10",
+    readingMinutes: 8,
+    lang: "zh-Hans",
+    group: "direct-ordering",
+  },
 ];
 
 // 最新喺前
