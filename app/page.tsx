@@ -350,8 +350,8 @@ const dict = {
   },
 } as const;
 
-// 真實聯絡 email 由 NEXT_PUBLIC_CONTACT_EMAIL 提供（換域名唔使改 code）；未設先用 placeholder
-const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@shopops.example";
+// 聯絡 email；可由 NEXT_PUBLIC_CONTACT_EMAIL 覆寫，未設就用真實預設地址
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@shopops.co.uk";
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("zh-Hant");
