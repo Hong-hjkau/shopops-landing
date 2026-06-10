@@ -505,9 +505,9 @@ export default function Home() {
       {/* 漫畫 hook — 廣東話圖，只喺繁體出（圖內文字唔跟語言切換，故 EN/簡 唔顯示）。黑底接住 Hero 一氣呵成 */}
       {lang === "zh-Hant" && (
         <section className="bg-black px-4 sm:px-6 pb-12 sm:pb-16">
-          <div className="max-w-md mx-auto">
+          <div className="max-w-lg mx-auto">
             <Image
-              src="/owner-pains.png"
+              src="/owner-pains.webp"
               alt="餐廳老闆嘅日常煩惱：外賣平台抽三成佣金、夜晚對數做報表估唔到邊樣賺錢、一堆系統各自為政、食安過敏原驚出事——原來一個 ShopOps app 就搞掂晒"
               width={1024}
               height={1536}
