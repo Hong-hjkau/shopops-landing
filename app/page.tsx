@@ -11,14 +11,6 @@ type FormStatus = "idle" | "sending" | "sent" | "error";
 
 const MOCKUPS = [MenuMockup, BoardMockup, OfflineMockup, AdminMockup];
 
-// 漫畫 4 格痛點（廣東話圖，只喺繁體 section 用）。原圖裁開打橫排，payoff 另外全闊
-const OWNER_PAINS = [
-  { src: "/owner-pain-1.webp", alt: "外賣平台抽三成佣金，做到死都係幫人賺" },
-  { src: "/owner-pain-2.webp", alt: "夜晚對數做報表，估唔到邊道菜先賺錢" },
-  { src: "/owner-pain-3.webp", alt: "POS、排班、訂位要開好多個 app" },
-  { src: "/owner-pain-4.webp", alt: "食安過敏原記錯一次驚出事" },
-];
-
 // Hero 大標題 A/B：A = 純痛點、B = 痛點 + 方案。live 比完揀邊個順眼，改呢一行就切換。
 const HERO_VARIANT: "A" | "B" = "B";
 
@@ -509,42 +501,6 @@ export default function Home() {
           <p className="mt-5 text-sm text-gray-400">{t.hero.reassure}</p>
         </div>
       </section>
-
-      {/* 漫畫 hook — 廣東話圖，只喺繁體出（圖內文字唔跟語言切換，故 EN/簡 唔顯示）。
-          原本一張高身海報黑底浮空又同頁面重複，改成：文字標題 + 4 格打橫 + payoff 全闊 */}
-      {lang === "zh-Hant" && (
-        <section className="bg-black px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-center text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-8 sm:mb-10">
-              這是你嗎？
-            </h2>
-            {/* 4 痛點格打橫：手機 2×2、桌面 4 欄。aspect 盒 + object-contain，黑底 letterbox 隱形 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-              {OWNER_PAINS.map((p) => (
-                <div key={p.src} className="aspect-[3/2] overflow-hidden rounded-lg bg-black">
-                  <Image
-                    src={p.src}
-                    alt={p.alt}
-                    width={510}
-                    height={314}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              ))}
-            </div>
-            {/* payoff 全闊 */}
-            <div className="mt-2 sm:mt-3 overflow-hidden rounded-lg">
-              <Image
-                src="/owner-payoff.webp"
-                alt="原來一個 ShopOps app 就搞掂晒 —— 營運智能化，效率倍增"
-                width={1020}
-                height={500}
-                className="w-full h-auto"
-              />
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Pain points — framing 外賣平台做共同敵人，引出下面功能做解藥 */}
       <section className="px-4 sm:px-6 py-16 sm:py-24">
