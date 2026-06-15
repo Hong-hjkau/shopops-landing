@@ -53,7 +53,8 @@ Marketing site，對外推廣 ShopOps（核心 POS 產品）。Live: [shopops-la
 - [x] ✅ **`hello@` send-as**（2026-06-08，Workspace 自動加，Gmail 可揀 from `hello@`）
 - [x] ✅ **`www.shopops.co.uk`**（2026-06-08，308 永久轉去 apex）
 - [x] ✅ **上線解封**（2026-06-08，刪 gate + `NEXT_PUBLIC_SITE_URL` + GSC property/sitemap）
-- [ ] DMARC 收緊（`p=none` → `p=quarantine`，穩定幾個月後）；contact form 寄件升級用 `noreply@shopops.co.uk`（可選，需 Resend 設定）
+- [x] ✅ **contact form 寄件升級** `noreply@shopops.co.uk`（2026-06-08 完成：Resend domain `shopops.co.uk` 已驗證；local + **Vercel production/preview `CONTACT_FROM_EMAIL` 已改**（API 設 plain 值已確認）+ redeploy + 真打 contact form 驗證 `ok:true`）
+- [ ] DMARC 收緊（`p=none` → `p=quarantine`，穩定幾個月後）—— ⚠️ root `_dmarc.shopops.co.uk` 已存在（`p=none`+rua hong@），**已覆蓋 Resend 評價信**（From=root 主域，Resend `send.` 只係 Return-Path 唔需自己 DMARC）；收緊會同時影響 Google Workspace 公司信，等有寄信量+睇報告先郁
 
 ## 定位與職責
 
