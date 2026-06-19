@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_URL } from "@/lib/site";
+import { LangProvider } from "@/components/LangProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -77,7 +78,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <LangProvider>{children}</LangProvider>
         <Analytics />
         <SpeedInsights />
       </body>
