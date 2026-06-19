@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
 import SavingsCalculator from "@/components/SavingsCalculator";
 import Faq from "@/components/Faq";
@@ -378,11 +379,12 @@ export default function PosLanding() {
       {/* Hero — 刻意黑底，令發光 logo 同背景融為一體（唔係 dark-mode，下面 section 維持淺色）*/}
       <section id="top" className="bg-black px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
         <div className="max-w-4xl mx-auto text-center">
-          <img
+          <Image
             src="/logo.png"
             alt="ShopOps"
             width={288}
             height={162}
+            priority
             className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
           />
           <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
