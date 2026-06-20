@@ -34,8 +34,8 @@ const dict = {
       subtitle: "已經喺真實生意度用緊嘅系統，即裝即用。",
       items: [
         { icon: "🍽️", name: "ShopOps POS", desc: "餐廳點餐 / POS / 廚房看板 / 離線後備，零佣金、唔鎖數據。", href: "/pos", cta: "了解更多" },
-        { icon: "⭐", name: "Reviewscope", desc: "餐廳評價監察 —— 各大平台評分一個版面睇晒，差評即時知。", href: "#contact", cta: "了解更多" },
-        { icon: "🗓️", name: "Rota", desc: "員工排班 + 打卡出席，定位簽到、自動計時數。", href: "#contact", cta: "了解更多" },
+        { icon: "⭐", name: "Reviewscope", desc: "餐廳評價監察 —— 各大平台評分一個版面睇晒，差評即時知。", href: "/reviewscope", cta: "了解更多" },
+        { icon: "🗓️", name: "Rota", desc: "員工排班 + 打卡出席，定位簽到、自動計時數。", href: "/rota", cta: "了解更多" },
       ] as Product[],
     },
     why: {
@@ -88,8 +88,8 @@ const dict = {
       subtitle: "已经在真实生意里使用的系统，即装即用。",
       items: [
         { icon: "🍽️", name: "ShopOps POS", desc: "餐厅点餐 / POS / 厨房看板 / 离线备援，零佣金、不锁数据。", href: "/pos", cta: "了解更多" },
-        { icon: "⭐", name: "Reviewscope", desc: "餐厅评价监察 —— 各大平台评分一个面板看齐，差评即时知道。", href: "#contact", cta: "了解更多" },
-        { icon: "🗓️", name: "Rota", desc: "员工排班 + 打卡考勤，定位签到、自动算工时。", href: "#contact", cta: "了解更多" },
+        { icon: "⭐", name: "Reviewscope", desc: "餐厅评价监察 —— 各大平台评分一个面板看齐，差评即时知道。", href: "/reviewscope", cta: "了解更多" },
+        { icon: "🗓️", name: "Rota", desc: "员工排班 + 打卡考勤，定位签到、自动算工时。", href: "/rota", cta: "了解更多" },
       ] as Product[],
     },
     why: {
@@ -142,8 +142,8 @@ const dict = {
       subtitle: "Systems already running in real businesses, ready to use.",
       items: [
         { icon: "🍽️", name: "ShopOps POS", desc: "Restaurant ordering / POS / kitchen board / offline backup. Zero commission, your data stays yours.", href: "/pos", cta: "Learn more" },
-        { icon: "⭐", name: "Reviewscope", desc: "Restaurant review monitoring — every platform's ratings in one dashboard, bad reviews flagged instantly.", href: "#contact", cta: "Learn more" },
-        { icon: "🗓️", name: "Rota", desc: "Staff scheduling and clock-in attendance — location check-in, automatic hours.", href: "#contact", cta: "Learn more" },
+        { icon: "⭐", name: "Reviewscope", desc: "Restaurant review monitoring — every platform's ratings in one dashboard, bad reviews flagged instantly.", href: "/reviewscope", cta: "Learn more" },
+        { icon: "🗓️", name: "Rota", desc: "Staff scheduling and clock-in attendance — location check-in, automatic hours.", href: "/rota", cta: "Learn more" },
       ] as Product[],
     },
     why: {

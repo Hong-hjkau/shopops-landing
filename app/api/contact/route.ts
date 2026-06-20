@@ -100,8 +100,11 @@ export async function POST(req: Request) {
   }
 
   const resend = new Resend(apiKey);
-  // 缺 source 時當公司頁(一般查詢);POS 頁會明確帶 "pos" 保留 Demo 字眼
-  const source: ContactSource = body.source === "pos" ? "pos" : "company";
+  // 缺 / 不認得 source 時當公司頁(一般查詢);各頁明確帶自己 source 令主題分得清邊個產品
+  const validSources: ContactSource[] = ["company", "pos", "reviewscope", "rota"];
+  const source: ContactSource = validSources.includes(body.source as ContactSource)
+    ? (body.source as ContactSource)
+    : "company";
   const subjectPrefix = enquirySubject(source, lang);
 
   const { error } = await resend.emails.send({
