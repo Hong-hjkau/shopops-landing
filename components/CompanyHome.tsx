@@ -32,7 +32,6 @@ const dict = {
     products: {
       title: "自家產品",
       subtitle: "已經喺真實生意度用緊嘅系統，即裝即用。",
-      learnMore: "了解更多",
       items: [
         { icon: "🍽️", name: "ShopOps POS", desc: "餐廳點餐 / POS / 廚房看板 / 離線後備，零佣金、唔鎖數據。", href: "/pos", cta: "了解更多" },
         { icon: "⭐", name: "Reviewscope", desc: "餐廳評價監察 —— 各大平台評分一個版面睇晒，差評即時知。", href: "#contact", cta: "了解更多" },
@@ -87,7 +86,6 @@ const dict = {
     products: {
       title: "自家产品",
       subtitle: "已经在真实生意里使用的系统，即装即用。",
-      learnMore: "了解更多",
       items: [
         { icon: "🍽️", name: "ShopOps POS", desc: "餐厅点餐 / POS / 厨房看板 / 离线备援，零佣金、不锁数据。", href: "/pos", cta: "了解更多" },
         { icon: "⭐", name: "Reviewscope", desc: "餐厅评价监察 —— 各大平台评分一个面板看齐，差评即时知道。", href: "#contact", cta: "了解更多" },
@@ -142,7 +140,6 @@ const dict = {
     products: {
       title: "Our products",
       subtitle: "Systems already running in real businesses, ready to use.",
-      learnMore: "Learn more",
       items: [
         { icon: "🍽️", name: "ShopOps POS", desc: "Restaurant ordering / POS / kitchen board / offline backup. Zero commission, your data stays yours.", href: "/pos", cta: "Learn more" },
         { icon: "⭐", name: "Reviewscope", desc: "Restaurant review monitoring — every platform's ratings in one dashboard, bad reviews flagged instantly.", href: "#contact", cta: "Learn more" },
