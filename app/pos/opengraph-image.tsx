@@ -3,7 +3,7 @@ import { readFile } from "fs/promises";
 import { join } from "path";
 
 export const runtime = "nodejs";
-export const alt = "ShopOps — Custom Software & Business Automation";
+export const alt = "ShopOps — Edinburgh 餐廳點餐管理系統";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -58,7 +58,7 @@ export default async function OpengraphImage() {
               marginBottom: "20px",
             }}
           >
-            Custom software · Automation
+            Built for Edinburgh restaurants
           </div>
           <div
             style={{
@@ -69,7 +69,7 @@ export default async function OpengraphImage() {
               marginBottom: "28px",
             }}
           >
-            Software built around how you work.
+            One ShopOps, every order handled.
           </div>
           <div
             style={{
@@ -80,13 +80,13 @@ export default async function OpengraphImage() {
               flexWrap: "wrap",
             }}
           >
-            <span>Automation</span>
+            <span>QR ordering</span>
             <span>·</span>
-            <span>Custom systems</span>
+            <span>Staff POS</span>
             <span>·</span>
-            <span>AI &amp; data</span>
+            <span>Kitchen board</span>
             <span>·</span>
-            <span>Products</span>
+            <span>Offline-ready</span>
           </div>
         </div>
       </div>
