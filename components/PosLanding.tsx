@@ -518,7 +518,7 @@ export default function PosLanding() {
       <Faq title={t.faq.title} items={t.faq.items} schemaItems={dict.en.faq.items} />
 
       {/* Contact */}
-      <ContactSection copy={t.contact} />
+      <ContactSection copy={t.contact} source="pos" />
 
       {/* Footer */}
       <SiteFooter text={t.footer} />

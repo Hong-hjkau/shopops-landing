@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { enquirySubject, type ContactSource } from "@/lib/contact";
 
 export const runtime = "nodejs";
 
@@ -10,6 +11,7 @@ type ContactBody = {
   email?: string;
   message?: string;
   lang?: "zh-Hant" | "zh-Hans" | "en";
+  source?: ContactSource;
 };
 
 function isEmail(s: string) {
@@ -98,12 +100,9 @@ export async function POST(req: Request) {
   }
 
   const resend = new Resend(apiKey);
-  const subjectPrefix =
-    lang === "en"
-      ? "ShopOps Demo Enquiry"
-      : lang === "zh-Hans"
-        ? "ShopOps Demo 咨询"
-        : "ShopOps Demo 查詢";
+  // 缺 source 時當公司頁(一般查詢);POS 頁會明確帶 "pos" 保留 Demo 字眼
+  const source: ContactSource = body.source === "pos" ? "pos" : "company";
+  const subjectPrefix = enquirySubject(source, lang);
 
   const { error } = await resend.emails.send({
     from,

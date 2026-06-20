@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/components/LangProvider";
+import { enquirySubject, type ContactSource } from "@/lib/contact";
 
 export type ContactCopy = {
   title: string;
@@ -26,7 +27,13 @@ type FormStatus = "idle" | "sending" | "sent" | "error";
 // 聯絡 email；可由 NEXT_PUBLIC_CONTACT_EMAIL 覆寫,未設就用真實預設地址
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hello@shopops.co.uk";
 
-export default function ContactSection({ copy }: { copy: ContactCopy }) {
+export default function ContactSection({
+  copy,
+  source,
+}: {
+  copy: ContactCopy;
+  source: ContactSource;
+}) {
   const { lang } = useLang();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -41,7 +48,7 @@ export default function ContactSection({ copy }: { copy: ContactCopy }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message, lang }),
+        body: JSON.stringify({ name, email, message, lang, source }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setStatus("sent");
@@ -60,13 +67,7 @@ export default function ContactSection({ copy }: { copy: ContactCopy }) {
     if (status === "error" || status === "sent") setStatus("idle");
   }
 
-  const mailtoSubject = encodeURIComponent(
-    lang === "en"
-      ? "ShopOps Enquiry"
-      : lang === "zh-Hans"
-        ? "ShopOps 咨询"
-        : "ShopOps 查詢"
-  );
+  const mailtoSubject = encodeURIComponent(enquirySubject(source, lang));
 
   return (
     <section id="contact" className="px-4 sm:px-6 py-16 sm:py-24">

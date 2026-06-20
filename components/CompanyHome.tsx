@@ -281,7 +281,7 @@ export default function CompanyHome() {
         </div>
       </section>
 
-      <ContactSection copy={t.contact} />
+      <ContactSection copy={t.contact} source="company" />
       <SiteFooter text={t.footer} />
     </main>
   );
