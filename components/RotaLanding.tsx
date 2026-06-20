@@ -40,10 +40,13 @@ const dict = {
     },
     pricing: {
       eyebrow: "簡單定價",
-      title: "先免費試，啱用先傾月費",
-      subtitle: "想試下你盤生意排更打卡點用？我哋幫你設好，試用一段時間，覺得啱使先收費。",
-      cta: "免費試用 / 聯絡報價",
-      note: "按團隊規模收月費。如果你用緊 ShopOps POS，可以無縫整合。具體價錢直接傾。",
+      title: "一個價，每月 £10",
+      subtitle: "先免費試用，啱使先每月 £10，全包、無合約、隨時取消。",
+      trial: "免費試用",
+      price: "£10",
+      unit: "／月",
+      cta: "免費試用",
+      note: "每月 £10。如果你用緊 ShopOps POS，可以無縫整合。",
     },
     faq: {
       title: "常見問題",
@@ -102,10 +105,13 @@ const dict = {
     },
     pricing: {
       eyebrow: "简单定价",
-      title: "先免费试，合用才谈月费",
-      subtitle: "想试试你这盘生意排班打卡怎么用？我们帮你设好，试用一段时间，觉得合用才收费。",
-      cta: "免费试用 / 联系报价",
-      note: "按团队规模收月费。如果你在用 ShopOps POS，可以无缝整合。具体价格直接聊。",
+      title: "一个价，每月 £10",
+      subtitle: "先免费试用，合用才每月 £10，全包、无合约、随时取消。",
+      trial: "免费试用",
+      price: "£10",
+      unit: "／月",
+      cta: "免费试用",
+      note: "每月 £10。如果你在用 ShopOps POS，可以无缝整合。",
     },
     faq: {
       title: "常见问题",
@@ -164,10 +170,13 @@ const dict = {
     },
     pricing: {
       eyebrow: "Simple pricing",
-      title: "Try it free, talk money only if it fits",
-      subtitle: "Want to see how scheduling and clock-in would work for your business? We'll set it up, you trial it, and we only charge once it fits.",
-      cta: "Start free trial / get a quote",
-      note: "Billed by team size. Integrates seamlessly if you use ShopOps POS. Let's talk price.",
+      title: "One price, £10 a month",
+      subtitle: "Start with a free trial, then £10 a month — all in, no contract, cancel anytime.",
+      trial: "Free trial",
+      price: "£10",
+      unit: "/month",
+      cta: "Start free trial",
+      note: "£10 a month. Integrates seamlessly if you use ShopOps POS.",
     },
     faq: {
       title: "FAQ",
@@ -297,6 +306,13 @@ export default function RotaLanding() {
             <p className="mt-4 text-gray-600 leading-relaxed">{t.pricing.subtitle}</p>
           </div>
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8 text-center">
+            <span className="inline-block mb-4 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-wide">
+              {t.pricing.trial}
+            </span>
+            <div className="flex items-baseline justify-center gap-1 mb-8">
+              <span className="text-5xl font-bold text-gray-900">{t.pricing.price}</span>
+              <span className="text-lg font-semibold text-gray-400">{t.pricing.unit}</span>
+            </div>
             <a href="#contact" className="inline-flex w-full justify-center px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition">
               {t.pricing.cta}
             </a>
