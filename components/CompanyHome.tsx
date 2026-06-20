@@ -14,9 +14,9 @@ const dict = {
   "zh-Hant": {
     nav: { services: "服務", products: "產品", contact: "聯絡", blog: "網誌", cta: "免費諮詢" },
     hero: {
-      title: "度身訂造軟件 × 業務自動化，幫你慳返重複工夫",
+      title: ["度身訂造軟件 × 業務自動化", "幫你慳返重複工夫"],
       subtitle:
-        "SHOPOPS 係一隊軟件團隊。由餐廳 POS 到內部工具、數據自動化、AI 應用 —— 你話畀我哋知個痛點，我哋幫你整一套真係用得着、唔使俾佣金、唔使受制於人嘅系統。",
+        "SHOPOPS 係一隊軟件團隊。數據自動化、AI 應用 —— 你話畀我哋知個痛點，我哋幫你整一套真係用得着、唔使俾佣金、唔使受制於人嘅系統。",
       ctaPrimary: "免費諮詢",
       ctaSecondary: "睇我哋嘅產品",
     },
@@ -68,9 +68,9 @@ const dict = {
   "zh-Hans": {
     nav: { services: "服务", products: "产品", contact: "联系", blog: "博客", cta: "免费咨询" },
     hero: {
-      title: "量身定制软件 × 业务自动化，帮你省下重复工序",
+      title: ["量身定制软件 × 业务自动化", "帮你省下重复工序"],
       subtitle:
-        "SHOPOPS 是一支软件团队。从餐厅 POS 到内部工具、数据自动化、AI 应用 —— 你告诉我们痛点，我们帮你做一套真正好用、不用付佣金、不受制于人的系统。",
+        "SHOPOPS 是一支软件团队。数据自动化、AI 应用 —— 你告诉我们痛点，我们帮你做一套真正好用、不用付佣金、不受制于人的系统。",
       ctaPrimary: "免费咨询",
       ctaSecondary: "看看我们的产品",
     },
@@ -122,9 +122,9 @@ const dict = {
   en: {
     nav: { services: "Services", products: "Products", contact: "Contact", blog: "Blog", cta: "Free consult" },
     hero: {
-      title: "Custom software and automation that takes the busywork off your plate",
+      title: ["Custom software & automation", "that takes the busywork off your plate"],
       subtitle:
-        "SHOPOPS is a software team. From restaurant POS to internal tools, data automation and AI — tell us the problem and we'll build a system that actually works, charges no commission, and keeps you in control.",
+        "SHOPOPS is a software team. Data automation and AI — tell us the problem and we'll build a system that actually works, charges no commission, and keeps you in control.",
       ctaPrimary: "Free consult",
       ctaSecondary: "See our products",
     },
@@ -203,7 +203,11 @@ export default function CompanyHome() {
             className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
           />
           <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
-            {t.hero.title}
+            {t.hero.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
             {t.hero.subtitle}
