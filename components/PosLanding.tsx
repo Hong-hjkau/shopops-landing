@@ -19,7 +19,7 @@ const dict = {
     nav: { features: "功能", savings: "慳幾多", pricing: "定價", blog: "網誌", contact: "聯絡我們", cta: "預約 Demo", company: "公司首頁" },
     hero: {
       titleA: "外賣平台抽走你三成生意，係時候攞返。",
-      titleB: "唔使再畀三成佣金，一套 ShopOps 搞掂全店點餐。",
+      titleB: "唔使再畀三成佣金\n一套 ShopOps 搞掂全店點餐。",
       subtitle:
         "Deliveroo、Uber Eats 每張單抽 25–35%。ShopOps 一個固定月費、零抽佣 —— QR 自助點餐、員工 POS、後台訂單、斷網照做，一個系統打通客人、樓面、廚房。",
       ctaPrimary: "預約 Demo",
@@ -130,7 +130,7 @@ const dict = {
     nav: { features: "功能", savings: "省多少", pricing: "定价", blog: "博客", contact: "联系我们", cta: "预约 Demo", company: "公司首页" },
     hero: {
       titleA: "外卖平台抽走你三成生意，是时候拿回来。",
-      titleB: "不用再付三成佣金，一套 ShopOps 搞定全店点餐。",
+      titleB: "不用再付三成佣金\n一套 ShopOps 搞定全店点餐。",
       subtitle:
         "Deliveroo、Uber Eats 每张单抽 25–35%。ShopOps 一个固定月费、零抽佣 —— QR 自助点餐、员工 POS、后台订单、断网照做，一个系统打通顾客、前厅、厨房。",
       ctaPrimary: "预约 Demo",
@@ -241,7 +241,7 @@ const dict = {
     nav: { features: "Features", savings: "Savings", pricing: "Pricing", blog: "Blog", contact: "Contact", cta: "Book a Demo", company: "Company" },
     hero: {
       titleA: "Delivery apps take a third of your sales. Time to take it back.",
-      titleB: "Stop paying a third in commission. One ShopOps runs every order.",
+      titleB: "Stop paying a third in commission.\nOne ShopOps runs every order.",
       subtitle:
         "Deliveroo and Uber Eats take 25–35% of every order. ShopOps is one flat monthly fee with zero commission — QR self-ordering, staff POS, back-office orders and an offline backup, connecting your customers, floor and kitchen.",
       ctaPrimary: "Book a Demo",
@@ -388,7 +388,11 @@ export default function PosLanding() {
             className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
           />
           <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
-            {heroTitle}
+            {heroTitle.split("\n").map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
             {t.hero.subtitle}
