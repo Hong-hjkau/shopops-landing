@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
 import CompanyHome from "@/components/CompanyHome";
 
-const TITLE = "ShopOps — 度身訂造軟件 × 業務自動化｜Custom Software & Automation";
+const TITLE = "ShopOps — 度身訂造軟件與業務自動化｜Custom Software";
 const DESCRIPTION =
-  "SHOPOPS 係一隊軟件團隊:業務流程自動化、度身訂造軟件 / 系統、AI 與數據分析,以及即裝即用嘅自家產品(餐廳 POS 等)。零佣金、唔鎖數據。 SHOPOPS is a software team building business automation, custom software, AI/data tools and ready-made products.";
+  "業務流程自動化、度身訂造軟件、AI 數據分析同即裝即用產品(POS 等)。Software team: automation, custom software, AI & data and ready-made products.";
 
 export const metadata: Metadata = {
   title: TITLE,

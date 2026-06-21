@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
 import ReviewscopeLanding from "@/components/ReviewscopeLanding";
 
-const TITLE =
-  "Reviewscope — 餐廳評價監察｜Restaurant Review Monitoring & Bad-Review Alerts";
+const TITLE = "Reviewscope — 餐廳評價監察｜Restaurant Review Monitoring";
 const DESCRIPTION =
-  "跨平台監察餐廳評價(Google / TripAdvisor 等),AI 分析情緒同主題,差評即時 Telegram 通知。Monitor your restaurant's reviews across platforms, with AI analysis and instant bad-review alerts on Telegram.";
+  "跨平台監察餐廳評價(Google、TripAdvisor),AI 分析、差評即時 Telegram 通知。Monitor reviews across platforms with AI analysis and instant Telegram alerts.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -21,9 +20,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Reviewscope — Restaurant Review Monitoring & Bad-Review Alerts",
+    title: "Reviewscope — Restaurant Review Monitoring",
     description:
-      "Monitor your restaurant's reviews across platforms, with AI sentiment analysis and instant bad-review alerts on Telegram.",
+      "Monitor reviews across platforms with AI analysis and instant bad-review alerts on Telegram.",
   },
 };
 
