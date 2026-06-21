@@ -4,7 +4,7 @@ import ReviewscopeLanding from "@/components/ReviewscopeLanding";
 
 const TITLE = "Reviewscope — 餐廳評價監察｜Restaurant Review Monitoring";
 const DESCRIPTION =
-  "跨平台監察餐廳評價(Google、TripAdvisor),AI 分析、差評即時 Telegram 通知。Monitor reviews across platforms with AI analysis and instant Telegram alerts.";
+  "跨平台監察餐廳評價(Google、TripAdvisor),AI 分析差評,即時 Telegram 通知。Cross-platform review monitoring with AI and instant alerts.";
 
 export const metadata: Metadata = {
   title: TITLE,
