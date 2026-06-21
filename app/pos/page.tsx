@@ -4,7 +4,7 @@ import PosLanding from "@/components/PosLanding";
 
 const TITLE = "ShopOps POS — Edinburgh 餐廳點餐系統｜Restaurant POS";
 const DESCRIPTION =
-  "為 Edinburgh 小型餐廳而設嘅點餐系統：QR 自助點餐、員工 POS、廚房看板、離線後備。All-in-one ordering for small Edinburgh restaurants — QR, staff POS, kitchen board, offline backup.";
+  "為 Edinburgh 細餐廳而設嘅點餐系統：QR 點餐、員工 POS、廚房看板、離線後備。Ordering for Edinburgh restaurants — QR, POS, kitchen board, offline.";
 
 export const metadata: Metadata = {
   title: TITLE,

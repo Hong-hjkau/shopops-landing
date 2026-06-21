@@ -88,6 +88,20 @@ export default async function OpengraphImage() {
             <span>·</span>
             <span>Products</span>
           </div>
+          <div style={{ marginTop: "36px", display: "flex" }}>
+            <div
+              style={{
+                background: "#f97316",
+                color: "#fff",
+                fontSize: "26px",
+                fontWeight: 700,
+                padding: "14px 32px",
+                borderRadius: "12px",
+              }}
+            >
+              Free consult →
+            </div>
+          </div>
         </div>
       </div>
     ),
