@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
 import PosLanding from "@/components/PosLanding";
 
-const TITLE = "ShopOps — Restaurant POS & QR Ordering for Edinburgh｜餐廳點餐管理系統";
+const TITLE = "ShopOps POS — Edinburgh 餐廳點餐系統｜Restaurant POS";
 const DESCRIPTION =
-  "All-in-one ordering system for small Edinburgh restaurants — QR self-ordering, staff POS, live kitchen board, and offline backup so you keep trading when the cloud goes down. 為 Edinburgh 小型餐廳而設嘅一站式點餐系統：客人 scan QR 自助落單、員工 POS、即時廚房看板，仲有離線後備，斷網都照做生意。";
+  "為 Edinburgh 小型餐廳而設嘅點餐系統：QR 自助點餐、員工 POS、廚房看板、離線後備。All-in-one ordering for small Edinburgh restaurants — QR, staff POS, kitchen board, offline backup.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ShopOps — Restaurant POS, QR ordering & kitchen board for Edinburgh",
+    title: "ShopOps POS — Restaurant ordering for Edinburgh",
     description:
-      "All-in-one ordering system for small Edinburgh restaurants. QR self-ordering, staff POS, live kitchen board, and offline backup so you keep trading when the cloud goes down.",
+      "All-in-one ordering for small Edinburgh restaurants — QR self-ordering, staff POS, live kitchen board and offline backup.",
   },
 };
 
