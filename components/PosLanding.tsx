@@ -72,11 +72,11 @@ const dict = {
       ],
     },
     pricing: {
-      eyebrow: "簡單透明定價",
+      eyebrow: "定價",
       title: "一個價，全部包，唔使估",
-      subtitle: "對手叫你開戶先報價。我哋直接擺出嚟。",
-      price: "£49",
-      unit: "／間／月",
+      subtitle: "每間餐廳規模唔同，留低資料我哋幫你度身報價。",
+      price: "請聯絡我們",
+      unit: "",
       trial: "首月免費試用",
       features: [
         "QR 點餐 + 員工 POS + 後台 + 離線後備，全部包",
@@ -183,11 +183,11 @@ const dict = {
       ],
     },
     pricing: {
-      eyebrow: "简单透明定价",
+      eyebrow: "定价",
       title: "一个价，全部包，不用猜",
-      subtitle: "对手让你先开户才报价。我们直接摆出来。",
-      price: "£49",
-      unit: "／间／月",
+      subtitle: "每间餐厅规模不同，留下资料我们帮你度身报价。",
+      price: "请联系我们",
+      unit: "",
       trial: "首月免费试用",
       features: [
         "QR 点餐 + 员工 POS + 后台 + 离线备援，全部包",
@@ -294,11 +294,11 @@ const dict = {
       ],
     },
     pricing: {
-      eyebrow: "Simple, transparent pricing",
+      eyebrow: "Pricing",
       title: "One price, everything included, no guessing",
-      subtitle: "Competitors hide the price until you sign up. Here's ours, up front.",
-      price: "£49",
-      unit: "/venue/month",
+      subtitle: "Every venue is different — leave your details and we'll quote you.",
+      price: "Contact us",
+      unit: "",
       trial: "First month free",
       features: [
         "QR ordering, staff POS, back-office and offline backup — all included",
@@ -488,8 +488,10 @@ export default function PosLanding() {
                 {t.pricing.trial}
               </span>
               <div className="flex items-baseline justify-center gap-1">
-                <span className="text-5xl font-bold text-gray-900">{t.pricing.price}</span>
-                <span className="text-lg font-semibold text-gray-400">{t.pricing.unit}</span>
+                <span className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pricing.price}</span>
+                {t.pricing.unit && (
+                  <span className="text-lg font-semibold text-gray-400">{t.pricing.unit}</span>
+                )}
               </div>
             </div>
 

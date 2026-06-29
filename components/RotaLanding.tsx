@@ -40,13 +40,13 @@ const dict = {
     },
     pricing: {
       eyebrow: "簡單定價",
-      title: "一個價，每月 £10",
-      subtitle: "先免費試用，啱使先每月 £10，全包、無合約、隨時取消。",
+      title: "一個價，全部包",
+      subtitle: "先免費試用，全包、無合約、隨時取消。留低資料我哋同你傾報價。",
       trial: "免費試用",
-      price: "£10",
-      unit: "／月",
+      price: "請聯絡我們",
+      unit: "",
       cta: "免費試用",
-      note: "每月 £10。如果你用緊 ShopOps POS，可以無縫整合。",
+      note: "如果你用緊 ShopOps POS，可以無縫整合。",
     },
     faq: {
       title: "常見問題",
@@ -105,13 +105,13 @@ const dict = {
     },
     pricing: {
       eyebrow: "简单定价",
-      title: "一个价，每月 £10",
-      subtitle: "先免费试用，合用才每月 £10，全包、无合约、随时取消。",
+      title: "一个价，全部包",
+      subtitle: "先免费试用，全包、无合约、随时取消。留下资料我们和你谈报价。",
       trial: "免费试用",
-      price: "£10",
-      unit: "／月",
+      price: "请联系我们",
+      unit: "",
       cta: "免费试用",
-      note: "每月 £10。如果你在用 ShopOps POS，可以无缝整合。",
+      note: "如果你在用 ShopOps POS，可以无缝整合。",
     },
     faq: {
       title: "常见问题",
@@ -170,13 +170,13 @@ const dict = {
     },
     pricing: {
       eyebrow: "Simple pricing",
-      title: "One price, £10 a month",
-      subtitle: "Start with a free trial, then £10 a month — all in, no contract, cancel anytime.",
+      title: "One price, everything included",
+      subtitle: "Start with a free trial — all in, no contract, cancel anytime. Leave your details and we'll quote you.",
       trial: "Free trial",
-      price: "£10",
-      unit: "/month",
+      price: "Contact us",
+      unit: "",
       cta: "Start free trial",
-      note: "£10 a month. Integrates seamlessly if you use ShopOps POS.",
+      note: "Integrates seamlessly if you use ShopOps POS.",
     },
     faq: {
       title: "FAQ",
@@ -310,8 +310,10 @@ export default function RotaLanding() {
               {t.pricing.trial}
             </span>
             <div className="flex items-baseline justify-center gap-1 mb-8">
-              <span className="text-5xl font-bold text-gray-900">{t.pricing.price}</span>
-              <span className="text-lg font-semibold text-gray-400">{t.pricing.unit}</span>
+              <span className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pricing.price}</span>
+              {t.pricing.unit && (
+                <span className="text-lg font-semibold text-gray-400">{t.pricing.unit}</span>
+              )}
             </div>
             <a href="#contact" className="inline-flex w-full justify-center px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition">
               {t.pricing.cta}

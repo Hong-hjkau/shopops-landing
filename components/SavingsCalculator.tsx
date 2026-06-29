@@ -10,9 +10,9 @@ import type { Lang } from "@/lib/i18n";
 // 對比對象係「外賣平台抽佣」(Deliveroo/Uber Eats 25–35%、Just Eat 14–18%)，
 // 唔係卡機過卡費 —— ShopOps 唔做卡機，過卡費轉咗都照俾，講卡機會誤導。
 // ShopOps 慳到嘅係：引導熟客 / 回頭客去自家 QR / 外賣網落單，嗰部分唔使俾平台抽。
-
-// ShopOps 固定月費（per venue）。改價只需要改呢一個常數。
-const SHOPOPS_MONTHLY = 49;
+//
+// 注意：呢度刻意唔顯示 ShopOps 月費（網站已改成「請聯絡我們」報價），
+// 所以「慳返」= 呢部分生意轉去自家落單後唔使俾平台嘅佣金，唔再減 ShopOps 月費。
 
 // Slider 預設值 / 範圍（訪客自己調，避免 hardcode 任何平台嘅實際收費）
 const TURNOVER_DEFAULT = 8000;
@@ -34,15 +34,13 @@ const copy = {
     turnoverLabel: "每月外賣平台營業額（可以轉去自家落單嗰部分）",
     rateLabel: "平台抽佣率",
     rateHint: "Deliveroo / Uber Eats 約 25–35%，Just Eat 約 14–18%",
-    resultLead: "你一年可以慳返",
+    resultLead: "外賣平台一年抽走你",
     perYear: "／年",
-    breakdownPlatform: "呢部分經平台一年抽走",
-    breakdownShopops: "ShopOps 一年固定月費",
-    noSaving:
-      "就算呢個金額，ShopOps 都係一個固定月費、零交易抽佣 —— 賬單可預測，仲有 QR 點餐、員工 POS、離線後備一齊用。",
+    resultSub:
+      "把熟客、回頭客轉去自家 QR／外賣網落單，呢部分生意一蚊佣金都唔使俾平台 —— 即係一年慳返呢筆。",
     cta: "預約 Demo，慳返呢筆",
     disclaimer:
-      "數字只供參考，按你輸入嘅金額同抽佣率即時估算；實際平台收費以各自合約為準，亦視乎你有幾多生意可以轉去自家落單。ShopOps 以 £49／間／月計，不抽交易佣金（客人碌卡嗰個手續費仍由你嘅收款公司收，與 ShopOps 無關）。",
+      "數字只供參考，按你輸入嘅金額同抽佣率即時估算；實際平台收費以各自合約為準，亦視乎你有幾多生意可以轉去自家落單。ShopOps 收固定月費、不抽交易佣金（客人碌卡嗰個手續費仍由你嘅收款公司收，與 ShopOps 無關）。報價請聯絡我哋。",
   },
   "zh-Hans": {
     eyebrow: "省回平台抽佣",
@@ -52,15 +50,13 @@ const copy = {
     turnoverLabel: "每月外卖平台营业额（可以转去自家下单的部分）",
     rateLabel: "平台抽佣率",
     rateHint: "Deliveroo / Uber Eats 约 25–35%，Just Eat 约 14–18%",
-    resultLead: "你一年可以省回",
+    resultLead: "外卖平台一年抽走你",
     perYear: "／年",
-    breakdownPlatform: "这部分经平台一年抽走",
-    breakdownShopops: "ShopOps 一年固定月费",
-    noSaving:
-      "就算这个金额，ShopOps 也是一个固定月费、零交易抽佣 —— 账单可预测，还有 QR 点餐、员工 POS、离线备援一起用。",
+    resultSub:
+      "把熟客、回头客转去自家 QR／外卖网下单，这部分生意一分佣金都不用付给平台 —— 也就是一年省回这笔。",
     cta: "预约 Demo，省回这笔",
     disclaimer:
-      "数字仅供参考，按你输入的金额和抽佣率即时估算；实际平台收费以各自合约为准，也视乎你有多少生意可以转去自家下单。ShopOps 以 £49／间／月计，不抽交易佣金（顾客刷卡的手续费仍由你的收款公司收取，与 ShopOps 无关）。",
+      "数字仅供参考，按你输入的金额和抽佣率即时估算；实际平台收费以各自合约为准，也视乎你有多少生意可以转去自家下单。ShopOps 收固定月费、不抽交易佣金（顾客刷卡的手续费仍由你的收款公司收取，与 ShopOps 无关）。报价请联系我们。",
   },
   en: {
     eyebrow: "Cut delivery commission",
@@ -70,15 +66,13 @@ const copy = {
     turnoverLabel: "Monthly delivery-app turnover (the share you can move to your own ordering)",
     rateLabel: "Platform commission rate",
     rateHint: "Deliveroo / Uber Eats ~25–35%, Just Eat ~14–18%",
-    resultLead: "You could save",
+    resultLead: "Platforms take from you each year",
     perYear: "/year",
-    breakdownPlatform: "Taken by the platform per year on this share",
-    breakdownShopops: "ShopOps flat fee per year",
-    noSaving:
-      "Even at this amount, ShopOps is one flat monthly fee with zero per-order commission — predictable billing, plus QR ordering, staff POS and offline backup included.",
+    resultSub:
+      "Move regulars and repeat customers to your own QR and ordering site and you pay zero commission on that business — that's what you keep each year.",
     cta: "Book a demo & keep this",
     disclaimer:
-      "Estimate only, based on the amount and rate you enter; actual platform fees depend on each contract and on how much business you can move to your own ordering. ShopOps is £49/venue/month with no transaction commission (any card fee on customer payments still comes from your own card-payment provider, separate from ShopOps).",
+      "Estimate only, based on the amount and rate you enter; actual platform fees depend on each contract and on how much business you can move to your own ordering. ShopOps charges one flat monthly fee with no transaction commission (any card fee on customer payments still comes from your own card-payment provider, separate from ShopOps). Contact us for a quote.",
   },
 } as const;
 
@@ -94,8 +88,7 @@ export default function SavingsCalculator({ lang }: { lang: Lang }) {
   const [rate, setRate] = useState(RATE_DEFAULT);
 
   const platformAnnual = turnover * 12 * (rate / 100);
-  const shopopsAnnual = SHOPOPS_MONTHLY * 12;
-  const saving = platformAnnual - shopopsAnnual;
+  const saving = platformAnnual;
 
   return (
     <section
@@ -158,27 +151,13 @@ export default function SavingsCalculator({ lang }: { lang: Lang }) {
 
           {/* Result */}
           <div className="mt-8 pt-8 border-t border-gray-100">
-            {saving > 0 ? (
-              <div className="text-center">
-                <p className="text-sm text-gray-500">{t.resultLead}</p>
-                <p className="mt-1 text-4xl sm:text-5xl font-bold text-green-600">
-                  {gbp.format(saving)}
-                  <span className="text-lg font-semibold text-gray-400">{t.perYear}</span>
-                </p>
-              </div>
-            ) : (
-              <p className="text-center text-gray-600 leading-relaxed">{t.noSaving}</p>
-            )}
-
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-              <div className="bg-red-50 border border-red-100 rounded-xl p-4 text-center">
-                <p className="text-gray-500">{t.breakdownPlatform}</p>
-                <p className="mt-1 text-lg font-bold text-red-600">{gbp.format(platformAnnual)}</p>
-              </div>
-              <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-center">
-                <p className="text-gray-500">{t.breakdownShopops}</p>
-                <p className="mt-1 text-lg font-bold text-green-600">{gbp.format(shopopsAnnual)}</p>
-              </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-500">{t.resultLead}</p>
+              <p className="mt-1 text-4xl sm:text-5xl font-bold text-red-600">
+                {gbp.format(saving)}
+                <span className="text-lg font-semibold text-gray-400">{t.perYear}</span>
+              </p>
+              <p className="mt-3 text-sm text-gray-600 leading-relaxed">{t.resultSub}</p>
             </div>
 
             <div className="mt-8 text-center">
