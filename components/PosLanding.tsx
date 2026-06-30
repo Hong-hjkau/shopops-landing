@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
 import SavingsCalculator from "@/components/SavingsCalculator";
+import PricingCard from "@/components/PricingCard";
 import Faq from "@/components/Faq";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -471,54 +472,8 @@ export default function PosLanding() {
       {/* Savings calculator */}
       <SavingsCalculator lang={lang} />
 
-      {/* Pricing — 公開透明定價，反對手黑箱做差異化 */}
-      <section id="pricing" className="px-4 sm:px-6 py-16 sm:py-24">
-        <div className="max-w-xl mx-auto">
-          <div className="text-center mb-10 sm:mb-12">
-            <p className="text-sm font-semibold text-orange-600 uppercase tracking-wide mb-4">
-              {t.pricing.eyebrow}
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pricing.title}</h2>
-            <p className="mt-4 text-gray-600 leading-relaxed">{t.pricing.subtitle}</p>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
-            <div className="text-center">
-              <span className="inline-block mb-4 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-wide">
-                {t.pricing.trial}
-              </span>
-              <div className="flex items-baseline justify-center gap-1">
-                <span className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pricing.price}</span>
-                {t.pricing.unit && (
-                  <span className="text-lg font-semibold text-gray-400">{t.pricing.unit}</span>
-                )}
-              </div>
-            </div>
-
-            <ul className="mt-8 space-y-3">
-              {t.pricing.features.map((f) => (
-                <li key={f} className="flex items-start gap-3 text-gray-700">
-                  <span className="shrink-0 mt-0.5 text-green-600 font-bold" aria-hidden>
-                    ✓
-                  </span>
-                  <span className="text-sm sm:text-base leading-relaxed">{f}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-8 text-center">
-              <a
-                href="#contact"
-                className="inline-flex w-full justify-center px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition"
-              >
-                {t.pricing.cta}
-              </a>
-            </div>
-
-            <p className="mt-6 text-xs text-gray-400 text-center leading-relaxed">{t.pricing.note}</p>
-          </div>
-        </div>
-      </section>
+      {/* Pricing（共享 PricingCard，POS 帶 features 清單） */}
+      <PricingCard pricing={t.pricing} />
 
       {/* FAQ — schema 固定出英文版（本地 SEO 價值最大），畫面顯示跟當前語言 */}
       <Faq title={t.faq.title} items={t.faq.items} schemaItems={dict.en.faq.items} />

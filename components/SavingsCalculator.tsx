@@ -88,7 +88,6 @@ export default function SavingsCalculator({ lang }: { lang: Lang }) {
   const [rate, setRate] = useState(RATE_DEFAULT);
 
   const platformAnnual = turnover * 12 * (rate / 100);
-  const saving = platformAnnual;
 
   return (
     <section
@@ -154,7 +153,7 @@ export default function SavingsCalculator({ lang }: { lang: Lang }) {
             <div className="text-center">
               <p className="text-sm text-gray-500">{t.resultLead}</p>
               <p className="mt-1 text-4xl sm:text-5xl font-bold text-red-600">
-                {gbp.format(saving)}
+                {gbp.format(platformAnnual)}
                 <span className="text-lg font-semibold text-gray-400">{t.perYear}</span>
               </p>
               <p className="mt-3 text-sm text-gray-600 leading-relaxed">{t.resultSub}</p>

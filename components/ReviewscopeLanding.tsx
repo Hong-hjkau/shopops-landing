@@ -6,6 +6,7 @@ import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection, { type ContactCopy } from "@/components/ContactSection";
 import Faq, { type FaqItem } from "@/components/Faq";
+import PricingCard from "@/components/PricingCard";
 
 type Pain = { icon: string; title: string; desc: string };
 type Feature = { icon: string; title: string; desc: string };
@@ -297,31 +298,8 @@ export default function ReviewscopeLanding() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="px-4 sm:px-6 py-16 sm:py-24">
-        <div className="max-w-xl mx-auto">
-          <div className="text-center mb-10 sm:mb-12">
-            <p className="text-sm font-semibold text-orange-600 uppercase tracking-wide mb-4">{t.pricing.eyebrow}</p>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pricing.title}</h2>
-            <p className="mt-4 text-gray-600 leading-relaxed">{t.pricing.subtitle}</p>
-          </div>
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8 text-center">
-            <span className="inline-block mb-4 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-wide">
-              {t.pricing.trial}
-            </span>
-            <div className="flex items-baseline justify-center gap-1 mb-8">
-              <span className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pricing.price}</span>
-              {t.pricing.unit && (
-                <span className="text-lg font-semibold text-gray-400">{t.pricing.unit}</span>
-              )}
-            </div>
-            <a href="#contact" className="inline-flex w-full justify-center px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition">
-              {t.pricing.cta}
-            </a>
-            <p className="mt-6 text-xs text-gray-400 leading-relaxed">{t.pricing.note}</p>
-          </div>
-        </div>
-      </section>
+      {/* Pricing（共享 PricingCard） */}
+      <PricingCard pricing={t.pricing} />
 
       {/* FAQ */}
       <Faq title={t.faq.title} items={t.faq.items} schemaItems={dict.en.faq.items} />
