@@ -10,7 +10,8 @@ const LangContext = createContext<LangCtx | null>(null);
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
   // SSR 同首次 client render 都用預設,避免 hydration mismatch;mount 後先由 localStorage 還原
-  const [lang, setLangState] = useState<Lang>("zh-Hant");
+  // 預設英文 —— 對外主要客群係英國;香港用戶切一次中文會記入 localStorage
+  const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);

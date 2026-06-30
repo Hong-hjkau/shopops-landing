@@ -5,24 +5,27 @@ import RotaLanding from "@/components/RotaLanding";
 const TITLE = "Rota — 員工排班 + 打卡｜Staff Scheduling & Clock-in";
 const DESCRIPTION =
   "排班、出席、計工時一條龍,員工用 Telegram 定位打卡,自動匯出工時。Staff scheduling, Telegram location clock-in and automatic hours export.";
+// 分享預覽（OG / Twitter）用英文 —— 主要對象係英國客
+const OG_TITLE_EN = "Rota — Staff Scheduling & Telegram Clock-in";
+const OG_DESC_EN =
+  "Staff scheduling, location clock-in via Telegram, and automatic hours export — for any business.";
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: "/rota" },
   openGraph: {
-    title: TITLE,
-    description: DESCRIPTION,
+    title: OG_TITLE_EN,
+    description: OG_DESC_EN,
     url: `${SITE_URL}/rota`,
     type: "website",
-    locale: "zh_HK",
+    locale: "en_GB",
     siteName: "ShopOps",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rota — Staff Scheduling & Telegram Clock-in",
-    description:
-      "Staff scheduling, location clock-in via Telegram, and automatic hours export — for any business.",
+    title: OG_TITLE_EN,
+    description: OG_DESC_EN,
   },
 };
 
