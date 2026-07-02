@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
 import SavingsCalculator from "@/components/SavingsCalculator";
+import PosFeatureGrid from "@/components/PosFeatureGrid";
 import PricingCard from "@/components/PricingCard";
 import Faq from "@/components/Faq";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
@@ -63,7 +64,7 @@ const dict = {
         {
           icon: "🔌",
           title: "斷網繼續做生意",
-          desc: "就算雲端死咗、WiFi 斷咗，本機後備即時頂上，餐廳照樣落單、廚房照樣出菜。其他人雲端 POS 死晒嗰陣，你照賺。",
+          desc: "就算雲端死咗、WiFi 斷咗，本機後備即時頂上，餐廳照樣落單、廚房照樣出菜。裝喺 iPad 仲可以拎出去市集、pop-up 檔口做流動收銀。",
         },
         {
           icon: "📝",
@@ -81,6 +82,7 @@ const dict = {
       trial: "首月免費試用",
       features: [
         "QR 點餐 + 員工 POS + 後台 + 離線後備，全部包",
+        "進階模組（訂位候位、食安記錄、報表成本等）按需要加",
         "零交易抽佣",
         "無合約，月繳隨時取消",
         "免費 setup + 幫你搬餐單",
@@ -94,6 +96,10 @@ const dict = {
         { q: "要綁約嗎？", a: "唔使。月繳，隨時可以取消，冇罰款。" },
         { q: "由舊系統轉過嚟麻煩嗎？", a: "我哋免費幫你搬餐單同初步設定，你基本上唔使自己搞。" },
         { q: "斷網／WiFi 死咗會點？", a: "本機後備即時頂上，照樣落單、出菜。網絡返嚟自動同步。" },
+        {
+          q: "係咪淨係落單咁簡單？",
+          a: "唔止。訂位候位、廚房看板、叫號屏、報表成本、食安記錄、過敏原標示都有齊，成間舖嘅日常一個後台搞掂。",
+        },
         {
           q: "同 Deliveroo、Uber Eats 有咩分別？",
           a: "佢哋抽你每張單兩三成、客係佢哋嘅；ShopOps 一個固定月費、零抽佣，客同數據都係你嘅。",
@@ -174,7 +180,7 @@ const dict = {
         {
           icon: "🔌",
           title: "断网继续做生意",
-          desc: "就算云端宕机、WiFi 断了，本机备援即时顶上，餐厅照样下单、厨房照样出菜。别人云端 POS 全挂的时候，你照样赚。",
+          desc: "就算云端宕机、WiFi 断了，本机备援即时顶上，餐厅照样下单、厨房照样出菜。装在 iPad 上还能带去市集、pop-up 摊位做移动收银。",
         },
         {
           icon: "📝",
@@ -192,6 +198,7 @@ const dict = {
       trial: "首月免费试用",
       features: [
         "QR 点餐 + 员工 POS + 后台 + 离线备援，全部包",
+        "进阶模块（订位候位、食安记录、报表成本等）按需要加",
         "零交易抽佣",
         "无合约，月付随时取消",
         "免费 setup + 帮你搬菜单",
@@ -205,6 +212,10 @@ const dict = {
         { q: "需要签约吗？", a: "不用。月付，随时可以取消，没有罚款。" },
         { q: "从旧系统转过来麻烦吗？", a: "我们免费帮你搬菜单和初步设定，你基本上不用自己弄。" },
         { q: "断网／WiFi 挂了会怎样？", a: "本机备援即时顶上，照样下单、出菜。网络恢复后自动同步。" },
+        {
+          q: "是不是只有点餐这么简单？",
+          a: "不止。订位候位、厨房看板、叫号屏、报表成本、食安记录、过敏原标示都齐全，整间店的日常一个后台搞定。",
+        },
         {
           q: "跟 Deliveroo、Uber Eats 有什么分别？",
           a: "他们抽你每张单两三成、客是他们的；ShopOps 一个固定月费、零抽佣，客和数据都是你的。",
@@ -285,7 +296,7 @@ const dict = {
         {
           icon: "🔌",
           title: "Keep trading offline",
-          desc: "When the cloud or WiFi goes down, a local backup keeps the restaurant running — orders in, food out. While competitors' cloud-only POS stops, you keep ringing sales.",
+          desc: "When the cloud or WiFi goes down, a local backup keeps the restaurant running — orders in, food out. Install it on an iPad and it doubles as a mobile till for market stalls and pop-ups.",
         },
         {
           icon: "📝",
@@ -303,6 +314,7 @@ const dict = {
       trial: "First month free",
       features: [
         "QR ordering, staff POS, back-office and offline backup — all included",
+        "Add-on modules to suit (reservations, food safety, reports and more)",
         "Zero transaction commission",
         "No contract, monthly, cancel anytime",
         "Free setup and menu migration",
@@ -321,6 +333,10 @@ const dict = {
         {
           q: "What happens if the internet or WiFi goes down?",
           a: "A local backup takes over instantly — orders still go in, food still goes out. It syncs back up once you're online again.",
+        },
+        {
+          q: "Is it just for taking orders?",
+          a: "Far from it. Reservations and waitlists, a kitchen display, a pickup call board, reports and food costing, food-safety records and allergen labelling are all built in — one back office runs the whole shop.",
         },
         {
           q: "How is this different from Deliveroo or Uber Eats?",
@@ -468,6 +484,9 @@ export default function PosLanding() {
           </div>
         </div>
       </section>
+
+      {/* 完整功能牆 — 4 大主賣點以外嘅已上線模組 */}
+      <PosFeatureGrid lang={lang} />
 
       {/* Savings calculator */}
       <SavingsCalculator lang={lang} />
