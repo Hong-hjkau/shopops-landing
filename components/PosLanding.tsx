@@ -4,6 +4,7 @@ import Image from "next/image";
 import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
 import SavingsCalculator from "@/components/SavingsCalculator";
 import PosFeatureGrid from "@/components/PosFeatureGrid";
+import CardGrid from "@/components/CardGrid";
 import PricingCard from "@/components/PricingCard";
 import Faq from "@/components/Faq";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
@@ -438,18 +439,7 @@ export default function PosLanding() {
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pains.title}</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {t.pains.items.map((item) => (
-              <div
-                key={item.title}
-                className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center"
-              >
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+          <CardGrid items={t.pains.items} cols="3" centered />
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import type { Lang } from "@/lib/i18n";
+import CardGrid from "@/components/CardGrid";
 
 // 完整功能牆 — 4 大主賣點以外嘅已上線模組，一格一類。
 // 內容只寫「而家真係 ship 咗」嘅嘢；未上線 / 內部功能（platform console、CTI）唔擺。
@@ -219,15 +220,7 @@ export default function PosFeatureGrid({ lang }: { lang: Lang }) {
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.title}</h2>
           <p className="mt-4 text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">{t.subtitle}</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {t.items.map((item) => (
-            <div key={item.title} className="bg-gray-50 rounded-xl border border-gray-200 p-6">
-              <div className="text-3xl mb-3">{item.icon}</div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-              <p className="text-gray-600 leading-relaxed text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </div>
+        <CardGrid items={t.items} cols="2/3" size="sm" />
         <p className="mt-8 text-center text-sm text-gray-500">
           {t.rotaNote}{" "}
           <a href="/rota" className="text-orange-600 font-semibold hover:underline">

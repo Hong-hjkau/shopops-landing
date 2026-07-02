@@ -5,6 +5,7 @@ import { useLang } from "@/components/LangProvider";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection, { type ContactCopy } from "@/components/ContactSection";
+import CardGrid from "@/components/CardGrid";
 
 type Pillar = { icon: string; title: string; desc: string };
 type Product = { icon: string; name: string; desc: string; href: string; cta: string };
@@ -229,15 +230,7 @@ export default function CompanyHome() {
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.services.title}</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {t.services.items.map((item) => (
-              <div key={item.title} className="bg-gray-50 rounded-xl border border-gray-200 p-6">
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+          <CardGrid items={t.services.items} cols="2" />
         </div>
       </section>
 

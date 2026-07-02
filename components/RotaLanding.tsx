@@ -7,6 +7,7 @@ import SiteFooter from "@/components/SiteFooter";
 import ContactSection, { type ContactCopy } from "@/components/ContactSection";
 import Faq, { type FaqItem } from "@/components/Faq";
 import PricingCard from "@/components/PricingCard";
+import CardGrid from "@/components/CardGrid";
 
 type Pain = { icon: string; title: string; desc: string };
 type Feature = { icon: string; title: string; desc: string };
@@ -266,15 +267,7 @@ export default function RotaLanding() {
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pains.title}</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {t.pains.items.map((item) => (
-              <div key={item.title} className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+          <CardGrid items={t.pains.items} cols="3" centered />
         </div>
       </section>
 
@@ -284,17 +277,7 @@ export default function RotaLanding() {
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.features.title}</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {t.features.items.map((item) => (
-              <div key={item.title} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <span className="text-2xl">{item.icon}</span>
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+          <CardGrid items={t.features.items} cols="2" look="panel" />
         </div>
       </section>
 
