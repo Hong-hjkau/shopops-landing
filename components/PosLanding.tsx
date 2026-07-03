@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { MenuMockup, BoardMockup, OfflineMockup, AdminMockup } from "@/components/mockups";
+import {
+  SafetyMockup,
+  MarginMockup,
+  InsightsMockup,
+  AllergenMockup,
+  TelegramMockup,
+  WaitlistMockup,
+} from "@/components/mockups";
 import SavingsCalculator from "@/components/SavingsCalculator";
 import PosFeatureGrid from "@/components/PosFeatureGrid";
 import CardGrid from "@/components/CardGrid";
@@ -12,7 +19,7 @@ import SiteFooter from "@/components/SiteFooter";
 import ContactSection from "@/components/ContactSection";
 import { useLang } from "@/components/LangProvider";
 
-const MOCKUPS = [MenuMockup, BoardMockup, OfflineMockup, AdminMockup];
+const MOCKUPS = [SafetyMockup, MarginMockup, InsightsMockup, AllergenMockup, TelegramMockup, WaitlistMockup];
 
 // Hero 大標題 A/B：A = 純痛點、B = 痛點 + 方案。live 比完揀邊個順眼，改呢一行就切換。
 const HERO_VARIANT: "A" | "B" = "B";
@@ -50,27 +57,37 @@ const dict = {
       ],
     },
     features: {
-      title: "為餐廳實戰而設嘅 4 大功能",
+      title: "6 大獨家功能，一般 POS 都冇",
       items: [
         {
-          icon: "🍽️",
-          title: "三合一點餐",
-          desc: "客人 scan QR 自助落單、員工 POS 一頁搞掂堂食 + 外賣、客人手機自取預訂。三個入口，同一個後台。",
+          icon: "🧾",
+          title: "食安日誌（SFBB 電子化）",
+          desc: "開店收店清單、雪櫃溫度、每日簽核全部電子化，做完自動留底。食環／EHO 上嚟檢查，一撳匯出成份記錄。市面要另租食安 app 先有呢樣嘢，ShopOps 直接包喺 POS 入面。",
         },
         {
-          icon: "📊",
-          title: "即時訂單看板",
-          desc: "訂單按進度自動分三組顯示 — 等緊做、做緊、做完，廚房一眼睇晒邊張單到咩階段。桌況頁仲可以逐件菜打剔，樓面即時知邊枱出齊。",
+          icon: "📸",
+          title: "影張發票，毛利自動計",
+          desc: "供應商發票影一影，AI 自動入帳、更新食材價，每碟菜賺幾多即刻見。人哋要另買成本系統再駁 POS 先做到，我哋前後台本身一體。",
         },
         {
-          icon: "🔌",
-          title: "斷網繼續做生意",
-          desc: "就算雲端死咗、WiFi 斷咗，本機後備即時頂上，餐廳照樣落單、廚房照樣出菜。裝喺 iPad 仲可以拎出去市集、pop-up 檔口做流動收銀。",
+          icon: "🌦️",
+          title: "天氣 + 客流 + 翻枱報表",
+          desc: "唔止日週月營業額 — 天氣對住生意睇、客流高峰、每張枱一晚轉幾多轉，幫你決定入幾多貨、排幾多人。一般 POS 嘅報表去唔到呢一步。",
         },
         {
-          icon: "📝",
-          title: "彈性菜單管理",
-          desc: "套餐選項組、午晚市時段切換、即時上落架，全部喺後台一鍵搞掂，唔需要等工程師。",
+          icon: "⚠️",
+          title: "過敏原自動標示 + 落單警示",
+          desc: "英國法定 14 種過敏原逐味菜自動標示；客人申報咗過敏，落單一撞到即刻彈警示擋住，唔使靠員工死記。呢條人命攸關嘅防線，一般 POS 淨係印喺餐牌，去唔到落單嗰一刻。",
+        },
+        {
+          icon: "📲",
+          title: "Telegram 提醒 + 排班打卡",
+          desc: "員工用自己手機 Telegram 打卡、睇更表、收提醒，唔使逼佢哋裝多隻 app。牌照年檢、預約跟進呢啲死線仲會自動催你，唔會漏。",
+        },
+        {
+          icon: "🎫",
+          title: "候位攞籌 + 電視叫號 + 廣告屏",
+          desc: "等位即場打張候位飛、取餐電視叫號、淡市時段輪播廣告 — 一部 TV 搞掂晒。訂位平台呢啲功能每個客抽你錢，ShopOps 全部包喺月費。",
         },
       ],
     },
@@ -166,27 +183,37 @@ const dict = {
       ],
     },
     features: {
-      title: "为餐厅实战而设的 4 大功能",
+      title: "6 大独家功能，一般 POS 都没有",
       items: [
         {
-          icon: "🍽️",
-          title: "三合一点餐",
-          desc: "顾客扫 QR 自助下单、员工 POS 一页搞定堂食 + 外卖、顾客手机自取预订。三个入口，同一个后台。",
+          icon: "🧾",
+          title: "食安日志（SFBB 电子化）",
+          desc: "开店收店清单、冰箱温度、每日签核全部电子化，做完自动留底。EHO 上门检查，一键导出全部记录。市面要另租食安 app 才有这功能，ShopOps 直接包在 POS 里。",
         },
         {
-          icon: "📊",
-          title: "实时订单看板",
-          desc: "订单按进度自动分三组显示 —— 待处理、制作中、已完成，厨房一眼看清每张单到哪个阶段。桌位页还能逐道菜划单，前厅即时知道哪桌出齐。",
+          icon: "📸",
+          title: "拍张发票，毛利自动算",
+          desc: "供应商发票拍一拍，AI 自动入账、更新食材价，每道菜赚多少马上看到。别人要另买成本系统再对接 POS 才做得到，我们前后台本来就是一体。",
         },
         {
-          icon: "🔌",
-          title: "断网继续做生意",
-          desc: "就算云端宕机、WiFi 断了，本机备援即时顶上，餐厅照样下单、厨房照样出菜。装在 iPad 上还能带去市集、pop-up 摊位做移动收银。",
+          icon: "🌦️",
+          title: "天气 + 客流 + 翻台报表",
+          desc: "不止日周月营业额 —— 天气对照生意看、客流高峰、每张桌一晚翻几轮，帮你决定进多少货、排多少人。一般 POS 的报表到不了这一步。",
         },
         {
-          icon: "📝",
-          title: "弹性菜单管理",
-          desc: "套餐选项组、午晚市时段切换、即时上下架，全部在后台一键搞定，不用等工程师。",
+          icon: "⚠️",
+          title: "过敏原自动标示 + 下单警示",
+          desc: "英国法定 14 种过敏原逐道菜自动标示；顾客申报过敏后，下单一冲突马上弹警示拦住，不靠员工死记。这条人命攸关的防线，一般 POS 只印在菜单上，到不了下单那一刻。",
+        },
+        {
+          icon: "📲",
+          title: "Telegram 提醒 + 排班打卡",
+          desc: "员工用自己手机 Telegram 打卡、看班表、收提醒，不用逼他们多装一个 app。牌照年检、预约跟进这些死线还会自动催你，不会漏。",
+        },
+        {
+          icon: "🎫",
+          title: "候位取号 + 电视叫号 + 广告屏",
+          desc: "等位当场打一张候位小票、取餐电视叫号、淡市时段轮播广告 —— 一台 TV 全搞定。订位平台这些功能每个客人都抽你钱，ShopOps 全部包在月费里。",
         },
       ],
     },
@@ -282,27 +309,37 @@ const dict = {
       ],
     },
     features: {
-      title: "Four features built for real restaurant use",
+      title: "Six features you won't find on a typical POS",
       items: [
         {
-          icon: "🍽️",
-          title: "Three ways to order",
-          desc: "Diners scan a QR to self-order, staff use one POS for dine-in + takeaway, customers pre-order on their phone. Three entry points, one dashboard.",
+          icon: "🧾",
+          title: "Food safety diary (digital SFBB)",
+          desc: "Opening and closing checklists, fridge temperatures and daily sign-off — all digital, all kept on record. When the EHO visits, export the lot as a PDF in one tap. Elsewhere this means renting a separate food-safety app; ShopOps builds it into the POS.",
         },
         {
-          icon: "📊",
-          title: "Live order board",
-          desc: "Orders flow through three stages — Pending, In Progress, Done — so the kitchen always sees what's next. The table view lets floor staff tick off each dish as it leaves the kitchen.",
+          icon: "📸",
+          title: "Snap an invoice, margins update",
+          desc: "Photograph a supplier invoice and AI logs it, updates your ingredient prices and shows what every dish really earns. Others need a separate costing system wired into the POS — ours is one system front to back.",
         },
         {
-          icon: "🔌",
-          title: "Keep trading offline",
-          desc: "When the cloud or WiFi goes down, a local backup keeps the restaurant running — orders in, food out. Install it on an iPad and it doubles as a mobile till for market stalls and pop-ups.",
+          icon: "🌦️",
+          title: "Weather, footfall & table-turn reports",
+          desc: "More than daily takings — see sales against the weather, footfall peaks and how many times each table turns a night, so you know how much to buy and who to rota on. Typical POS reports stop well short of this.",
         },
         {
-          icon: "📝",
-          title: "Flexible menu control",
-          desc: "Set-meal option groups, lunch/dinner sessions, instant item availability — all from the admin panel. No engineer required.",
+          icon: "⚠️",
+          title: "Allergen labels + order-time alerts",
+          desc: "All 14 UK statutory allergens labelled per dish automatically. Once a diner declares an allergy, any conflicting order triggers an instant alert before it goes through — no relying on staff memory. Most POS systems stop at the printed menu; this guards the moment of ordering.",
+        },
+        {
+          icon: "📲",
+          title: "Telegram reminders + staff clock-in",
+          desc: "Staff clock in, check rotas and get reminders on Telegram — an app they already have, nothing new to install. Licence renewals and follow-ups chase you automatically, so deadlines never slip.",
+        },
+        {
+          icon: "🎫",
+          title: "Waitlist tickets, TV call board & signage",
+          desc: "Print a numbered waitlist ticket on the spot, call pickups on a TV screen and loop promos in quiet hours — one telly does it all. Booking platforms charge per diner for this; ShopOps includes it in the monthly fee.",
         },
       ],
     },
@@ -452,7 +489,7 @@ export default function PosLanding() {
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.features.title}</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {t.features.items.map((item, idx) => {
               const Mockup = MOCKUPS[idx];
               return (
@@ -475,7 +512,7 @@ export default function PosLanding() {
         </div>
       </section>
 
-      {/* 完整功能牆 — 4 大主賣點以外嘅已上線模組 */}
+      {/* 完整功能牆 — 6 大獨家以外嘅已上線模組 */}
       <PosFeatureGrid lang={lang} />
 
       {/* Savings calculator */}

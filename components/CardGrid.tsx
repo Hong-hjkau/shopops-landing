@@ -1,6 +1,6 @@
 // 全站共用嘅「icon + 標題 + 描述」卡片 grid。
 // 兩個 look：tile = 灰卡 icon 喺上（痛點卡／服務四柱／功能牆）；panel = 白卡 icon 喺標題內（產品頁功能卡）。
-// 唔屬呢兩個家族嘅 grid（首頁產品卡有 CTA、「點解揀」無卡框、POS 4 大卡嵌 mockup）唔好硬塞入嚟。
+// 唔屬呢兩個家族嘅 grid（首頁產品卡有 CTA、「點解揀」無卡框、POS 6 大獨家卡嵌 mockup）唔好硬塞入嚟。
 
 type CardItem = { icon: string; title: string; desc: string };
 

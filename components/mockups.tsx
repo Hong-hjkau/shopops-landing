@@ -1,276 +1,354 @@
 import type { Lang } from "@/lib/i18n";
 
-export function MenuMockup({ lang }: { lang: Lang }) {
+export function SafetyMockup({ lang }: { lang: Lang }) {
   const t = {
     "zh-Hant": {
-      table: "枱號 5",
-      session: "🌞 午市",
-      tabs: ["套餐", "主菜", "飲品"],
-      items: [
-        { name: "經典牛肉漢堡", desc: "炭烤牛肉配車打芝士薯條", price: "£8.50" },
-        { name: "炸魚薯條", desc: "脆漿鱈魚配青豆蓉", price: "£7.80" },
+      title: "🧾 食安日誌 · 今日",
+      badge: "✓ 已簽核",
+      rows: [
+        { icon: "🌅", label: "開店清單", value: "8/8 完成" },
+        { icon: "🌡️", label: "雪櫃 2.8°C · 冰格 −18.2°C", value: "正常" },
+        { icon: "🌙", label: "收店清單 + 簽名", value: "陳師傅" },
       ],
+      footer: "📄 EHO 檢查？一撳匯出 PDF",
     },
     "zh-Hans": {
-      table: "桌号 5",
-      session: "🌞 午市",
-      tabs: ["套餐", "主菜", "饮品"],
-      items: [
-        { name: "经典牛肉汉堡", desc: "炭烤牛肉配车打芝士薯条", price: "£8.50" },
-        { name: "炸鱼薯条", desc: "脆浆鳕鱼配青豆蓉", price: "£7.80" },
+      title: "🧾 食安日志 · 今日",
+      badge: "✓ 已签核",
+      rows: [
+        { icon: "🌅", label: "开店清单", value: "8/8 完成" },
+        { icon: "🌡️", label: "冰箱 2.8°C · 冷冻 −18.2°C", value: "正常" },
+        { icon: "🌙", label: "收店清单 + 签名", value: "陈师傅" },
       ],
+      footer: "📄 EHO 检查？一键导出 PDF",
     },
     en: {
-      table: "Table 5",
-      session: "🌞 Lunch",
-      tabs: ["Sets", "Mains", "Drinks"],
-      items: [
-        { name: "Classic Beef Burger", desc: "Chargrilled beef, cheddar, fries", price: "£8.50" },
-        { name: "Fish & Chips", desc: "Beer-battered cod, mushy peas", price: "£7.80" },
+      title: "🧾 Food safety · Today",
+      badge: "✓ Signed off",
+      rows: [
+        { icon: "🌅", label: "Opening checks", value: "8/8 done" },
+        { icon: "🌡️", label: "Fridge 2.8°C · Freezer −18.2°C", value: "OK" },
+        { icon: "🌙", label: "Closing checks + sign-off", value: "Chef Chan" },
       ],
+      footer: "📄 EHO visit? Export PDF in one tap",
     },
   }[lang];
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-      {/* Sticky header */}
-      <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between bg-white">
-        <div className="flex items-center gap-1.5">
-          <span className="text-base">🪑</span>
-          <span className="text-sm font-bold text-gray-800">{t.table}</span>
-        </div>
-        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 font-medium">
-          {t.session}
-        </span>
-      </div>
-      {/* Tab pills */}
-      <div className="px-3 py-2 flex gap-1.5 border-b border-gray-100">
-        {t.tabs.map((tab, i) => (
-          <span
-            key={tab}
-            className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-              i === 0 ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600"
-            }`}
-          >
-            {tab}
-          </span>
-        ))}
-      </div>
-      {/* Menu items */}
-      <div className="p-3 space-y-2 bg-gray-50">
-        {t.items.map((item) => (
-          <div
-            key={item.name}
-            className="bg-white rounded-lg p-2.5 flex items-center justify-between border border-gray-100"
-          >
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-semibold text-gray-800 truncate">{item.name}</div>
-              <div className="text-[10px] text-gray-400 truncate">{item.desc}</div>
-              <div className="text-sm font-bold text-orange-600 mt-0.5">{item.price}</div>
-            </div>
-            <button className="w-7 h-7 rounded-full bg-gray-900 text-white flex items-center justify-center text-base font-bold flex-shrink-0">
-              +
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function BoardMockup({ lang }: { lang: Lang }) {
-  const labels = {
-    "zh-Hant": { pending: "待處理", progress: "製作中", done: "已完成" },
-    "zh-Hans": { pending: "待处理", progress: "制作中", done: "已完成" },
-    en: { pending: "Pending", progress: "In Progress", done: "Done" },
-  }[lang];
-  const info = {
-    "zh-Hant": { a12: "枱 3 · 4 件", a10: "外賣 · 3 件", a09: "枱 1 · 5 件" },
-    "zh-Hans": { a12: "桌 3 · 4 件", a10: "外卖 · 3 件", a09: "桌 1 · 5 件" },
-    en: { a12: "Table 3 · 4 items", a10: "Takeaway · 3 items", a09: "Table 1 · 5 items" },
-  }[lang];
-
-  const columns = [
-    {
-      label: labels.pending,
-      headerClass: "bg-red-100 text-red-700",
-      cards: [{ code: "#A12", info: info.a12, price: "£24.00" }],
-    },
-    {
-      label: labels.progress,
-      headerClass: "bg-yellow-100 text-yellow-700",
-      cards: [{ code: "#A10", info: info.a10, price: "£18.00" }],
-    },
-    {
-      label: labels.done,
-      headerClass: "bg-gray-200 text-gray-600",
-      cards: [{ code: "#A09", info: info.a09, price: "£32.50" }],
-    },
-  ];
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm p-3">
-      <div className="grid grid-cols-3 gap-2">
-        {columns.map((col) => (
-          <div key={col.label} className="space-y-2">
-            <div
-              className={`text-[10px] font-bold text-center py-1 rounded ${col.headerClass}`}
-            >
-              {col.label}
-            </div>
-            {col.cards.map((c) => (
-              <div
-                key={c.code}
-                className="bg-white border border-gray-200 rounded-lg p-2 shadow-sm"
-              >
-                <div className="text-xs font-bold text-gray-800">{c.code}</div>
-                <div className="text-[10px] text-gray-500 mt-0.5">{c.info}</div>
-                <div className="text-xs font-bold text-gray-900 mt-1">{c.price}</div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function OfflineMockup({ lang }: { lang: Lang }) {
-  const t = {
-    "zh-Hant": {
-      cloudTitle: "☁️ 雲端服務",
-      cloudBadge: "✕ 全部死晒",
-      cloud: ["網站", "資料", "網絡"],
-      localTitle: "🏠 本機後備",
-      localBadge: "✓ 照樣運作",
-      local: ["iPad", "本機", "廚房"],
-    },
-    "zh-Hans": {
-      cloudTitle: "☁️ 云端服务",
-      cloudBadge: "✕ 全部宕机",
-      cloud: ["网站", "资料", "网络"],
-      localTitle: "🏠 本机后备",
-      localBadge: "✓ 照常运作",
-      local: ["iPad", "本机", "厨房"],
-    },
-    en: {
-      cloudTitle: "☁️ Cloud services",
-      cloudBadge: "✕ All down",
-      cloud: ["Website", "Database", "Network"],
-      localTitle: "🏠 Local backup",
-      localBadge: "✓ Still running",
-      local: ["iPad", "Local", "Kitchen"],
-    },
-  }[lang];
-
-  const cloudIcons = ["🌐", "🗄️", "📶"];
-  const localIcons = ["📱", "📦", "🍳"];
-
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm p-4">
-      {/* Cloud layer - dead */}
-      <div className="pb-3 border-b border-dashed border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold text-gray-500">{t.cloudTitle}</span>
-          <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-bold">
-            {t.cloudBadge}
-          </span>
-        </div>
-        <div className="flex items-center justify-around opacity-40">
-          {t.cloud.map((label, i) => (
-            <div key={label} className="flex flex-col items-center">
-              <div className="text-xl">{cloudIcons[i]}</div>
-              <div className="text-[10px] text-gray-500 mt-0.5 line-through">{label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Local layer - alive */}
-      <div className="pt-3">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold text-gray-700">{t.localTitle}</span>
-          <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">
-            {t.localBadge}
-          </span>
-        </div>
-        <div className="flex items-center justify-around">
-          {t.local.map((label, i, arr) => (
-            <div key={label} className="flex items-center">
-              <div className="flex flex-col items-center">
-                <div className="text-xl">{localIcons[i]}</div>
-                <div className="text-[10px] text-gray-700 font-semibold mt-0.5">{label}</div>
-              </div>
-              {i < arr.length - 1 && <span className="text-gray-400 text-sm mx-2">↔</span>}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function AdminMockup({ lang }: { lang: Lang }) {
-  const t = {
-    "zh-Hant": {
-      title: "📝 菜單管理",
-      addBtn: "+ 加菜式",
-      on: "● 上架",
-      off: "○ 下架",
-      items: [
-        { name: "經典牛肉漢堡", price: "£8.50", on: true },
-        { name: "炸魚薯條", price: "£7.80", on: true },
-        { name: "是日例湯（限午市）", price: "£3.50", on: false },
-      ],
-    },
-    "zh-Hans": {
-      title: "📝 菜单管理",
-      addBtn: "+ 加菜式",
-      on: "● 上架",
-      off: "○ 下架",
-      items: [
-        { name: "经典牛肉汉堡", price: "£8.50", on: true },
-        { name: "炸鱼薯条", price: "£7.80", on: true },
-        { name: "是日例汤（限午市）", price: "£3.50", on: false },
-      ],
-    },
-    en: {
-      title: "📝 Menu Manager",
-      addBtn: "+ Add item",
-      on: "● Live",
-      off: "○ Hidden",
-      items: [
-        { name: "Classic Beef Burger", price: "£8.50", on: true },
-        { name: "Fish & Chips", price: "£7.80", on: true },
-        { name: "Soup of the Day (lunch)", price: "£3.50", on: false },
-      ],
-    },
-  }[lang];
-
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-      {/* Header */}
-      <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between bg-white">
+      <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
         <span className="text-sm font-bold text-gray-800">{t.title}</span>
-        <span className="px-2 py-0.5 rounded-lg bg-gray-900 text-white text-[10px] font-semibold">
-          {t.addBtn}
+        <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">
+          {t.badge}
         </span>
       </div>
-      {/* Table */}
       <div className="divide-y divide-gray-100">
-        {t.items.map((item) => (
-          <div key={item.name} className="px-3 py-2 flex items-center gap-2">
-            <span className="flex-1 text-xs font-medium text-gray-800 truncate">{item.name}</span>
-            <span className="text-xs font-semibold text-orange-600 w-12 text-right">{item.price}</span>
-            {item.on ? (
-              <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold">
-                {t.on}
-              </span>
-            ) : (
-              <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-[10px] font-bold">
-                {t.off}
-              </span>
-            )}
+        {t.rows.map((row) => (
+          <div key={row.label} className="px-3 py-2 flex items-center gap-2">
+            <span className="text-base">{row.icon}</span>
+            <span className="flex-1 text-xs font-medium text-gray-800 truncate">{row.label}</span>
+            <span className="px-2 py-0.5 rounded-full bg-green-50 text-green-700 text-[10px] font-semibold flex-shrink-0">
+              {row.value}
+            </span>
           </div>
         ))}
+      </div>
+      <div className="px-3 py-2 bg-gray-50 border-t border-gray-100 text-[10px] text-gray-500 font-medium">
+        {t.footer}
+      </div>
+    </div>
+  );
+}
+
+export function MarginMockup({ lang }: { lang: Lang }) {
+  const t = {
+    "zh-Hant": {
+      step1: "📸 影低供應商發票",
+      step1Badge: "AI 已入帳",
+      step2: "雞髀肉",
+      step2Change: "£3.80 → £4.20/kg",
+      step2Badge: "自動更新",
+      step3: "照燒雞髀飯 £9.50",
+      step3Badge: "毛利 62%",
+    },
+    "zh-Hans": {
+      step1: "📸 拍下供应商发票",
+      step1Badge: "AI 已入账",
+      step2: "鸡腿肉",
+      step2Change: "£3.80 → £4.20/kg",
+      step2Badge: "自动更新",
+      step3: "照烧鸡腿饭 £9.50",
+      step3Badge: "毛利 62%",
+    },
+    en: {
+      step1: "📸 Snap the supplier invoice",
+      step1Badge: "Logged by AI",
+      step2: "Chicken thigh",
+      step2Change: "£3.80 → £4.20/kg",
+      step2Badge: "Auto-updated",
+      step3: "Teriyaki chicken rice £9.50",
+      step3Badge: "62% margin",
+    },
+  }[lang];
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm p-3 space-y-1">
+      <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 flex items-center justify-between">
+        <span className="text-xs font-semibold text-gray-800">{t.step1}</span>
+        <span className="px-2 py-0.5 rounded-full bg-gray-900 text-white text-[10px] font-bold">
+          {t.step1Badge}
+        </span>
+      </div>
+      <div className="text-center text-gray-300 text-xs leading-none">↓</div>
+      <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
+        <span className="text-xs font-semibold text-gray-800 flex-shrink-0">{t.step2}</span>
+        <span className="text-[10px] text-red-600 font-semibold truncate">{t.step2Change} ⬆</span>
+        <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold flex-shrink-0">
+          {t.step2Badge}
+        </span>
+      </div>
+      <div className="text-center text-gray-300 text-xs leading-none">↓</div>
+      <div className="bg-white border border-gray-200 rounded-lg px-3 py-2 flex items-center justify-between shadow-sm">
+        <span className="text-xs font-bold text-gray-900 truncate">{t.step3}</span>
+        <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold flex-shrink-0">
+          🟢 {t.step3Badge}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export function InsightsMockup({ lang }: { lang: Lang }) {
+  const t = {
+    "zh-Hant": {
+      title: "📊 今日概況",
+      weather: "☔ 雨 · 12°C",
+      stats: [
+        { label: "客流", value: "86 人" },
+        { label: "翻枱", value: "2.4 轉" },
+        { label: "外賣", value: "+32%" },
+      ],
+      insight: "💡 落雨日外賣單通常多三成，早啲備貨",
+    },
+    "zh-Hans": {
+      title: "📊 今日概况",
+      weather: "☔ 雨 · 12°C",
+      stats: [
+        { label: "客流", value: "86 人" },
+        { label: "翻台", value: "2.4 轮" },
+        { label: "外卖", value: "+32%" },
+      ],
+      insight: "💡 下雨天外卖单通常多三成，提早备货",
+    },
+    en: {
+      title: "📊 Today at a glance",
+      weather: "☔ Rain · 12°C",
+      stats: [
+        { label: "Covers", value: "86" },
+        { label: "Table turns", value: "2.4×" },
+        { label: "Takeaway", value: "+32%" },
+      ],
+      insight: "💡 Rainy days usually mean ~30% more takeaway — prep early",
+    },
+  }[lang];
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
+        <span className="text-sm font-bold text-gray-800">{t.title}</span>
+        <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">
+          {t.weather}
+        </span>
+      </div>
+      <div className="p-3 grid grid-cols-3 gap-2">
+        {t.stats.map((s) => (
+          <div
+            key={s.label}
+            className="bg-gray-50 border border-gray-100 rounded-lg py-2 text-center"
+          >
+            <div className="text-sm font-bold text-gray-900">{s.value}</div>
+            <div className="text-[10px] text-gray-500 mt-0.5">{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div className="px-3 py-2 bg-orange-50 border-t border-orange-100 text-[10px] text-orange-800 font-medium">
+        {t.insight}
+      </div>
+    </div>
+  );
+}
+
+export function AllergenMockup({ lang }: { lang: Lang }) {
+  const t = {
+    "zh-Hant": {
+      title: "⚠️ 過敏原警示",
+      declared: "枱 3 · 客人已申報：",
+      allergens: ["🥜 花生", "🦐 甲殼類"],
+      dish: "沙嗲雞肉串",
+      dishTag: "含花生",
+      alert: "⛔ 撞過敏原，落單已擋",
+      footer: "菜單自動標晒英國法定 14 種過敏原",
+    },
+    "zh-Hans": {
+      title: "⚠️ 过敏原警示",
+      declared: "桌 3 · 顾客已申报：",
+      allergens: ["🥜 花生", "🦐 甲壳类"],
+      dish: "沙嗲鸡肉串",
+      dishTag: "含花生",
+      alert: "⛔ 冲突过敏原，下单已拦",
+      footer: "菜单自动标齐英国法定 14 种过敏原",
+    },
+    en: {
+      title: "⚠️ Allergen alert",
+      declared: "Table 3 · declared allergies:",
+      allergens: ["🥜 Peanuts", "🦐 Crustaceans"],
+      dish: "Chicken satay skewers",
+      dishTag: "contains peanuts",
+      alert: "⛔ Allergen conflict — order blocked",
+      footer: "All 14 UK statutory allergens labelled automatically",
+    },
+  }[lang];
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between">
+        <span className="text-sm font-bold text-gray-800">{t.title}</span>
+      </div>
+      <div className="p-3 space-y-2">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] text-gray-500 font-medium">{t.declared}</span>
+          {t.allergens.map((a) => (
+            <span
+              key={a}
+              className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold"
+            >
+              {a}
+            </span>
+          ))}
+        </div>
+        <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
+          <span className="text-xs font-semibold text-gray-800 truncate">{t.dish}</span>
+          <span className="text-[10px] text-gray-500 flex-shrink-0">🥜 {t.dishTag}</span>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs font-bold text-red-700 text-center">
+          {t.alert}
+        </div>
+      </div>
+      <div className="px-3 py-2 bg-gray-50 border-t border-gray-100 text-[10px] text-gray-500 font-medium">
+        {t.footer}
+      </div>
+    </div>
+  );
+}
+
+export function TelegramMockup({ lang }: { lang: Lang }) {
+  const t = {
+    "zh-Hant": {
+      title: "✈️ ShopOps 提醒",
+      msgs: [
+        { mine: false, text: "⏰ 聽日 10:00 消防年檢，記得預約師傅" },
+        { mine: false, text: "📋 阿明：你聽日更係 11:00–19:00" },
+        { mine: true, text: "✅ 打卡成功 08:58 · 舖頭範圍內" },
+      ],
+    },
+    "zh-Hans": {
+      title: "✈️ ShopOps 提醒",
+      msgs: [
+        { mine: false, text: "⏰ 明天 10:00 消防年检，记得预约师傅" },
+        { mine: false, text: "📋 阿明：你明天班次是 11:00–19:00" },
+        { mine: true, text: "✅ 打卡成功 08:58 · 店铺范围内" },
+      ],
+    },
+    en: {
+      title: "✈️ ShopOps reminders",
+      msgs: [
+        { mine: false, text: "⏰ Fire-safety inspection due tomorrow 10:00" },
+        { mine: false, text: "📋 Ming: your shift tomorrow is 11:00–19:00" },
+        { mine: true, text: "✅ Clocked in 08:58 · on-site" },
+      ],
+    },
+  }[lang];
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="px-3 py-2 border-b border-gray-100 bg-sky-50 flex items-center gap-1.5">
+        <span className="text-sm font-bold text-sky-800">{t.title}</span>
+        <span className="px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 text-[10px] font-semibold">
+          Telegram
+        </span>
+      </div>
+      <div className="p-3 space-y-1.5 bg-gray-50">
+        {t.msgs.map((m) => (
+          <div key={m.text} className={`flex ${m.mine ? "justify-end" : "justify-start"}`}>
+            <div
+              className={`max-w-[85%] px-2.5 py-1.5 rounded-xl text-[10px] leading-snug font-medium ${
+                m.mine
+                  ? "bg-green-100 text-green-900 rounded-br-sm"
+                  : "bg-white border border-gray-200 text-gray-700 rounded-bl-sm"
+              }`}
+            >
+              {m.text}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function WaitlistMockup({ lang }: { lang: Lang }) {
+  const t = {
+    "zh-Hant": {
+      tvLabel: "📺 電視叫號屏",
+      tvCall: "A08 請取餐",
+      tvSub: "淡市自動輪播廣告",
+      ticket: "候位飛",
+      ticketNo: "W12",
+      ticketInfo: "2 位 · 前面 3 組",
+      print: "🖨️ 即場打印",
+    },
+    "zh-Hans": {
+      tvLabel: "📺 电视叫号屏",
+      tvCall: "A08 请取餐",
+      tvSub: "淡市自动轮播广告",
+      ticket: "候位小票",
+      ticketNo: "W12",
+      ticketInfo: "2 位 · 前面 3 组",
+      print: "🖨️ 当场打印",
+    },
+    en: {
+      tvLabel: "📺 TV call board",
+      tvCall: "A08 ready",
+      tvSub: "Loops promos in quiet hours",
+      ticket: "Waitlist ticket",
+      ticketNo: "W12",
+      ticketInfo: "Party of 2 · 3 groups ahead",
+      print: "🖨️ Printed on the spot",
+    },
+  }[lang];
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm p-3 space-y-2">
+      {/* TV call board */}
+      <div className="bg-gray-900 rounded-lg px-3 py-2.5">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-gray-400 font-semibold">{t.tvLabel}</span>
+          <span className="text-[10px] text-gray-500">{t.tvSub}</span>
+        </div>
+        <div className="mt-1 text-center text-lg font-bold text-orange-400 tracking-wide">
+          {t.tvCall}
+        </div>
+      </div>
+      {/* Waitlist ticket */}
+      <div className="border-2 border-dashed border-gray-300 rounded-lg px-3 py-2 flex items-center gap-3">
+        <div className="text-xl font-black text-gray-900">{t.ticketNo}</div>
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-bold text-gray-800">{t.ticket}</div>
+          <div className="text-[10px] text-gray-500">{t.ticketInfo}</div>
+        </div>
+        <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px] font-semibold flex-shrink-0">
+          {t.print}
+        </span>
       </div>
     </div>
   );
