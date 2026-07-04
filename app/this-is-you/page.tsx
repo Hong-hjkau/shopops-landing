@@ -6,12 +6,12 @@ import ComicAd from "./ComicAd";
 export const metadata: Metadata = {
   title: "這是你嗎？— ShopOps 店管家",
   description:
-    "外賣平台抽三成佣金、夜晚對數做報表、一堆系統各自為政、食安過敏原驚出事？一個 ShopOps 就搞掂晒。",
+    "收工後文書做不完、POS 功能唔啱用、日日重複悶到爆、資料太多做唔哂？店管家 ShopOps 為你度身訂造，營運智能化效率倍增。",
   alternates: { canonical: "/this-is-you" },
   openGraph: {
     title: "這是你嗎？— ShopOps 店管家",
     description:
-      "外賣平台抽三成佣金、夜晚對數、系統各自為政、食安驚出事？一個 ShopOps 就搞掂晒。",
+      "文書做不完、POS 唔啱用、日日重複、資料太多？店管家 ShopOps 度身訂造，營運智能化效率倍增。",
     url: "/this-is-you",
     images: ["/comic-hant.webp"],
   },
