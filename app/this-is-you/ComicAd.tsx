@@ -5,10 +5,12 @@ import Image from "next/image";
 
 type Lang = "hant" | "hans" | "en";
 
-const L: Record<Lang, { label: string; img: string; cta: string; sub: string; foot: string }> = {
+const L: Record<Lang, { label: string; img: string; w: number; h: number; cta: string; sub: string; foot: string }> = {
   hant: {
     label: "繁",
     img: "/comic-hant.webp",
+    w: 864,
+    h: 1820,
     cta: "了解更多 / 預約 Demo →",
     sub: "免費試用 1 天 · 無合約 · 零抽佣",
     foot: "© 2026 ShopOps 店管家 · Edinburgh",
@@ -16,6 +18,8 @@ const L: Record<Lang, { label: string; img: string; cta: string; sub: string; fo
   hans: {
     label: "简",
     img: "/comic-hans.webp",
+    w: 864,
+    h: 1821,
     cta: "了解更多 / 预约 Demo →",
     sub: "免费试用 1 天 · 无合约 · 零抽佣",
     foot: "© 2026 ShopOps 店管家 · Edinburgh",
@@ -23,6 +27,8 @@ const L: Record<Lang, { label: string; img: string; cta: string; sub: string; fo
   en: {
     label: "EN",
     img: "/comic-en.webp",
+    w: 876,
+    h: 1796,
     cta: "Learn more / Book a Demo →",
     sub: "Free 1-day trial · No contract · No commission",
     foot: "© 2026 ShopOps · Edinburgh",
@@ -59,9 +65,9 @@ export default function ComicAd() {
 
         <Image
           src={t.img}
-          alt="餐廳老闆嘅日常煩惱：外賣平台抽三成佣金、夜晚對數做報表估唔到邊樣賺錢、一堆系統各自為政、食安過敏原驚出事——原來一個 ShopOps app 就搞掂晒"
-          width={1024}
-          height={1536}
+          alt="小店老闆嘅日常煩惱：收工後文書做不完、買咗 POS 但功能唔啱用、日日重複悶到爆、要搵嘅資料太多做唔哂——店管家 ShopOps 度身訂造解決方案，營運智能化效率倍增"
+          width={t.w}
+          height={t.h}
           priority
           className="w-full h-auto rounded-2xl shadow-2xl"
         />
