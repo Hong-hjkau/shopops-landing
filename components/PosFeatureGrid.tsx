@@ -25,6 +25,11 @@ const dict = {
         desc: "套餐選項組、午晚市時段切換、即時上落架，全部喺後台一鍵搞掂，唔需要等工程師。",
       },
       {
+        icon: "🏬",
+        title: "多店一個後台",
+        desc: "開幾多間分店都係同一個帳號管：右上角一撳切換舖頭；總店改好菜單一鍵發佈落全部分店，分店有需要仲可以自己微調。",
+      },
+      {
         icon: "🔌",
         title: "斷網照做生意",
         desc: "雲端死咗、WiFi 斷咗，本機後備即時頂上，照落單照出菜；裝喺 iPad 拎出去市集、pop-up 檔口收錢，返網自動同步。",
@@ -86,6 +91,11 @@ const dict = {
         desc: "套餐选项组、午晚市时段切换、即时上下架，全部在后台一键搞定，不用等工程师。",
       },
       {
+        icon: "🏬",
+        title: "多店一个后台",
+        desc: "开多少家分店都是同一个账号管：右上角一点切换店铺；总店改好菜单一键发布到全部分店，分店有需要还能自己微调。",
+      },
+      {
         icon: "🔌",
         title: "断网照样做生意",
         desc: "云端宕机、WiFi 断了，本机备援即时顶上，照样下单出菜；装在 iPad 上带去市集、pop-up 摊位收钱，回网自动同步。",
@@ -145,6 +155,11 @@ const dict = {
         icon: "📝",
         title: "Flexible menu control",
         desc: "Set-meal option groups, lunch/dinner sessions, instant item availability — all from the admin panel. No engineer required.",
+      },
+      {
+        icon: "🏬",
+        title: "Multi-site, one back office",
+        desc: "Run any number of branches from one account: switch shops from the header, publish HQ menu changes to every branch in one click, and let each branch fine-tune its own copy.",
       },
       {
         icon: "🔌",
