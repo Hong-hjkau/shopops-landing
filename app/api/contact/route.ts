@@ -101,7 +101,7 @@ export async function POST(req: Request) {
 
   const resend = new Resend(apiKey);
   // 缺 / 不認得 source 時當公司頁(一般查詢);各頁明確帶自己 source 令主題分得清邊個產品
-  const validSources: ContactSource[] = ["company", "pos", "reviewscope", "rota"];
+  const validSources: ContactSource[] = ["company", "pos", "rota"];
   const source: ContactSource = validSources.includes(body.source as ContactSource)
     ? (body.source as ContactSource)
     : "company";

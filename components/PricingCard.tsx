@@ -1,5 +1,5 @@
-// 共享定價卡：三個產品 landing（POS / Rota / Reviewscope）共用同一個定價區。
-// POS 有 features ✓ 清單，傳 `features` 就 render；Rota / Reviewscope 唔傳，淨係
+// 共享定價卡：產品 landing（POS / Rota）共用同一個定價區。
+// POS 有 features ✓ 清單，傳 `features` 就 render；Rota 唔傳，淨係
 // 標題 + 價錢 + CTA。只食一個 `pricing` 物件（各頁 `t.pricing`，雙語由各頁 lang 驅動）。
 
 type PricingCardCopy = {
