@@ -843,10 +843,22 @@ Expected: 只剩 `mockups.tsx`（若 Task 8 選 A/C）。
 
 - [ ] **Step 3: 發光配額**
 
+⚠️ **計劃修正（2026-07-17）**：原本寫「總數 = 3」係錯嘅。「3 個發光位」指嘅係
+**3 個種類**（hero logo / 主 CTA / SavingsCalculator 關鍵數字），但站有 3 個
+頁面（`/`、`/pos`、`/rota`）各有自己嘅 hero，所以正確預期係
+**3 個種類 × 實際出現 7 次**（3 logo + 3 CTA + 1 數字）。
+
 ```bash
-grep -rn 'glow-accent' --include=*.tsx components app | wc -l
+# 按種類審計，唔係數總數
+grep -rn 'glow-accent' --include=*.tsx components app
 ```
-Expected: `3`。
+
+Expected：
+- `CompanyHome.tsx` 2 個（hero logo + hero 主 CTA）
+- `PosLanding.tsx` 2 個（同上）
+- `RotaLanding.tsx` 2 個（同上）
+- `SavingsCalculator.tsx` 1 個（`glow-accent-sm`，關鍵數字）
+- **其他任何檔案出現 = 違反設計約束，要收返**
 
 - [ ] **Step 4: 字體實測（Playwright）**
 

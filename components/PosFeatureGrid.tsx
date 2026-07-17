@@ -212,8 +212,8 @@ export default function PosFeatureGrid({ lang }: { lang: Lang }) {
     <section id="all-features" className="px-4 sm:px-6 py-16 sm:py-24">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.title}</h2>
-          <p className="mt-4 text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">{t.subtitle}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.title}</h2>
+          <p className="mt-4 text-text-secondary text-base sm:text-lg max-w-2xl mx-auto">{t.subtitle}</p>
         </div>
         <CardGrid items={t.items} cols="2/3" size="sm" />
       </div>

@@ -44,7 +44,7 @@ export default function SiteHeader({
                 className={`px-3 py-1 rounded-full transition ${
                   // 當前語言用中性色，唔用橙 —— 橙留返畀 CTA，
                   // 一個語言掣搶咗主色會攤薄真正想人撳嘅嘢
-                  lang === l.key ? "bg-border text-text" : "text-text-secondary hover:text-text"
+                  lang === l.key ? "bg-text text-bg" : "text-text-secondary hover:text-text"
                 }`}
                 aria-pressed={lang === l.key}
               >
@@ -54,7 +54,9 @@ export default function SiteHeader({
           </div>
           <a
             href={cta.href}
-            className="hidden sm:inline-flex px-4 py-2 bg-accent text-on-accent text-sm font-semibold rounded-lg hover:bg-accent-hover transition"
+            // header CTA 維持原本嘅深色掣（唔跟 hero 用橙）—— hero 個橙 CTA
+            // 先係主行動，header 呢個係常駐入口，兩者分工，唔好成頁都係橙
+            className="hidden sm:inline-flex px-4 py-2 bg-text text-bg text-sm font-semibold rounded-lg hover:bg-text-secondary transition"
           >
             {cta.label}
           </a>

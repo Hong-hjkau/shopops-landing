@@ -35,7 +35,7 @@ export default function CardGrid({
         return look === "panel" ? (
           <div key={item.title} className="bg-surface rounded-xl border border-border p-5 sm:p-6">
             <h3 className="text-xl font-bold text-text mb-2 flex items-center gap-2">
-              <Icon className="w-6 h-6 text-accent shrink-0" strokeWidth={2} aria-hidden />
+              <Icon className="w-6 h-6 text-accent-strong shrink-0" strokeWidth={2} aria-hidden />
               {item.title}
             </h3>
             <p className="text-text-secondary leading-relaxed text-sm sm:text-base">{item.desc}</p>
@@ -46,7 +46,7 @@ export default function CardGrid({
             className={`bg-surface rounded-xl border border-border p-6${centered ? " text-center" : ""}`}
           >
             <Icon
-              className={`${size === "sm" ? "w-7 h-7 mb-3" : "w-8 h-8 mb-4"} text-accent${centered ? " mx-auto" : ""}`}
+              className={`${size === "sm" ? "w-7 h-7 mb-3" : "w-8 h-8 mb-4"} text-accent-strong${centered ? " mx-auto" : ""}`}
               strokeWidth={2}
               aria-hidden
             />

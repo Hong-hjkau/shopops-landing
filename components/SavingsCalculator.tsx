@@ -92,26 +92,26 @@ export default function SavingsCalculator({ lang }: { lang: Lang }) {
   return (
     <section
       id="savings"
-      className="px-4 sm:px-6 py-16 sm:py-24 bg-gray-50 border-y border-gray-100"
+      className="px-4 sm:px-6 py-16 sm:py-24 bg-surface border-y border-border"
     >
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 sm:mb-12">
-          <p className="text-sm font-semibold text-orange-600 uppercase tracking-wide mb-4">
+          <p className="text-sm font-semibold text-accent-strong uppercase tracking-wide mb-4">
             {t.eyebrow}
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.title}</h2>
-          <p className="mt-4 text-gray-600 leading-relaxed max-w-2xl mx-auto">{t.subtitle}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.title}</h2>
+          <p className="mt-4 text-text-secondary leading-relaxed max-w-2xl mx-auto">{t.subtitle}</p>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="bg-bg border border-border rounded-2xl shadow-sm p-6 sm:p-8">
           {/* Sliders */}
           <div className="space-y-6">
             <div>
               <div className="flex items-baseline justify-between mb-2">
-                <label htmlFor="turnover" className="text-sm font-semibold text-gray-700">
+                <label htmlFor="turnover" className="text-sm font-semibold text-text">
                   {t.turnoverLabel}
                 </label>
-                <span className="text-base font-bold text-gray-900 shrink-0 ml-3">
+                <span className="text-base font-bold text-text shrink-0 ml-3">
                   {gbp.format(turnover)}
                 </span>
               </div>
@@ -123,16 +123,16 @@ export default function SavingsCalculator({ lang }: { lang: Lang }) {
                 step={TURNOVER_STEP}
                 value={turnover}
                 onChange={(e) => setTurnover(Number(e.target.value))}
-                className="w-full accent-orange-500"
+                className="w-full accent-accent"
               />
             </div>
 
             <div>
               <div className="flex items-baseline justify-between mb-2">
-                <label htmlFor="rate" className="text-sm font-semibold text-gray-700">
+                <label htmlFor="rate" className="text-sm font-semibold text-text">
                   {t.rateLabel}
                 </label>
-                <span className="text-base font-bold text-gray-900 shrink-0 ml-3">{rate}%</span>
+                <span className="text-base font-bold text-text shrink-0 ml-3">{rate}%</span>
               </div>
               <input
                 id="rate"
@@ -142,33 +142,33 @@ export default function SavingsCalculator({ lang }: { lang: Lang }) {
                 step={RATE_STEP}
                 value={rate}
                 onChange={(e) => setRate(Number(e.target.value))}
-                className="w-full accent-orange-500"
+                className="w-full accent-accent"
               />
-              <p className="mt-1 text-xs text-gray-400">{t.rateHint}</p>
+              <p className="mt-1 text-xs text-text-secondary">{t.rateHint}</p>
             </div>
           </div>
 
           {/* Result */}
-          <div className="mt-8 pt-8 border-t border-gray-100">
+          <div className="mt-8 pt-8 border-t border-border">
             <div className="text-center">
-              <p className="text-sm text-gray-500">{t.resultLead}</p>
-              <p className="mt-1 text-4xl sm:text-5xl font-bold text-red-600">
+              <p className="text-sm text-text-secondary">{t.resultLead}</p>
+              <p className="mt-1 text-4xl sm:text-5xl font-bold text-loss">
                 {gbp.format(platformAnnual)}
-                <span className="text-lg font-semibold text-gray-400">{t.perYear}</span>
+                <span className="text-lg font-semibold text-text-secondary">{t.perYear}</span>
               </p>
-              <p className="mt-3 text-sm text-gray-600 leading-relaxed">{t.resultSub}</p>
+              <p className="mt-3 text-sm text-text-secondary leading-relaxed">{t.resultSub}</p>
             </div>
 
             <div className="mt-8 text-center">
               <a
                 href="#contact"
-                className="inline-flex px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition"
+                className="inline-flex px-6 py-4 bg-accent text-on-accent rounded-xl font-bold text-base hover:bg-accent-hover transition"
               >
                 {t.cta}
               </a>
             </div>
 
-            <p className="mt-6 text-xs text-gray-400 text-center leading-relaxed">{t.disclaimer}</p>
+            <p className="mt-6 text-xs text-text-secondary text-center leading-relaxed">{t.disclaimer}</p>
           </div>
         </div>
       </div>

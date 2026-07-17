@@ -433,7 +433,7 @@ export default function PosLanding() {
       />
 
       {/* Hero — 刻意黑底，令發光 logo 同背景融為一體（唔係 dark-mode，下面 section 維持淺色）*/}
-      <section id="top" className="bg-black px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
+      <section id="top" className="bg-hero-bg px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
         <div className="max-w-4xl mx-auto text-center">
           <Image
             src="/logo.png"
@@ -441,33 +441,33 @@ export default function PosLanding() {
             width={288}
             height={162}
             priority
-            className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
+            className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto glow-accent"
           />
-          <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-bold text-hero-text leading-tight tracking-tight">
             {heroTitle.split("\n").map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
             ))}
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-lg sm:text-xl text-hero-text-secondary leading-relaxed max-w-2xl mx-auto">
             {t.hero.subtitle}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="#contact"
-              className="px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition"
+              className="px-6 py-4 bg-accent text-on-accent rounded-xl font-bold text-base hover:bg-accent-hover transition glow-accent"
             >
               {t.hero.ctaPrimary}
             </a>
             <a
               href="#features"
-              className="px-6 py-4 border border-gray-600 text-gray-200 rounded-xl font-semibold text-base hover:bg-gray-800 transition"
+              className="px-6 py-4 border border-hero-border text-hero-text rounded-xl font-semibold text-base hover:bg-white/10 transition"
             >
               {t.hero.ctaSecondary}
             </a>
           </div>
-          <p className="mt-5 text-sm text-gray-400">{t.hero.reassure}</p>
+          <p className="mt-5 text-sm text-text-secondary">{t.hero.reassure}</p>
         </div>
       </section>
 
@@ -475,7 +475,7 @@ export default function PosLanding() {
       <section className="px-4 sm:px-6 py-16 sm:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.pains.title}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.pains.title}</h2>
           </div>
           <CardGrid items={t.pains.items} cols="3" centered />
         </div>
@@ -484,11 +484,11 @@ export default function PosLanding() {
       {/* Features */}
       <section
         id="features"
-        className="px-4 sm:px-6 py-16 sm:py-24 bg-gray-50 border-y border-gray-100"
+        className="px-4 sm:px-6 py-16 sm:py-24 bg-surface border-y border-border"
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.features.title}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.features.title}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {t.features.items.map((item, idx) => {
@@ -503,7 +503,7 @@ export default function PosLanding() {
                     <Mockup lang={lang} />
                   </div>
                   <h3 className="text-xl font-bold text-text mb-2 flex items-center gap-2">
-                    <Icon className="w-6 h-6 text-accent shrink-0" strokeWidth={2} aria-hidden />
+                    <Icon className="w-6 h-6 text-accent-strong shrink-0" strokeWidth={2} aria-hidden />
                     {item.title}
                   </h3>
                   <p className="text-text-secondary leading-relaxed text-sm sm:text-base">{item.desc}</p>

@@ -191,7 +191,7 @@ export default function CompanyHome() {
       />
 
       {/* Hero — 黑底 + logo + 橙 CTA */}
-      <section id="top" className="bg-black px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
+      <section id="top" className="bg-hero-bg px-4 sm:px-6 pt-12 sm:pt-16 pb-16 sm:pb-20">
         <div className="max-w-4xl mx-auto text-center">
           <Image
             src="/logo.png"
@@ -199,23 +199,23 @@ export default function CompanyHome() {
             width={288}
             height={162}
             priority
-            className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto"
+            className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto glow-accent"
           />
-          <h1 className="text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-bold text-hero-text leading-tight tracking-tight">
             {t.hero.title.map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
             ))}
           </h1>
-          <p className="mt-6 text-lg sm:text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
+          <p className="mt-6 text-lg sm:text-xl text-hero-text-secondary leading-relaxed max-w-2xl mx-auto">
             {t.hero.subtitle}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="#contact" className="px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition">
+            <a href="#contact" className="px-6 py-4 bg-accent text-on-accent rounded-xl font-bold text-base hover:bg-accent-hover transition glow-accent">
               {t.hero.ctaPrimary}
             </a>
-            <a href="#products" className="px-6 py-4 border border-gray-600 text-gray-200 rounded-xl font-semibold text-base hover:bg-gray-800 transition">
+            <a href="#products" className="px-6 py-4 border border-hero-border text-hero-text rounded-xl font-semibold text-base hover:bg-white/10 transition">
               {t.hero.ctaSecondary}
             </a>
           </div>
@@ -226,28 +226,28 @@ export default function CompanyHome() {
       <section id="services" className="px-4 sm:px-6 py-16 sm:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.services.title}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.services.title}</h2>
           </div>
           <CardGrid items={t.services.items} cols="2" />
         </div>
       </section>
 
       {/* 自家產品 showcase */}
-      <section id="products" className="px-4 sm:px-6 py-16 sm:py-24 bg-gray-50 border-y border-gray-100">
+      <section id="products" className="px-4 sm:px-6 py-16 sm:py-24 bg-surface border-y border-border">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.products.title}</h2>
-            <p className="mt-4 text-gray-600 leading-relaxed">{t.products.subtitle}</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.products.title}</h2>
+            <p className="mt-4 text-text-secondary leading-relaxed">{t.products.subtitle}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {t.products.items.map((p) => {
               const Icon = ICONS[p.icon];
               return (
                 <div key={p.name} className="bg-surface rounded-xl border border-border p-6 flex flex-col">
-                  <Icon className="w-8 h-8 mb-4 text-accent" strokeWidth={2} aria-hidden />
+                  <Icon className="w-8 h-8 mb-4 text-accent-strong" strokeWidth={2} aria-hidden />
                   <h3 className="text-xl font-bold text-text mb-2">{p.name}</h3>
                   <p className="text-text-secondary leading-relaxed text-sm sm:text-base flex-1">{p.desc}</p>
-                  <a href={p.href} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent-hover transition">
+                  <a href={p.href} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent-strong hover:text-accent-strong-hover transition">
                     {p.cta} →
                   </a>
                 </div>
@@ -261,14 +261,14 @@ export default function CompanyHome() {
       <section className="px-4 sm:px-6 py-16 sm:py-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.why.title}</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.why.title}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {t.why.items.map((r) => {
               const Icon = ICONS[r.icon];
               return (
                 <div key={r.title} className="text-center px-4">
-                  <Icon className="w-8 h-8 mb-4 mx-auto text-accent" strokeWidth={2} aria-hidden />
+                  <Icon className="w-8 h-8 mb-4 mx-auto text-accent-strong" strokeWidth={2} aria-hidden />
                   <h3 className="text-xl font-bold text-text mb-2">{r.title}</h3>
                   <p className="text-text-secondary leading-relaxed text-sm sm:text-base">{r.desc}</p>
                 </div>

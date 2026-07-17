@@ -49,7 +49,7 @@ export default function Faq({
                 >
                   <span className="font-semibold text-text">{it.q}</span>
                   <span
-                    className={`shrink-0 text-accent text-xl transition-transform ${
+                    className={`shrink-0 text-accent-strong text-xl transition-transform ${
                       isOpen ? "rotate-45" : ""
                     }`}
                     aria-hidden

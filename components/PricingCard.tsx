@@ -21,14 +21,14 @@ export default function PricingCard({ pricing }: { pricing: PricingCardCopy }) {
     <section id="pricing" className="px-4 sm:px-6 py-16 sm:py-24">
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-10 sm:mb-12">
-          <p className="text-sm font-semibold text-accent uppercase tracking-wide mb-4">{eyebrow}</p>
+          <p className="text-sm font-semibold text-accent-strong uppercase tracking-wide mb-4">{eyebrow}</p>
           <h2 className="text-3xl sm:text-4xl font-bold text-text">{title}</h2>
           <p className="mt-4 text-text-secondary leading-relaxed">{subtitle}</p>
         </div>
 
         <div className="bg-surface border border-border rounded-2xl p-6 sm:p-8">
           <div className="text-center">
-            <span className="inline-block mb-4 px-3 py-1 bg-accent/10 text-accent border border-accent/30 text-xs font-bold rounded-full uppercase tracking-wide">
+            <span className="inline-block mb-4 px-3 py-1 bg-accent/10 text-accent-strong border border-accent/30 text-xs font-bold rounded-full uppercase tracking-wide">
               {trial}
             </span>
             <div className="flex items-baseline justify-center gap-1">

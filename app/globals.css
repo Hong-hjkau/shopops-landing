@@ -1,20 +1,45 @@
 @import "tailwindcss";
 
-@theme {
-  /* 深色 token —— 色值經 scripts/check-contrast.mjs 驗算，改動前先跑 npm run contrast */
-  --color-bg: #0A0A0B;          /* 唔用純黑 #000：OLED 上內容邊界會「浮」 */
-  --color-surface: #141416;
-  --color-border: #26262A;
-  --color-text: #FAFAFA;
-  --color-text-secondary: #A1A1AA;
-  --color-accent: #F97316;
-  --color-accent-hover: #FB923C;
-  --color-on-accent: #0A0A0B;   /* 橙底用黑字：白字得 2.80:1，FAIL */
+/* 呢個站有兩個相反環境：
+     1. hero  = 黑底淺字（品牌氣勢）
+     2. 其餘  = 白底深字（長時間閱讀）
+   所以有兩套色，唔係一套。色值全部經 scripts/check-contrast.mjs 實算，
+   改動前後都要跑 npm run contrast。 */
 
-  /* 狀態色（表單成功 / 失敗）。深色底用 400 級淺色調 —— 淺色底嗰套
-     green-700 / red-700 喺黑底上會變成一嚿睇唔到嘅暗色。 */
-  --color-success: #4ADE80;
-  --color-danger: #F87171;
+@theme {
+  /* ── 主體：淺色 ── */
+  --color-bg: #FFFFFF;
+  --color-surface: #F9FAFB;
+  --color-border: #E5E7EB;
+  --color-text: #111827;            /* 17.74:1 on 白底 */
+  --color-text-secondary: #4B5563;  /* 7.56:1 on 白底 */
+
+  /* ── hero：深色 ── */
+  --color-hero-bg: #0A0A0B;         /* 唔用純黑 #000：OLED 上內容邊界會「浮」 */
+  --color-hero-text: #FAFAFA;       /* 18.96:1 on hero 底 */
+  --color-hero-text-secondary: #A1A1AA; /* 7.72:1 on hero 底 */
+  --color-hero-border: #3F3F46;
+
+  /* ── 橙 ──
+     ⚠️ 冇一隻橙可以同時服務白底同黑底（實算）：
+        orange-500 → 白底 2.80:1 ❌ / 黑底 7.06:1 ✅
+        orange-700 → 白底 5.18:1 ✅ / 黑底 3.82:1 ❌
+     所以分兩隻。揀錯邊隻 = 對比度即刻爆，唔好憑感覺。 */
+  --color-accent: #F97316;             /* 掣底色；hero（黑底）上嘅橙字／icon */
+  --color-accent-strong: #C2410C;      /* 白底上嘅橙字／icon（5.18:1） */
+  --color-accent-strong-hover: #9A3412;/* 白底上嘅橙字 hover（7.31:1） */
+  --color-accent-hover: #EA580C;       /* 掣 hover 底色，字仍然係黑（5.56:1） */
+  --color-on-accent: #0A0A0B;          /* 橙底用黑字：白字得 2.80:1，FAIL */
+
+  /* ── 表單狀態（淺底）── */
+  --color-success: #15803D;
+  --color-success-bg: #F0FDF4;
+  --color-danger: #B91C1C;
+  --color-danger-bg: #FEF2F2;
+
+  /* SavingsCalculator 個大數字（畀外賣平台抽走嘅錢）。
+     紅 = 對用戶不利 = 蝕錢，語意啱，唔好改做橙。4.83:1（大字 AA-large 3:1）。 */
+  --color-loss: #DC2626;
 
   --font-sans: var(--font-geist-sans), var(--font-noto-tc), "PingFang TC",
     "Microsoft JhengHei", sans-serif;
@@ -27,11 +52,9 @@ body {
   font-family: var(--font-sans);
 }
 
-/* 發光 —— 只准用喺 3 個位：hero logo、主 CTA、SavingsCalculator 關鍵數字。
-   濫用會令發光唔再係重點，變成噪音。加新使用位前先問。 */
+/* 發光 —— 只准用喺 hero 內（logo + 主 CTA）。
+   離開咗黑底 hero 就唔好用：喺白底上發光唔會靚，只會糊。
+   加新使用位前先問。 */
 .glow-accent {
   filter: drop-shadow(0 0 24px rgb(249 115 22 / 0.45));
-}
-.glow-accent-sm {
-  text-shadow: 0 0 18px rgb(249 115 22 / 0.55);
 }

@@ -75,7 +75,7 @@ export default function ContactSection({
         <div className="text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-text">{copy.title}</h2>
           <p className="mt-4 text-text-secondary">{copy.subtitle}</p>
-          <p className="mt-2 text-sm font-medium text-accent">{copy.reassure}</p>
+          <p className="mt-2 text-sm font-medium text-accent-strong">{copy.reassure}</p>
         </div>
 
         <form
@@ -90,7 +90,7 @@ export default function ContactSection({
               value={name}
               onChange={(e) => handleFieldChange(setName, e.target.value)}
               placeholder={copy.namePlaceholder}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-strong"
             />
           </div>
           <div>
@@ -101,7 +101,7 @@ export default function ContactSection({
               value={email}
               onChange={(e) => handleFieldChange(setEmail, e.target.value)}
               placeholder={copy.emailPlaceholder}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-strong"
             />
           </div>
           <div>
@@ -112,7 +112,7 @@ export default function ContactSection({
               value={message}
               onChange={(e) => handleFieldChange(setMessage, e.target.value)}
               placeholder={copy.messagePlaceholder}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-strong resize-none"
             />
           </div>
 
@@ -125,12 +125,12 @@ export default function ContactSection({
           </button>
 
           {status === "sent" && (
-            <p className="text-sm text-success bg-success/10 border border-success/40 rounded-lg px-3 py-2 text-center">
+            <p className="text-sm text-success bg-success-bg border border-success/30 rounded-lg px-3 py-2 text-center">
               {copy.submitSent}
             </p>
           )}
           {status === "error" && (
-            <p className="text-sm text-danger bg-danger/10 border border-danger/40 rounded-lg px-3 py-2 text-center">
+            <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-lg px-3 py-2 text-center">
               {copy.submitError}
             </p>
           )}
@@ -139,7 +139,7 @@ export default function ContactSection({
             {copy.orEmail}{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=${mailtoSubject}`}
-              className="font-semibold text-accent hover:text-accent-hover underline"
+              className="font-semibold text-accent-strong hover:text-accent-strong-hover underline"
             >
               {CONTACT_EMAIL}
             </a>
