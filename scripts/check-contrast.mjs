@@ -11,6 +11,10 @@ const TOKENS = {
   accent: '#F97316',
   accentHover: '#FB923C',
   onAccent: '#0A0A0B',
+  // 狀態色（表單成功 / 失敗）。深色底要用淺色調（400 級），
+  // 唔可以照搬淺色底嗰套 green-700 / red-700 —— 嗰啲喺黑底上係一嚿黑。
+  success: '#4ADE80',
+  danger: '#F87171',
 };
 
 // [名, 前景, 背景, 最低要求]
@@ -23,6 +27,10 @@ const PAIRS = [
   ['橙 on surface', TOKENS.accent, TOKENS.surface, 4.5],
   ['CTA 字 on 橙底', TOKENS.onAccent, TOKENS.accent, 4.5],
   ['CTA 字 on 橙 hover', TOKENS.onAccent, TOKENS.accentHover, 4.5],
+  ['成功訊息 on surface', TOKENS.success, TOKENS.surface, 4.5],
+  ['錯誤訊息 on surface', TOKENS.danger, TOKENS.surface, 4.5],
+  // header 語言切換掣：當前語言個底用 border 色（唔用橙，橙留返畀 CTA）
+  ['當前語言 on border底', TOKENS.text, TOKENS.border, 4.5],
 ];
 
 const srgbToLin = (c) => {

@@ -21,27 +21,27 @@ export default function PricingCard({ pricing }: { pricing: PricingCardCopy }) {
     <section id="pricing" className="px-4 sm:px-6 py-16 sm:py-24">
       <div className="max-w-xl mx-auto">
         <div className="text-center mb-10 sm:mb-12">
-          <p className="text-sm font-semibold text-orange-600 uppercase tracking-wide mb-4">{eyebrow}</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{title}</h2>
-          <p className="mt-4 text-gray-600 leading-relaxed">{subtitle}</p>
+          <p className="text-sm font-semibold text-accent uppercase tracking-wide mb-4">{eyebrow}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-text">{title}</h2>
+          <p className="mt-4 text-text-secondary leading-relaxed">{subtitle}</p>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="bg-surface border border-border rounded-2xl p-6 sm:p-8">
           <div className="text-center">
-            <span className="inline-block mb-4 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-full uppercase tracking-wide">
+            <span className="inline-block mb-4 px-3 py-1 bg-accent/10 text-accent border border-accent/30 text-xs font-bold rounded-full uppercase tracking-wide">
               {trial}
             </span>
             <div className="flex items-baseline justify-center gap-1">
-              <span className="text-3xl sm:text-4xl font-bold text-gray-900">{price}</span>
-              {unit && <span className="text-lg font-semibold text-gray-400">{unit}</span>}
+              <span className="text-3xl sm:text-4xl font-bold text-text">{price}</span>
+              {unit && <span className="text-lg font-semibold text-text-secondary">{unit}</span>}
             </div>
           </div>
 
           {features && features.length > 0 && (
             <ul className="mt-8 space-y-3">
               {features.map((f) => (
-                <li key={f} className="flex items-start gap-3 text-gray-700">
-                  <span className="shrink-0 mt-0.5 text-green-600 font-bold" aria-hidden>
+                <li key={f} className="flex items-start gap-3 text-text">
+                  <span className="shrink-0 mt-0.5 text-success font-bold" aria-hidden>
                     ✓
                   </span>
                   <span className="text-sm sm:text-base leading-relaxed">{f}</span>
@@ -53,13 +53,13 @@ export default function PricingCard({ pricing }: { pricing: PricingCardCopy }) {
           <div className="mt-8 text-center">
             <a
               href="#contact"
-              className="inline-flex w-full justify-center px-6 py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition"
+              className="inline-flex w-full justify-center px-6 py-4 bg-accent text-on-accent rounded-xl font-bold text-base hover:bg-accent-hover transition"
             >
               {cta}
             </a>
           </div>
 
-          <p className="mt-6 text-xs text-gray-400 text-center leading-relaxed">{note}</p>
+          <p className="mt-6 text-xs text-text-secondary text-center leading-relaxed">{note}</p>
         </div>
       </div>
     </section>

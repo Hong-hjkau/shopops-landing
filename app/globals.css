@@ -11,6 +11,11 @@
   --color-accent-hover: #FB923C;
   --color-on-accent: #0A0A0B;   /* 橙底用黑字：白字得 2.80:1，FAIL */
 
+  /* 狀態色（表單成功 / 失敗）。深色底用 400 級淺色調 —— 淺色底嗰套
+     green-700 / red-700 喺黑底上會變成一嚿睇唔到嘅暗色。 */
+  --color-success: #4ADE80;
+  --color-danger: #F87171;
+
   --font-sans: var(--font-geist-sans), var(--font-noto-tc), "PingFang TC",
     "Microsoft JhengHei", sans-serif;
   --font-mono: var(--font-geist-mono), monospace;

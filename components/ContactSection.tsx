@@ -73,80 +73,80 @@ export default function ContactSection({
     <section id="contact" className="px-4 sm:px-6 py-16 sm:py-24">
       <div className="max-w-xl mx-auto">
         <div className="text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{copy.title}</h2>
-          <p className="mt-4 text-gray-600">{copy.subtitle}</p>
-          <p className="mt-2 text-sm font-medium text-orange-600">{copy.reassure}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-text">{copy.title}</h2>
+          <p className="mt-4 text-text-secondary">{copy.subtitle}</p>
+          <p className="mt-2 text-sm font-medium text-accent">{copy.reassure}</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="mt-10 bg-gray-50 border border-gray-200 rounded-2xl p-6 sm:p-8 space-y-4"
+          className="mt-10 bg-surface border border-border rounded-2xl p-6 sm:p-8 space-y-4"
         >
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{copy.nameLabel}</label>
+            <label className="block text-sm font-semibold text-text mb-1.5">{copy.nameLabel}</label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => handleFieldChange(setName, e.target.value)}
               placeholder={copy.namePlaceholder}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{copy.emailLabel}</label>
+            <label className="block text-sm font-semibold text-text mb-1.5">{copy.emailLabel}</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => handleFieldChange(setEmail, e.target.value)}
               placeholder={copy.emailPlaceholder}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{copy.messageLabel}</label>
+            <label className="block text-sm font-semibold text-text mb-1.5">{copy.messageLabel}</label>
             <textarea
               required
               rows={4}
               value={message}
               onChange={(e) => handleFieldChange(setMessage, e.target.value)}
               placeholder={copy.messagePlaceholder}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 resize-none"
+              className="w-full px-3 py-2 border border-border rounded-lg text-sm text-text bg-bg placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent resize-none"
             />
           </div>
 
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full py-4 bg-orange-500 text-white rounded-xl font-bold text-base hover:bg-orange-600 transition disabled:opacity-60"
+            className="w-full py-4 bg-accent text-on-accent rounded-xl font-bold text-base hover:bg-accent-hover transition disabled:opacity-60"
           >
             {status === "sending" ? copy.submitSending : copy.submitIdle}
           </button>
 
           {status === "sent" && (
-            <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center">
+            <p className="text-sm text-success bg-success/10 border border-success/40 rounded-lg px-3 py-2 text-center">
               {copy.submitSent}
             </p>
           )}
           {status === "error" && (
-            <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-center">
+            <p className="text-sm text-danger bg-danger/10 border border-danger/40 rounded-lg px-3 py-2 text-center">
               {copy.submitError}
             </p>
           )}
 
-          <p className="text-xs text-gray-500 text-center pt-2">
+          <p className="text-xs text-text-secondary text-center pt-2">
             {copy.orEmail}{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=${mailtoSubject}`}
-              className="font-semibold text-gray-700 hover:text-gray-900 underline"
+              className="font-semibold text-accent hover:text-accent-hover underline"
             >
               {CONTACT_EMAIL}
             </a>
           </p>
         </form>
 
-        <p className="mt-8 text-sm text-gray-500 text-center">{copy.note}</p>
+        <p className="mt-8 text-sm text-text-secondary text-center">{copy.note}</p>
       </div>
     </section>
   );

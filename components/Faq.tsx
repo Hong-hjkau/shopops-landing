@@ -31,12 +31,12 @@ export default function Faq({
   };
 
   return (
-    <section id="faq" className="px-4 sm:px-6 py-16 sm:py-24 bg-gray-50 border-y border-gray-100">
+    <section id="faq" className="px-4 sm:px-6 py-16 sm:py-24 bg-surface border-y border-border">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-10 sm:mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{title}</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-text">{title}</h2>
         </div>
-        <div className="divide-y divide-gray-200 border-y border-gray-200">
+        <div className="divide-y divide-border border-y border-border">
           {items.map((it, idx) => {
             const isOpen = open === idx;
             return (
@@ -47,9 +47,9 @@ export default function Faq({
                   aria-expanded={isOpen}
                   className="w-full flex items-center justify-between gap-4 py-5 text-left"
                 >
-                  <span className="font-semibold text-gray-900">{it.q}</span>
+                  <span className="font-semibold text-text">{it.q}</span>
                   <span
-                    className={`shrink-0 text-orange-500 text-xl transition-transform ${
+                    className={`shrink-0 text-accent text-xl transition-transform ${
                       isOpen ? "rotate-45" : ""
                     }`}
                     aria-hidden
@@ -58,7 +58,7 @@ export default function Faq({
                   </span>
                 </button>
                 {isOpen && (
-                  <p className="pb-5 -mt-1 text-gray-600 leading-relaxed text-sm sm:text-base">
+                  <p className="pb-5 -mt-1 text-text-secondary leading-relaxed text-sm sm:text-base">
                     {it.a}
                   </p>
                 )}

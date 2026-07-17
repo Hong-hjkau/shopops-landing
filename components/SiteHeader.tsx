@@ -22,27 +22,29 @@ export default function SiteHeader({
   const { lang, setLang } = useLang();
 
   return (
-    <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-gray-100">
+    <header className="sticky top-0 z-20 bg-bg/80 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
           <Image src="/logo-icon.png" alt="" width={512} height={496} className="h-8 w-auto" />
-          <span className="font-bold text-gray-900 text-lg tracking-tight">ShopOps</span>
+          <span className="font-bold text-text text-lg tracking-tight">ShopOps</span>
         </a>
-        <nav className="hidden sm:flex items-center gap-6 text-sm text-gray-600">
+        <nav className="hidden sm:flex items-center gap-6 text-sm text-text-secondary">
           {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className="hover:text-gray-900 transition">
+            <a key={l.href} href={l.href} className="hover:text-text transition">
               {l.label}
             </a>
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-gray-100 rounded-full p-0.5 text-xs font-medium">
+          <div className="flex items-center bg-surface rounded-full p-0.5 text-xs font-medium">
             {LANGS.map((l) => (
               <button
                 key={l.key}
                 onClick={() => setLang(l.key)}
                 className={`px-3 py-1 rounded-full transition ${
-                  lang === l.key ? "bg-gray-900 text-white" : "text-gray-600 hover:text-gray-900"
+                  // 當前語言用中性色，唔用橙 —— 橙留返畀 CTA，
+                  // 一個語言掣搶咗主色會攤薄真正想人撳嘅嘢
+                  lang === l.key ? "bg-border text-text" : "text-text-secondary hover:text-text"
                 }`}
                 aria-pressed={lang === l.key}
               >
@@ -52,7 +54,7 @@ export default function SiteHeader({
           </div>
           <a
             href={cta.href}
-            className="hidden sm:inline-flex px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-700 transition"
+            className="hidden sm:inline-flex px-4 py-2 bg-accent text-on-accent text-sm font-semibold rounded-lg hover:bg-accent-hover transition"
           >
             {cta.label}
           </a>
