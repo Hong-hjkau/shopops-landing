@@ -8,9 +8,10 @@ import ContactSection, { type ContactCopy } from "@/components/ContactSection";
 import Faq, { type FaqItem } from "@/components/Faq";
 import PricingCard from "@/components/PricingCard";
 import CardGrid from "@/components/CardGrid";
+import { type IconName } from "@/components/icons";
 
-type Pain = { icon: string; title: string; desc: string };
-type Feature = { icon: string; title: string; desc: string };
+type Pain = { icon: IconName; title: string; desc: string };
+type Feature = { icon: IconName; title: string; desc: string };
 
 const dict = {
   "zh-Hant": {
@@ -26,18 +27,18 @@ const dict = {
     pains: {
       title: "排更同打卡，係咪仲用緊 WhatsApp + 紙？",
       items: [
-        { icon: "📋", title: "排更亂晒", desc: "WhatsApp group、紙、白板，改一次更要逐個通知，邊個睇漏咗就出事。" },
-        { icon: "⏰", title: "唔知邊個準時", desc: "邊個遲到、邊個冇返、邊個早走？冇記錄，月尾鬧交都冇憑據。" },
-        { icon: "🧮", title: "月尾計工時好痛苦", desc: "逐個員工逐日加時數，再整 Excel 畀會計，計到頭都大，仲容易計錯。" },
+        { icon: "painRotaMess", title: "排更亂晒", desc: "WhatsApp group、紙、白板，改一次更要逐個通知，邊個睇漏咗就出事。" },
+        { icon: "painPunctuality", title: "唔知邊個準時", desc: "邊個遲到、邊個冇返、邊個早走？冇記錄，月尾鬧交都冇憑據。" },
+        { icon: "painTallyHours", title: "月尾計工時好痛苦", desc: "逐個員工逐日加時數，再整 Excel 畀會計，計到頭都大，仲容易計錯。" },
       ] as Pain[],
     },
     features: {
       title: "排更、打卡、計工時，一條龍",
       items: [
-        { icon: "📍", title: "Telegram 定位打卡", desc: "員工用自己手機，喺指定位置範圍內先打到卡。唔使買打卡機、唔使 QR 卡，遲到自動記低。" },
-        { icon: "🗓️", title: "排更 grid + 員工提交", desc: "老闆後台拖拉排更，重疊同超時自動提醒；員工自己 Telegram 提交可返時段、confirm 或拒更。" },
-        { icon: "🔁", title: "員工自助換更", desc: "員工之間 Telegram 申請換更，老闆一撳批准，唔使再 WhatsApp 嗌交。" },
-        { icon: "📤", title: "自動計工時 + Excel", desc: "打卡數據自動累積工時，月尾一鍵匯出 Excel 畀會計，唔使再人手加數。" },
+        { icon: "locationClockIn", title: "Telegram 定位打卡", desc: "員工用自己手機，喺指定位置範圍內先打到卡。唔使買打卡機、唔使 QR 卡，遲到自動記低。" },
+        { icon: "rotaGrid", title: "排更 grid + 員工提交", desc: "老闆後台拖拉排更，重疊同超時自動提醒；員工自己 Telegram 提交可返時段、confirm 或拒更。" },
+        { icon: "shiftSwap", title: "員工自助換更", desc: "員工之間 Telegram 申請換更，老闆一撳批准，唔使再 WhatsApp 嗌交。" },
+        { icon: "hoursExport", title: "自動計工時 + Excel", desc: "打卡數據自動累積工時，月尾一鍵匯出 Excel 畀會計，唔使再人手加數。" },
       ] as Feature[],
     },
     pricing: {
@@ -91,18 +92,18 @@ const dict = {
     pains: {
       title: "排班和打卡，是不是还在用 WhatsApp + 纸？",
       items: [
-        { icon: "📋", title: "排班乱成一团", desc: "WhatsApp group、纸、白板，改一次班要逐个通知，谁看漏了就出事。" },
-        { icon: "⏰", title: "不知道谁准时", desc: "谁迟到、谁没来、谁早走？没记录，月底吵架都没凭据。" },
-        { icon: "🧮", title: "月底算工时很痛苦", desc: "逐个员工逐日加时数，再做 Excel 给会计，算到头都大，还容易算错。" },
+        { icon: "painRotaMess", title: "排班乱成一团", desc: "WhatsApp group、纸、白板，改一次班要逐个通知，谁看漏了就出事。" },
+        { icon: "painPunctuality", title: "不知道谁准时", desc: "谁迟到、谁没来、谁早走？没记录，月底吵架都没凭据。" },
+        { icon: "painTallyHours", title: "月底算工时很痛苦", desc: "逐个员工逐日加时数，再做 Excel 给会计，算到头都大，还容易算错。" },
       ] as Pain[],
     },
     features: {
       title: "排班、打卡、算工时，一条龙",
       items: [
-        { icon: "📍", title: "Telegram 定位打卡", desc: "员工用自己手机，在指定位置范围内才打得到卡。不用买打卡机、不用 QR 卡，迟到自动记录。" },
-        { icon: "🗓️", title: "排班 grid + 员工提交", desc: "老板后台拖拉排班，重叠和超时自动提醒；员工自己 Telegram 提交可上班时段、confirm 或拒班。" },
-        { icon: "🔁", title: "员工自助换班", desc: "员工之间 Telegram 申请换班，老板一按批准，不用再 WhatsApp 喊来喊去。" },
-        { icon: "📤", title: "自动算工时 + Excel", desc: "打卡数据自动累积工时，月底一键导出 Excel 给会计，不用再人手加数。" },
+        { icon: "locationClockIn", title: "Telegram 定位打卡", desc: "员工用自己手机，在指定位置范围内才打得到卡。不用买打卡机、不用 QR 卡，迟到自动记录。" },
+        { icon: "rotaGrid", title: "排班 grid + 员工提交", desc: "老板后台拖拉排班，重叠和超时自动提醒；员工自己 Telegram 提交可上班时段、confirm 或拒班。" },
+        { icon: "shiftSwap", title: "员工自助换班", desc: "员工之间 Telegram 申请换班，老板一按批准，不用再 WhatsApp 喊来喊去。" },
+        { icon: "hoursExport", title: "自动算工时 + Excel", desc: "打卡数据自动累积工时，月底一键导出 Excel 给会计，不用再人手加数。" },
       ] as Feature[],
     },
     pricing: {
@@ -156,18 +157,18 @@ const dict = {
     pains: {
       title: "Still running your rota and clock-in on WhatsApp and paper?",
       items: [
-        { icon: "📋", title: "The rota is a mess", desc: "WhatsApp groups, paper, a whiteboard — every change means messaging everyone, and whoever misses it causes a problem." },
-        { icon: "⏰", title: "You don't know who's on time", desc: "Who's late, who's a no-show, who left early? With no record, there's nothing to point to at month-end." },
-        { icon: "🧮", title: "Tallying hours is painful", desc: "Adding up each person's hours day by day, then building an Excel for the accountant — slow, and easy to get wrong." },
+        { icon: "painRotaMess", title: "The rota is a mess", desc: "WhatsApp groups, paper, a whiteboard — every change means messaging everyone, and whoever misses it causes a problem." },
+        { icon: "painPunctuality", title: "You don't know who's on time", desc: "Who's late, who's a no-show, who left early? With no record, there's nothing to point to at month-end." },
+        { icon: "painTallyHours", title: "Tallying hours is painful", desc: "Adding up each person's hours day by day, then building an Excel for the accountant — slow, and easy to get wrong." },
       ] as Pain[],
     },
     features: {
       title: "Scheduling, clock-in and hours — end to end",
       items: [
-        { icon: "📍", title: "Telegram location clock-in", desc: "Staff use their own phones and can only clock in within the location you set. No time clock, no QR cards, and lateness is logged automatically." },
-        { icon: "🗓️", title: "Rota grid + staff availability", desc: "Build the rota by drag-and-drop with overlap and overtime warnings; staff submit their availability and confirm or decline shifts from Telegram." },
-        { icon: "🔁", title: "Staff-led shift swaps", desc: "Staff request swaps between themselves on Telegram; you approve with one tap — no more WhatsApp back-and-forth." },
-        { icon: "📤", title: "Auto hours + Excel export", desc: "Clock-in data tallies hours automatically; export an Excel for your accountant at month-end with one click." },
+        { icon: "locationClockIn", title: "Telegram location clock-in", desc: "Staff use their own phones and can only clock in within the location you set. No time clock, no QR cards, and lateness is logged automatically." },
+        { icon: "rotaGrid", title: "Rota grid + staff availability", desc: "Build the rota by drag-and-drop with overlap and overtime warnings; staff submit their availability and confirm or decline shifts from Telegram." },
+        { icon: "shiftSwap", title: "Staff-led shift swaps", desc: "Staff request swaps between themselves on Telegram; you approve with one tap — no more WhatsApp back-and-forth." },
+        { icon: "hoursExport", title: "Auto hours + Excel export", desc: "Clock-in data tallies hours automatically; export an Excel for your accountant at month-end with one click." },
       ] as Feature[],
     },
     pricing: {

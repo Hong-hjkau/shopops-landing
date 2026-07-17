@@ -6,10 +6,11 @@ import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection, { type ContactCopy } from "@/components/ContactSection";
 import CardGrid from "@/components/CardGrid";
+import { ICONS, type IconName } from "@/components/icons";
 
-type Pillar = { icon: string; title: string; desc: string };
-type Product = { icon: string; name: string; desc: string; href: string; cta: string };
-type Reason = { icon: string; title: string; desc: string };
+type Pillar = { icon: IconName; title: string; desc: string };
+type Product = { icon: IconName; name: string; desc: string; href: string; cta: string };
+type Reason = { icon: IconName; title: string; desc: string };
 
 const dict = {
   "zh-Hant": {
@@ -24,26 +25,26 @@ const dict = {
     services: {
       title: "我哋做咩",
       items: [
-        { icon: "🔄", title: "業務流程自動化", desc: "把重複手動工序自動化：報表、提醒、數據收集、定時任務、Telegram／email 通知，慳返人手、唔會漏。" },
-        { icon: "🛠️", title: "度身訂造軟件 / 系統", desc: "按你需求開發 web app、內部工具、管理後台、dashboard。唔使硬塞現成軟件，啱你流程先做。" },
-        { icon: "🤖", title: "AI / 數據分析", desc: "LLM 應用（摘要 / 分類 / 客服）、數據監控、市場 / 評價 / 信號掃描，幫你由數據攞到決策。" },
-        { icon: "📦", title: "自家現成產品", desc: "已經做好、即裝即用嘅 SaaS，唔使從零開發。" },
+        { icon: "automation", title: "業務流程自動化", desc: "把重複手動工序自動化：報表、提醒、數據收集、定時任務、Telegram／email 通知，慳返人手、唔會漏。" },
+        { icon: "custom", title: "度身訂造軟件 / 系統", desc: "按你需求開發 web app、內部工具、管理後台、dashboard。唔使硬塞現成軟件，啱你流程先做。" },
+        { icon: "ai", title: "AI / 數據分析", desc: "LLM 應用（摘要 / 分類 / 客服）、數據監控、市場 / 評價 / 信號掃描，幫你由數據攞到決策。" },
+        { icon: "products", title: "自家現成產品", desc: "已經做好、即裝即用嘅 SaaS，唔使從零開發。" },
       ] as Pillar[],
     },
     products: {
       title: "自家產品",
       subtitle: "已經喺真實生意度用緊嘅系統，即裝即用。",
       items: [
-        { icon: "🍽️", name: "ShopOps POS", desc: "餐廳點餐 / POS / 廚房看板 / 離線後備，零佣金、唔鎖數據。", href: "/pos", cta: "了解更多" },
-        { icon: "🗓️", name: "Rota", desc: "員工排班 + 打卡出席，定位簽到、自動計時數。", href: "/rota", cta: "了解更多" },
+        { icon: "pos", name: "ShopOps POS", desc: "餐廳點餐 / POS / 廚房看板 / 離線後備，零佣金、唔鎖數據。", href: "/pos", cta: "了解更多" },
+        { icon: "rota", name: "Rota", desc: "員工排班 + 打卡出席，定位簽到、自動計時數。", href: "/rota", cta: "了解更多" },
       ] as Product[],
     },
     why: {
       title: "點解揀 SHOPOPS",
       items: [
-        { icon: "🤝", title: "直接溝通、唔外判", desc: "同實際做嘢嗰個人傾，唔使隔幾層、唔使等外判。" },
-        { icon: "🍜", title: "由實戰磨出嚟", desc: "產品喺真生意日日用住改出嚟，唔係 demo ware。" },
-        { icon: "🔓", title: "你嘅嘢係你嘅", desc: "零佣金、唔鎖數據、唔綁約。" },
+        { icon: "direct", title: "直接溝通、唔外判", desc: "同實際做嘢嗰個人傾，唔使隔幾層、唔使等外判。" },
+        { icon: "forged", title: "由實戰磨出嚟", desc: "產品喺真生意日日用住改出嚟，唔係 demo ware。" },
+        { icon: "yours", title: "你嘅嘢係你嘅", desc: "零佣金、唔鎖數據、唔綁約。" },
       ] as Reason[],
     },
     contact: {
@@ -77,26 +78,26 @@ const dict = {
     services: {
       title: "我们做什么",
       items: [
-        { icon: "🔄", title: "业务流程自动化", desc: "把重复手动工序自动化：报表、提醒、数据收集、定时任务、Telegram／email 通知，省人手、不漏单。" },
-        { icon: "🛠️", title: "量身定制软件 / 系统", desc: "按你需求开发 web app、内部工具、管理后台、dashboard。不用硬塞现成软件，贴合你流程才做。" },
-        { icon: "🤖", title: "AI / 数据分析", desc: "LLM 应用（摘要 / 分类 / 客服）、数据监控、市场 / 评价 / 信号扫描，帮你从数据得出决策。" },
-        { icon: "📦", title: "自家现成产品", desc: "已经做好、即装即用的 SaaS，不用从零开发。" },
+        { icon: "automation", title: "业务流程自动化", desc: "把重复手动工序自动化：报表、提醒、数据收集、定时任务、Telegram／email 通知，省人手、不漏单。" },
+        { icon: "custom", title: "量身定制软件 / 系统", desc: "按你需求开发 web app、内部工具、管理后台、dashboard。不用硬塞现成软件，贴合你流程才做。" },
+        { icon: "ai", title: "AI / 数据分析", desc: "LLM 应用（摘要 / 分类 / 客服）、数据监控、市场 / 评价 / 信号扫描，帮你从数据得出决策。" },
+        { icon: "products", title: "自家现成产品", desc: "已经做好、即装即用的 SaaS，不用从零开发。" },
       ] as Pillar[],
     },
     products: {
       title: "自家产品",
       subtitle: "已经在真实生意里使用的系统，即装即用。",
       items: [
-        { icon: "🍽️", name: "ShopOps POS", desc: "餐厅点餐 / POS / 厨房看板 / 离线备援，零佣金、不锁数据。", href: "/pos", cta: "了解更多" },
-        { icon: "🗓️", name: "Rota", desc: "员工排班 + 打卡考勤，定位签到、自动算工时。", href: "/rota", cta: "了解更多" },
+        { icon: "pos", name: "ShopOps POS", desc: "餐厅点餐 / POS / 厨房看板 / 离线备援，零佣金、不锁数据。", href: "/pos", cta: "了解更多" },
+        { icon: "rota", name: "Rota", desc: "员工排班 + 打卡考勤，定位签到、自动算工时。", href: "/rota", cta: "了解更多" },
       ] as Product[],
     },
     why: {
       title: "为什么选 SHOPOPS",
       items: [
-        { icon: "🤝", title: "直接沟通、不外包", desc: "跟实际做事的人聊，不用隔几层、不用等外包。" },
-        { icon: "🍜", title: "实战打磨出来", desc: "产品在真实生意里天天用着改出来，不是 demo ware。" },
-        { icon: "🔓", title: "你的东西是你的", desc: "零佣金、不锁数据、不绑约。" },
+        { icon: "direct", title: "直接沟通、不外包", desc: "跟实际做事的人聊，不用隔几层、不用等外包。" },
+        { icon: "forged", title: "实战打磨出来", desc: "产品在真实生意里天天用着改出来，不是 demo ware。" },
+        { icon: "yours", title: "你的东西是你的", desc: "零佣金、不锁数据、不绑约。" },
       ] as Reason[],
     },
     contact: {
@@ -130,26 +131,26 @@ const dict = {
     services: {
       title: "What we do",
       items: [
-        { icon: "🔄", title: "Business process automation", desc: "Automate repetitive manual work — reports, reminders, data collection, scheduled jobs, Telegram/email alerts. Less manual effort, nothing slips through." },
-        { icon: "🛠️", title: "Custom software & systems", desc: "We build web apps, internal tools, admin panels and dashboards around your needs — not a generic product you have to bend your workflow to fit." },
-        { icon: "🤖", title: "AI & data analysis", desc: "LLM apps (summarise / classify / support), data monitoring, market / review / signal scanning — turning your data into decisions." },
-        { icon: "📦", title: "Ready-made products", desc: "Built-and-ready SaaS you can use right away, no building from scratch." },
+        { icon: "automation", title: "Business process automation", desc: "Automate repetitive manual work — reports, reminders, data collection, scheduled jobs, Telegram/email alerts. Less manual effort, nothing slips through." },
+        { icon: "custom", title: "Custom software & systems", desc: "We build web apps, internal tools, admin panels and dashboards around your needs — not a generic product you have to bend your workflow to fit." },
+        { icon: "ai", title: "AI & data analysis", desc: "LLM apps (summarise / classify / support), data monitoring, market / review / signal scanning — turning your data into decisions." },
+        { icon: "products", title: "Ready-made products", desc: "Built-and-ready SaaS you can use right away, no building from scratch." },
       ] as Pillar[],
     },
     products: {
       title: "Our products",
       subtitle: "Systems already running in real businesses, ready to use.",
       items: [
-        { icon: "🍽️", name: "ShopOps POS", desc: "Restaurant ordering / POS / kitchen board / offline backup. Zero commission, your data stays yours.", href: "/pos", cta: "Learn more" },
-        { icon: "🗓️", name: "Rota", desc: "Staff scheduling and clock-in attendance — location check-in, automatic hours.", href: "/rota", cta: "Learn more" },
+        { icon: "pos", name: "ShopOps POS", desc: "Restaurant ordering / POS / kitchen board / offline backup. Zero commission, your data stays yours.", href: "/pos", cta: "Learn more" },
+        { icon: "rota", name: "Rota", desc: "Staff scheduling and clock-in attendance — location check-in, automatic hours.", href: "/rota", cta: "Learn more" },
       ] as Product[],
     },
     why: {
       title: "Why SHOPOPS",
       items: [
-        { icon: "🤝", title: "Talk to the maker, no outsourcing", desc: "You deal with the person actually building it — no layers, no offshore handoffs." },
-        { icon: "🍜", title: "Forged in real use", desc: "Our products are used and refined daily in a real business — not demo ware." },
-        { icon: "🔓", title: "What's yours stays yours", desc: "Zero commission, no data lock-in, no contracts." },
+        { icon: "direct", title: "Talk to the maker, no outsourcing", desc: "You deal with the person actually building it — no layers, no offshore handoffs." },
+        { icon: "forged", title: "Forged in real use", desc: "Our products are used and refined daily in a real business — not demo ware." },
+        { icon: "yours", title: "What's yours stays yours", desc: "Zero commission, no data lock-in, no contracts." },
       ] as Reason[],
     },
     contact: {
@@ -239,16 +240,19 @@ export default function CompanyHome() {
             <p className="mt-4 text-gray-600 leading-relaxed">{t.products.subtitle}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {t.products.items.map((p) => (
-              <div key={p.name} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-col">
-                <div className="text-4xl mb-4">{p.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{p.name}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm sm:text-base flex-1">{p.desc}</p>
-                <a href={p.href} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-orange-600 hover:text-orange-700 transition">
-                  {p.cta} →
-                </a>
-              </div>
-            ))}
+            {t.products.items.map((p) => {
+              const Icon = ICONS[p.icon];
+              return (
+                <div key={p.name} className="bg-surface rounded-xl border border-border p-6 flex flex-col">
+                  <Icon className="w-8 h-8 mb-4 text-accent" strokeWidth={2} aria-hidden />
+                  <h3 className="text-xl font-bold text-text mb-2">{p.name}</h3>
+                  <p className="text-text-secondary leading-relaxed text-sm sm:text-base flex-1">{p.desc}</p>
+                  <a href={p.href} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent-hover transition">
+                    {p.cta} →
+                  </a>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -260,13 +264,16 @@ export default function CompanyHome() {
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{t.why.title}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {t.why.items.map((r) => (
-              <div key={r.title} className="text-center px-4">
-                <div className="text-4xl mb-4">{r.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{r.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{r.desc}</p>
-              </div>
-            ))}
+            {t.why.items.map((r) => {
+              const Icon = ICONS[r.icon];
+              return (
+                <div key={r.title} className="text-center px-4">
+                  <Icon className="w-8 h-8 mb-4 mx-auto text-accent" strokeWidth={2} aria-hidden />
+                  <h3 className="text-xl font-bold text-text mb-2">{r.title}</h3>
+                  <p className="text-text-secondary leading-relaxed text-sm sm:text-base">{r.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
