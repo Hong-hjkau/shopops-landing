@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { BG_GRADIENT, COLORS } from "@/lib/brand";
 
 export const runtime = "nodejs";
 export const alt = "ShopOps — Edinburgh 餐廳點餐管理系統";
@@ -19,7 +20,7 @@ export default async function OpengraphImage() {
           height: "100%",
           display: "flex",
           alignItems: "center",
-          background: "linear-gradient(135deg, #0b0b0d 0%, #1a1a1f 100%)",
+          background: BG_GRADIENT,
           padding: "60px 80px",
           fontFamily: "sans-serif",
         }}
@@ -50,7 +51,7 @@ export default async function OpengraphImage() {
         >
           <div
             style={{
-              color: "#fb923c",
+              color: COLORS.accentHover,
               fontSize: "22px",
               fontWeight: 700,
               letterSpacing: "2px",
@@ -62,7 +63,7 @@ export default async function OpengraphImage() {
           </div>
           <div
             style={{
-              color: "#fff",
+              color: COLORS.text,
               fontSize: "60px",
               fontWeight: 800,
               lineHeight: 1.05,
@@ -73,7 +74,7 @@ export default async function OpengraphImage() {
           </div>
           <div
             style={{
-              color: "#9ca3af",
+              color: COLORS.textSecondary,
               fontSize: "24px",
               display: "flex",
               gap: "18px",
@@ -91,8 +92,8 @@ export default async function OpengraphImage() {
           <div style={{ marginTop: "36px", display: "flex" }}>
             <div
               style={{
-                background: "#f97316",
-                color: "#fff",
+                background: COLORS.accent,
+                color: COLORS.onAccent,
                 fontSize: "26px",
                 fontWeight: 700,
                 padding: "14px 32px",

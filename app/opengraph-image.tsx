@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { BG_GRADIENT, COLORS, COPY } from "@/lib/brand";
 
 export const runtime = "nodejs";
 export const alt = "ShopOps — Custom Software & Business Automation";
@@ -19,7 +20,7 @@ export default async function OpengraphImage() {
           height: "100%",
           display: "flex",
           alignItems: "center",
-          background: "linear-gradient(135deg, #0b0b0d 0%, #1a1a1f 100%)",
+          background: BG_GRADIENT,
           padding: "60px 80px",
           fontFamily: "sans-serif",
         }}
@@ -50,7 +51,7 @@ export default async function OpengraphImage() {
         >
           <div
             style={{
-              color: "#fb923c",
+              color: COLORS.accentHover,
               fontSize: "22px",
               fontWeight: 700,
               letterSpacing: "2px",
@@ -58,48 +59,46 @@ export default async function OpengraphImage() {
               marginBottom: "20px",
             }}
           >
-            Custom software · Automation
+            {COPY.eyebrow}
           </div>
           <div
             style={{
-              color: "#fff",
+              color: COLORS.text,
               fontSize: "60px",
               fontWeight: 800,
               lineHeight: 1.05,
               marginBottom: "28px",
             }}
           >
-            Software built around how you work.
+            {COPY.title}
           </div>
           <div
             style={{
-              color: "#9ca3af",
+              color: COLORS.textSecondary,
               fontSize: "24px",
               display: "flex",
               gap: "18px",
               flexWrap: "wrap",
             }}
           >
-            <span>Automation</span>
-            <span>·</span>
-            <span>Custom systems</span>
-            <span>·</span>
-            <span>AI &amp; data</span>
-            <span>·</span>
-            <span>Products</span>
+            {COPY.tags.flatMap((tag, i) =>
+              i === 0
+                ? [<span key={tag}>{tag}</span>]
+                : [<span key={`dot-${tag}`}>·</span>, <span key={tag}>{tag}</span>]
+            )}
           </div>
           <div style={{ marginTop: "36px", display: "flex" }}>
             <div
               style={{
-                background: "#f97316",
-                color: "#fff",
+                background: COLORS.accent,
+                color: COLORS.onAccent,
                 fontSize: "26px",
                 fontWeight: 700,
                 padding: "14px 32px",
                 borderRadius: "12px",
               }}
             >
-              Free consult →
+              {`${COPY.cta} →`}
             </div>
           </div>
         </div>
