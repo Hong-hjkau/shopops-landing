@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 type Lang = "hant" | "hans" | "en";
 
@@ -55,7 +56,8 @@ export default function ComicAd() {
               onClick={() => setLang(k)}
               aria-pressed={lang === k}
               className={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${
-                lang === k ? "bg-orange-500 text-white" : "text-gray-300 hover:text-white"
+                // 橙底用黑字：白字得 2.80:1，連 AA-large 3:1 都 FAIL（全站一致）
+                lang === k ? "bg-accent text-on-accent" : "text-gray-300 hover:text-white"
               }`}
             >
               {L[k].label}
@@ -72,12 +74,12 @@ export default function ComicAd() {
           className="w-full h-auto rounded-2xl shadow-2xl"
         />
 
-        <a
+        <Link
           href="/#contact"
-          className="mt-7 px-10 py-4 bg-orange-500 hover:bg-orange-600 text-white text-lg font-bold rounded-xl transition"
+          className="mt-7 px-10 py-4 bg-accent hover:bg-accent-hover text-on-accent text-lg font-bold rounded-xl transition"
         >
           {t.cta}
-        </a>
+        </Link>
         <p className="mt-3.5 text-sm text-gray-400">{t.sub}</p>
         <footer className="mt-7 text-xs text-gray-500">{t.foot}</footer>
       </div>

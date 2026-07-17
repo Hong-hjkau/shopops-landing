@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useLang } from "@/components/LangProvider";
 import type { Lang } from "@/lib/i18n";
 
@@ -24,10 +25,10 @@ export default function SiteHeader({
   return (
     <header className="sticky top-0 z-20 bg-bg/80 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <Image src="/logo-icon.png" alt="" width={512} height={496} className="h-8 w-auto" />
           <span className="font-bold text-text text-lg tracking-tight">ShopOps</span>
-        </a>
+        </Link>
         <nav className="hidden sm:flex items-center gap-6 text-sm text-text-secondary">
           {navLinks.map((l) => (
             <a key={l.href} href={l.href} className="hover:text-text transition">
