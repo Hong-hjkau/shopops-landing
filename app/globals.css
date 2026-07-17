@@ -45,8 +45,14 @@
   --color-accent-soft-bg: #FFF7ED;
   --color-accent-soft-border: #FED7AA;
 
-  --font-sans: var(--font-geist-sans), var(--font-noto-tc), "PingFang TC",
-    "Microsoft JhengHei", sans-serif;
+  /* 英文行 Geist（webfont）；中文行系統字體，唔載 CJK webfont。
+     點解唔載：見 app/layout.tsx 嘅註解（實測 /blog 要 1.5MB，唔抵）。
+     排先後：Apple → Windows → Android/Linux → 泛用。
+     ⚠️ 呢個 stack 唔可以再加返 Arial —— 原本 body 有 `font-family: Arial`
+     蓋晒全部，令中文跌落 Arial 嘅 fallback 鏈，正正就係要修嗰個 bug。 */
+  --font-sans: var(--font-geist-sans), "PingFang TC", "PingFang SC",
+    "Microsoft JhengHei", "Microsoft YaHei", "Noto Sans CJK TC",
+    "Hiragino Sans GB", sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 }
 
