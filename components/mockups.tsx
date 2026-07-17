@@ -1,5 +1,15 @@
 import type { Lang } from "@/lib/i18n";
 
+// POS 產品畫面嘅假截圖（手砌，唔係真截圖）。
+//
+// ⚠️ 呢度嘅 emoji（🧾 🌅 🌡️ …）係刻意保留，唔好換 Lucide：
+// 佢哋係「模擬緊 POS 畫面入面嘅內容」，唔屬本站嘅 icon system。
+// 2026-07-17 全站 emoji→Lucide 遷移時，本檔係明確例外。
+// 全站零-emoji 檢查（grep 'icon: "'）見到呢度有命中係預期，唔係執漏。
+//
+// 淺色內部：2026-07-17 睇實物後決定保留 —— 佢哋擺喺白卡上讀落似
+// 「真係影住個產品畫面」，正正係想要嘅效果。
+
 export function SafetyMockup({ lang }: { lang: Lang }) {
   const t = {
     "zh-Hant": {

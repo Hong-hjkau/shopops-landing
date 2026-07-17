@@ -12,7 +12,7 @@ export default function BlogLayout({
     // blog 外殼語言中性：語言由每篇文章自己 scope（<article lang={post.lang}>），
     // 因為 blog 而家有英文 + 中文版，唔可以喺外殼硬寫一種語言
     <div className="flex flex-col min-h-full">
-      <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-gray-100">
+      <header className="sticky top-0 z-20 bg-bg/80 backdrop-blur border-b border-border">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Image
@@ -22,17 +22,17 @@ export default function BlogLayout({
               height={496}
               className="h-8 w-auto"
             />
-            <span className="font-bold text-gray-900 text-lg tracking-tight">
+            <span className="font-bold text-text text-lg tracking-tight">
               ShopOps
             </span>
           </Link>
-          <nav className="flex items-center gap-5 text-sm text-gray-600">
-            <Link href="/blog" className="hover:text-gray-900 transition">
+          <nav className="flex items-center gap-5 text-sm text-text-secondary">
+            <Link href="/blog" className="hover:text-text transition">
               Blog
             </Link>
             <Link
               href="/#contact"
-              className="hidden sm:inline-flex px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-700 transition"
+              className="hidden sm:inline-flex px-4 py-2 bg-text text-bg text-sm font-semibold rounded-lg hover:bg-text-secondary transition"
             >
               Book a Demo
             </Link>
@@ -42,9 +42,9 @@ export default function BlogLayout({
 
       <main className="flex-1">{children}</main>
 
-      <footer className="px-4 sm:px-6 py-8 border-t border-gray-100 text-center text-sm text-gray-500">
+      <footer className="px-4 sm:px-6 py-8 border-t border-border text-center text-sm text-text-secondary">
         © 2026 ShopOps · Edinburgh ·{" "}
-        <Link href="/" className="underline hover:text-gray-700">
+        <Link href="/" className="underline hover:text-text">
           Home
         </Link>
       </footer>

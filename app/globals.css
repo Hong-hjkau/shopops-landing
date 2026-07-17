@@ -41,6 +41,10 @@
      紅 = 對用戶不利 = 蝕錢，語意啱，唔好改做橙。4.83:1（大字 AA-large 3:1）。 */
   --color-loss: #DC2626;
 
+  /* blog LeadMagnet 個橙色 callout 底（配 accent-strong 字，4.88:1） */
+  --color-accent-soft-bg: #FFF7ED;
+  --color-accent-soft-border: #FED7AA;
+
   --font-sans: var(--font-geist-sans), var(--font-noto-tc), "PingFang TC",
     "Microsoft JhengHei", sans-serif;
   --font-mono: var(--font-geist-mono), monospace;

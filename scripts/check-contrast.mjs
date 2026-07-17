@@ -41,6 +41,9 @@ const TOKENS = {
   // SavingsCalculator 個大數字（畀外賣平台抽走嘅錢）。
   // 紅 = 對用戶不利 = 蝕錢，語意啱，唔改做橙。
   lossFigure: '#DC2626',
+
+  // blog LeadMagnet 個橙色 callout 底
+  accentSoftBg: '#FFF7ED',
 };
 
 // [名, 前景, 背景, 最低要求]
@@ -67,6 +70,8 @@ const PAIRS = [
   ['成功訊息', TOKENS.success, TOKENS.successBg, 4.5],
   ['錯誤訊息', TOKENS.danger, TOKENS.dangerBg, 4.5],
   ['計算機蝕錢數字 on 白底', TOKENS.lossFigure, TOKENS.bg, 3.0],  // 48px 大字 → AA-large
+  ['blog callout 橙字', TOKENS.accentStrong, TOKENS.accentSoftBg, 4.5],
+  ['blog callout 正文', TOKENS.text, TOKENS.accentSoftBg, 4.5],
 ];
 
 const srgbToLin = (c) => {

@@ -23,13 +23,13 @@ export default function BlogIndex() {
   return (
     <section className="px-4 sm:px-6 py-12 sm:py-16">
       <div className="max-w-3xl mx-auto">
-        <p className="text-sm font-semibold text-orange-600 uppercase tracking-wide">
+        <p className="text-sm font-semibold text-accent-strong uppercase tracking-wide">
           ShopOps Blog
         </p>
-        <h1 className="mt-2 text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+        <h1 className="mt-2 text-3xl sm:text-4xl font-bold text-text tracking-tight">
           Running a UK restaurant smarter
         </h1>
-        <p className="mt-4 text-gray-600 text-lg leading-relaxed">
+        <p className="mt-4 text-text-secondary text-lg leading-relaxed">
           Practical, no-fluff guides for small independent restaurants and
           cafes — keeping more of every order, choosing the right tools, and
           getting customers to come back direct.

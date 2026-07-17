@@ -33,22 +33,22 @@ const copy = {
 export default function LeadMagnet({ lang = "en" }: { lang?: Post["lang"] }) {
   const t = copy[lang];
   return (
-    <aside className="my-10 rounded-2xl border border-orange-200 bg-orange-50 p-6 sm:p-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-orange-600">
+    <aside className="my-10 rounded-2xl border border-accent-soft-border bg-accent-soft-bg p-6 sm:p-8">
+      <p className="text-sm font-semibold uppercase tracking-wide text-accent-strong">
         {t.eyebrow}
       </p>
-      <h3 className="mt-2 text-xl sm:text-2xl font-bold text-gray-900">{t.title}</h3>
-      <p className="mt-3 text-gray-700 leading-relaxed">{t.body}</p>
+      <h3 className="mt-2 text-xl sm:text-2xl font-bold text-text">{t.title}</h3>
+      <p className="mt-3 text-text leading-relaxed">{t.body}</p>
       <div className="mt-5 flex flex-col sm:flex-row gap-3">
         <Link
           href="/#savings"
-          className="inline-flex justify-center px-5 py-3 bg-orange-500 text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition"
+          className="inline-flex justify-center px-5 py-3 bg-accent text-on-accent rounded-xl font-bold text-sm hover:bg-accent-hover transition"
         >
           {t.calc}
         </Link>
         <Link
           href="/#contact"
-          className="inline-flex justify-center px-5 py-3 border border-gray-300 text-gray-800 rounded-xl font-semibold text-sm hover:bg-white transition"
+          className="inline-flex justify-center px-5 py-3 border border-border text-text rounded-xl font-semibold text-sm hover:bg-surface transition"
         >
           {t.demo}
         </Link>

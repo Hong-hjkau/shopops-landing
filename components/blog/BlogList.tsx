@@ -44,8 +44,8 @@ export default function BlogList({ posts }: { posts: Post[] }) {
               aria-pressed={filter === f.key}
               className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                 filter === f.key
-                  ? "bg-gray-900 text-white"
-                  : "bg-gray-100 text-gray-600 hover:text-gray-900"
+                  ? "bg-text text-bg"
+                  : "bg-surface text-text-secondary hover:text-text"
               }`}
             >
               {f.label}
@@ -59,21 +59,21 @@ export default function BlogList({ posts }: { posts: Post[] }) {
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="block rounded-2xl border border-gray-200 p-5 sm:p-6 hover:shadow-md hover:border-gray-300 transition"
+            className="block rounded-2xl border border-border p-5 sm:p-6 hover:shadow-md hover:border-accent-strong/40 transition"
           >
-            <div className="flex items-center gap-3 text-xs text-gray-500">
-              <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 font-semibold text-gray-600">
+            <div className="flex items-center gap-3 text-xs text-text-secondary">
+              <span className="inline-flex items-center rounded-full bg-surface px-2 py-0.5 font-semibold text-text-secondary">
                 {langLabel(post.lang)}
               </span>
               <time dateTime={post.date}>{formatDate(post.date)}</time>
               <span aria-hidden>·</span>
               <span>{post.readingMinutes} min read</span>
             </div>
-            <h2 className="mt-2 text-xl sm:text-2xl font-bold text-gray-900 leading-snug">
+            <h2 className="mt-2 text-xl sm:text-2xl font-bold text-text leading-snug">
               {post.title}
             </h2>
-            <p className="mt-2 text-gray-600 leading-relaxed">{post.description}</p>
-            <span className="mt-3 inline-block text-sm font-semibold text-orange-600">
+            <p className="mt-2 text-text-secondary leading-relaxed">{post.description}</p>
+            <span className="mt-3 inline-block text-sm font-semibold text-accent-strong">
               Read guide →
             </span>
           </Link>
