@@ -24,6 +24,9 @@
 .DS_Store
 *.pem
 
+# scripts/gen-social.mjs 出嘅圖（上傳去社交平台用，唔入 repo）
+/social-out/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
