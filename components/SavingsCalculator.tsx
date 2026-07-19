@@ -7,7 +7,7 @@ import type { Lang } from "@/lib/i18n";
 // 跟 component-first 原則抽成獨立檔。佢只食 `lang` prop，自帶 zh/en 文案，
 // 由 page.tsx 嘅同一個 lang state 驅動，維持全站雙語一致。
 //
-// 對比對象係「外賣平台抽佣」(Deliveroo/Uber Eats 25–35%、Just Eat 14–18%)，
+// 對比對象係「外賣平台抽佣」(Deliveroo/Uber Eats 25–35%、Just Eat 14–17%)，
 // 唔係卡機過卡費 —— ShopOps 唔做卡機，過卡費轉咗都照俾，講卡機會誤導。
 // ShopOps 慳到嘅係：引導熟客 / 回頭客去自家 QR / 外賣網落單，嗰部分唔使俾平台抽。
 //
@@ -30,10 +30,10 @@ const copy = {
     eyebrow: "慳返平台抽佣",
     title: "外賣平台每張單抽你兩三成？計下一年俾咗幾多",
     subtitle:
-      "Deliveroo、Uber Eats 一張單抽 25–35%，Just Eat 都要 14–18%。熟客、回頭客其實唔需要經平台 —— 用 ShopOps 自家 QR 同外賣網落單，呢部分生意一蚊佣金都唔使俾。拉下面條 bar，睇下你一年慳幾多。",
+      "Deliveroo、Uber Eats 一張單抽 25–35%，Just Eat 都要 14–17%。熟客、回頭客其實唔需要經平台 —— 用 ShopOps 自家 QR 同外賣網落單，呢部分生意一蚊佣金都唔使俾。拉下面條 bar，睇下你一年慳幾多。",
     turnoverLabel: "每月外賣平台營業額（可以轉去自家落單嗰部分）",
     rateLabel: "平台抽佣率",
-    rateHint: "Deliveroo / Uber Eats 約 25–35%，Just Eat 約 14–18%",
+    rateHint: "Deliveroo / Uber Eats 約 25–35%，Just Eat 約 14–17%",
     resultLead: "外賣平台一年抽走你",
     perYear: "／年",
     resultSub:
@@ -46,10 +46,10 @@ const copy = {
     eyebrow: "省回平台抽佣",
     title: "外卖平台每张单抽你两三成？算算一年付了多少",
     subtitle:
-      "Deliveroo、Uber Eats 一张单抽 25–35%，Just Eat 也要 14–18%。熟客、回头客其实不需要经平台 —— 用 ShopOps 自家 QR 和外卖网下单，这部分生意一分佣金都不用付。拉下面的滑块，看看你一年省多少。",
+      "Deliveroo、Uber Eats 一张单抽 25–35%，Just Eat 也要 14–17%。熟客、回头客其实不需要经平台 —— 用 ShopOps 自家 QR 和外卖网下单，这部分生意一分佣金都不用付。拉下面的滑块，看看你一年省多少。",
     turnoverLabel: "每月外卖平台营业额（可以转去自家下单的部分）",
     rateLabel: "平台抽佣率",
-    rateHint: "Deliveroo / Uber Eats 约 25–35%，Just Eat 约 14–18%",
+    rateHint: "Deliveroo / Uber Eats 约 25–35%，Just Eat 约 14–17%",
     resultLead: "外卖平台一年抽走你",
     perYear: "／年",
     resultSub:
@@ -62,10 +62,10 @@ const copy = {
     eyebrow: "Cut delivery commission",
     title: "Delivery apps taking 25–35% per order? See the yearly cost",
     subtitle:
-      "Deliveroo and Uber Eats take 25–35% of every order; Just Eat 14–18%. Your regulars and repeat customers don't need the middleman — when they order through ShopOps' own QR and ordering site, you pay zero commission on that business. Drag the sliders to see your yearly saving.",
+      "Deliveroo and Uber Eats take 25–35% of every order; Just Eat 14–17%. Your regulars and repeat customers don't need the middleman — when they order through ShopOps' own QR and ordering site, you pay zero commission on that business. Drag the sliders to see your yearly saving.",
     turnoverLabel: "Monthly delivery-app turnover (the share you can move to your own ordering)",
     rateLabel: "Platform commission rate",
-    rateHint: "Deliveroo / Uber Eats ~25–35%, Just Eat ~14–18%",
+    rateHint: "Deliveroo / Uber Eats ~25–35%, Just Eat ~14–17%",
     resultLead: "Platforms take from you each year",
     perYear: "/year",
     resultSub:
