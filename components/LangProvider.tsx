@@ -26,6 +26,15 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // 同步 <html lang> 同當前語言。SSR 時 layout.tsx hardcode "en"（同上面預設
+  // 一致，避 hydration mismatch）；client 端語言一變就更新 DOM。
+  // 好處：①螢幕閱讀器用啱語言發音 ②簡體時 lang="zh-Hans"，瀏覽器揀啱 SC 字型
+  // fallback（唔會用繁體 TC 字型去 render 簡體）。
+  // 三個值（zh-Hant / zh-Hans / en）都係有效 BCP 47 標籤，直接 assign。
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   function setLang(l: Lang) {
     setLangState(l);
     try {
