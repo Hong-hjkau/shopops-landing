@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Post } from "@/lib/posts";
 
-// 文末轉化區（漏斗出口）。Step 1 唔整獨立 gated PDF，先 reuse 首頁既有
+// 文末轉化區（漏斗出口）。Step 1 唔整獨立 gated PDF，先 reuse /pos 頁既有
 // savings calculator + demo 聯絡表做 conversion，已係完整漏斗。
 // 將來 Step 2 換成「留 email 攞免費佣金計算表 PDF」再改呢個 component。
 //
@@ -41,13 +41,13 @@ export default function LeadMagnet({ lang = "en" }: { lang?: Post["lang"] }) {
       <p className="mt-3 text-text leading-relaxed">{t.body}</p>
       <div className="mt-5 flex flex-col sm:flex-row gap-3">
         <Link
-          href="/#savings"
+          href="/pos#savings"
           className="inline-flex justify-center px-5 py-3 bg-accent text-on-accent rounded-xl font-bold text-sm hover:bg-accent-hover transition"
         >
           {t.calc}
         </Link>
         <Link
-          href="/#contact"
+          href="/pos#contact"
           className="inline-flex justify-center px-5 py-3 border border-border text-text rounded-xl font-semibold text-sm hover:bg-surface transition"
         >
           {t.demo}
