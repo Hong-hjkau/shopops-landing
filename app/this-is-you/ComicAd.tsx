@@ -13,7 +13,7 @@ const L: Record<Lang, { label: string; img: string; w: number; h: number; cta: s
     w: 864,
     h: 1820,
     cta: "了解更多 / 預約 Demo →",
-    sub: "免費試用 1 天 · 無合約 · 零抽佣",
+    sub: "免費試用 3 天 · 無合約 · 零抽佣",
     foot: "© 2026 ShopOps 店管家 · Edinburgh",
   },
   hans: {
@@ -22,7 +22,7 @@ const L: Record<Lang, { label: string; img: string; w: number; h: number; cta: s
     w: 864,
     h: 1821,
     cta: "了解更多 / 预约 Demo →",
-    sub: "免费试用 1 天 · 无合约 · 零抽佣",
+    sub: "免费试用 3 天 · 无合约 · 零抽佣",
     foot: "© 2026 ShopOps 店管家 · Edinburgh",
   },
   en: {
@@ -31,7 +31,7 @@ const L: Record<Lang, { label: string; img: string; w: number; h: number; cta: s
     w: 876,
     h: 1796,
     cta: "Learn more / Book a Demo →",
-    sub: "Free 1-day trial · No contract · No commission",
+    sub: "Free 3-day trial · No contract · No commission",
     foot: "© 2026 ShopOps · Edinburgh",
   },
 };
