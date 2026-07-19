@@ -7,7 +7,7 @@
 //
 // 要 Node ≥ 22.18（直接 import .ts 靠原生 type stripping，唔使 build step）。
 import { execFileSync } from "node:child_process";
-import { writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync, readdirSync, rmSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ACCENT_GLOW, BG_GRADIENT, COLORS, COPY } from "../lib/brand.ts";
@@ -159,6 +159,9 @@ for (const v of VARIANTS) {
     `file:///${htmlPath.replace(/\\/g, "/")}`,
   ]);
   if (!existsSync(pngPath)) throw new Error(`${v.name} 出圖失敗`);
+  // .html 只係畀 Chrome 截圖用嘅中間檔，截完即刪 —— social-out/ 只留 .png，
+  // 免得撳錯個 4200px 闊嘅 .html 以為壞咗。
+  rmSync(htmlPath, { force: true });
   console.log(`✓ ${v.name}.png  (${v.w}×${v.h})`);
 }
 console.log(`\n出咗喺 ${OUT_DIR}`);
