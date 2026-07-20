@@ -18,6 +18,8 @@ export type ContactCopy = {
   submitSending: string;
   submitSent: string;
   submitError: string;
+  submitErrorTooLong: string;
+  submitErrorRateLimit: string;
   orEmail: string;
   note: string;
 };
@@ -39,6 +41,7 @@ export default function ContactSection({
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [errorKind, setErrorKind] = useState<"generic" | "tooLong" | "rateLimit">("generic");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,13 +53,21 @@ export default function ContactSection({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, message, lang, source }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        setErrorKind(
+          res.status === 429 ? "rateLimit" : message.length > 2000 ? "tooLong" : "generic"
+        );
+        setStatus("error");
+        return;
+      }
+      setErrorKind("generic");
       setStatus("sent");
       setName("");
       setEmail("");
       setMessage("");
     } catch (err) {
       console.error("[contact] 表單提交失敗：", err);
+      setErrorKind("generic");
       setStatus("error");
     }
   }
@@ -83,8 +94,9 @@ export default function ContactSection({
           className="mt-10 bg-surface border border-border rounded-2xl p-6 sm:p-8 space-y-4"
         >
           <div>
-            <label className="block text-sm font-semibold text-text mb-1.5">{copy.nameLabel}</label>
+            <label htmlFor="contact-name" className="block text-sm font-semibold text-text mb-1.5">{copy.nameLabel}</label>
             <input
+              id="contact-name"
               type="text"
               required
               value={name}
@@ -94,8 +106,9 @@ export default function ContactSection({
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-text mb-1.5">{copy.emailLabel}</label>
+            <label htmlFor="contact-email" className="block text-sm font-semibold text-text mb-1.5">{copy.emailLabel}</label>
             <input
+              id="contact-email"
               type="email"
               required
               value={email}
@@ -105,8 +118,9 @@ export default function ContactSection({
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-text mb-1.5">{copy.messageLabel}</label>
+            <label htmlFor="contact-message" className="block text-sm font-semibold text-text mb-1.5">{copy.messageLabel}</label>
             <textarea
+              id="contact-message"
               required
               rows={4}
               value={message}
@@ -131,7 +145,11 @@ export default function ContactSection({
           )}
           {status === "error" && (
             <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-lg px-3 py-2 text-center">
-              {copy.submitError}
+              {errorKind === "tooLong"
+                ? copy.submitErrorTooLong
+                : errorKind === "rateLimit"
+                  ? copy.submitErrorRateLimit
+                  : copy.submitError}
             </p>
           )}
 
