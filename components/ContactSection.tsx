@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/components/LangProvider";
-import { enquirySubject, type ContactSource } from "@/lib/contact";
+import { enquirySubject, ERROR_MESSAGE_TOO_LONG, type ContactSource } from "@/lib/contact";
 
 export type ContactCopy = {
   title: string;
@@ -54,8 +54,15 @@ export default function ContactSection({
         body: JSON.stringify({ name, email, message, lang, source }),
       });
       if (!res.ok) {
+        // 讀返 server 講嘅真正原因,唔好靠 client 數字數猜(server 係先驗 email 後驗長度)
+        const detail = await res.json().catch(() => null);
+        console.error(`[contact] 表單提交失敗：HTTP ${res.status}`, detail?.error ?? "");
         setErrorKind(
-          res.status === 429 ? "rateLimit" : message.length > 2000 ? "tooLong" : "generic"
+          res.status === 429
+            ? "rateLimit"
+            : detail?.error === ERROR_MESSAGE_TOO_LONG
+              ? "tooLong"
+              : "generic"
         );
         setStatus("error");
         return;

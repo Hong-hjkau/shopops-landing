@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { enquirySubject, type ContactSource } from "@/lib/contact";
+import {
+  enquirySubject,
+  ERROR_MESSAGE_TOO_LONG,
+  MESSAGE_MAX_LENGTH,
+  type ContactSource,
+} from "@/lib/contact";
 
 export const runtime = "nodejs";
 
@@ -95,8 +100,8 @@ export async function POST(req: Request) {
   if (!isEmail(email)) {
     return NextResponse.json({ error: "Invalid email format." }, { status: 400 });
   }
-  if (message.length > 2000) {
-    return NextResponse.json({ error: "Message too long." }, { status: 400 });
+  if (message.length > MESSAGE_MAX_LENGTH) {
+    return NextResponse.json({ error: ERROR_MESSAGE_TOO_LONG }, { status: 400 });
   }
 
   const resend = new Resend(apiKey);

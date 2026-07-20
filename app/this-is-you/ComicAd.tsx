@@ -75,7 +75,7 @@ export default function ComicAd() {
         />
 
         <Link
-          href="/#contact"
+          href="/pos#contact"
           className="mt-7 px-10 py-4 bg-accent hover:bg-accent-hover text-on-accent text-lg font-bold rounded-xl transition"
         >
           {t.cta}
