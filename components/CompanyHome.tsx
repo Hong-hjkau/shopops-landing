@@ -245,7 +245,7 @@ export default function CompanyHome() {
             <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.products.title}</h2>
             <p className="mt-4 text-text-secondary leading-relaxed">{t.products.subtitle}</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {t.products.items.map((p) => {
               const Icon = ICONS[p.icon];
               return (

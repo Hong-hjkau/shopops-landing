@@ -3,7 +3,7 @@ import CardGrid from "@/components/CardGrid";
 
 // 完整功能牆 — 6 大獨家賣點以外嘅已上線模組，一格一類。
 // 內容只寫「而家真係 ship 咗」嘅嘢；未上線 / 內部功能（platform console、CTI）唔擺。
-// 同 6 大獨家重複嘅（食安記錄／客人評價／叫號屏廣告屏／成本毛利）唔喺呢度重覆。
+// 同 6 大獨家重複嘅（食安記錄／叫號屏廣告屏／成本毛利）唔喺呢度重覆。
 const dict = {
   "zh-Hant": {
     title: "獨家嘢以外，基本功一樣做足",

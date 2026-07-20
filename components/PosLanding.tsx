@@ -47,7 +47,7 @@ const dict = {
         },
         {
           icon: "painCommission",
-          title: "抽你兩三成",
+          title: "一張單抽走三成",
           desc: "每張 £50 單抽走 £15，毛利本來就薄嘅餐廳，幾乎係做白工。",
         },
         {
@@ -175,7 +175,7 @@ const dict = {
         },
         {
           icon: "painCommission",
-          title: "抽你两三成",
+          title: "一张单抽走三成",
           desc: "每张 £50 的单抽走 £15，毛利本来就薄的餐厅，几乎是白干。",
         },
         {
