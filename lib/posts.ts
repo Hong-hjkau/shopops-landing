@@ -81,7 +81,7 @@ export const POSTS: Post[] = [
 
 // 最新喺前
 export const postsByDate = (): Post[] =>
-  [...POSTS].sort((a, b) => (a.date < b.date ? 1 : -1));
+  [...POSTS].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
 export const getPost = (slug: string): Post | undefined =>
   POSTS.find((p) => p.slug === slug);

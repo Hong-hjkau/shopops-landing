@@ -61,6 +61,8 @@ const dict = {
       submitSending: "發送中...",
       submitSent: "已收到！我哋會盡快聯絡你",
       submitError: "發送失敗，請直接 email 或稍後再試",
+      submitErrorTooLong: "訊息太長（上限 2000 字），請縮短啲再試",
+      submitErrorRateLimit: "試多咗幾次，請等幾分鐘再試，或直接 email 我哋",
       orEmail: "或直接 email：",
       note: "由自動化小工具到完整系統都做，歡迎傾下。",
     } as ContactCopy,
@@ -114,6 +116,8 @@ const dict = {
       submitSending: "发送中...",
       submitSent: "已收到！我们会尽快联系你",
       submitError: "发送失败，请直接 email 或稍后再试",
+      submitErrorTooLong: "信息太长（上限 2000 字），请缩短后再试",
+      submitErrorRateLimit: "尝试次数过多，请几分钟后再试，或直接 email 我们",
       orEmail: "或直接 email：",
       note: "从自动化小工具到完整系统都做，欢迎聊聊。",
     } as ContactCopy,
@@ -167,6 +171,8 @@ const dict = {
       submitSending: "Sending...",
       submitSent: "Got it! We'll be in touch shortly.",
       submitError: "Send failed. Please email us directly or try again.",
+      submitErrorTooLong: "Message too long (2,000 characters max) — please shorten it.",
+      submitErrorRateLimit: "Too many attempts — please wait a few minutes or email us directly.",
       orEmail: "Or email directly:",
       note: "From small automation scripts to full systems — happy to chat.",
     } as ContactCopy,
@@ -239,7 +245,7 @@ export default function CompanyHome() {
             <h2 className="text-3xl sm:text-4xl font-bold text-text">{t.products.title}</h2>
             <p className="mt-4 text-text-secondary leading-relaxed">{t.products.subtitle}</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {t.products.items.map((p) => {
               const Icon = ICONS[p.icon];
               return (

@@ -31,7 +31,7 @@ export default function BlogLayout({
               Blog
             </Link>
             <Link
-              href="/#contact"
+              href="/pos#contact"
               className="hidden sm:inline-flex px-4 py-2 bg-text text-bg text-sm font-semibold rounded-lg hover:bg-text-secondary transition"
             >
               Book a Demo

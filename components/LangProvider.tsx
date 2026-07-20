@@ -14,15 +14,20 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === "zh-Hant" || saved === "zh-Hans" || saved === "en") {
-      // ⚠️ 刻意喺 effect 入面 setState —— 唔好跟 react-hooks/set-state-in-effect
-      // 改走。SSR 同首次 client render 一定要用預設值（"en"），server 唔知
-      // 你 localStorage 揀咗咩語言；mount 之後先由 localStorage 還原。若改成
-      // 初始化時直接讀 localStorage，server render 英文、client render 中文
-      // → hydration mismatch 爆 error。個 lint 規則唔知呢個 SSR context。
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLangState(saved);
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === "zh-Hant" || saved === "zh-Hans" || saved === "en") {
+        // ⚠️ 刻意喺 effect 入面 setState —— 唔好跟 react-hooks/set-state-in-effect
+        // 改走。SSR 同首次 client render 一定要用預設值（"en"），server 唔知
+        // 你 localStorage 揀咗咩語言；mount 之後先由 localStorage 還原。若改成
+        // 初始化時直接讀 localStorage，server render 英文、client render 中文
+        // → hydration mismatch 爆 error。個 lint 規則唔知呢個 SSR context。
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setLangState(saved);
+      }
+    } catch {
+      // localStorage read 唔可用(cookies 全禁/SecurityError)→ 維持預設語言,唔好 crash 成頁
+      // (下面個 setLang setter 已有對應 guard)
     }
   }, []);
 

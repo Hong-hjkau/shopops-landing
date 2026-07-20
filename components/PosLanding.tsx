@@ -35,7 +35,7 @@ const dict = {
         "Deliveroo、Uber Eats 每張單抽 25–35%。ShopOps 一個固定月費、零抽佣 —— QR 自助點餐、員工 POS、後台訂單、斷網照做，一個系統打通客人、樓面、廚房。",
       ctaPrimary: "預約 Demo",
       ctaSecondary: "睇下有咩功能",
-      reassure: "免費試用 1 天 (無合約 · 唔使信用卡登記)",
+      reassure: "免費試用 3 天 (無合約 · 唔使信用卡登記)",
     },
     pains: {
       title: "外賣平台冇講你知嘅三件事",
@@ -47,7 +47,7 @@ const dict = {
         },
         {
           icon: "painCommission",
-          title: "抽你兩三成",
+          title: "一張單抽走三成",
           desc: "每張 £50 單抽走 £15，毛利本來就薄嘅餐廳，幾乎係做白工。",
         },
         {
@@ -98,7 +98,7 @@ const dict = {
       subtitle: "每間餐廳規模唔同，留低資料我哋幫你度身報價。",
       price: "請聯絡我們",
       unit: "",
-      trial: "首月免費試用",
+      trial: "免費試用 3 天 · 確認後首 30 天免費",
       features: [
         "QR 點餐 + 員工 POS + 後台 + 離線後備，全部包",
         "進階模組（訂位候位、食安記錄、報表成本等）按需要加",
@@ -135,7 +135,7 @@ const dict = {
     },
     contact: {
       title: "想睇 demo 或者了解多啲？",
-      subtitle: "留低資料我哋會聯絡你，安排免費試用 1 天。",
+      subtitle: "留低資料我哋會聯絡你，安排免費試用 3 天 —— 唔使入太多資料。確認採用後首 30 天免費，我哋仲會幫你入齊資料。",
       reassure: "無合約 · 唔使信用卡登記",
       nameLabel: "你嘅名 / 餐廳名",
       namePlaceholder: "例：陳生 / Joy Kitchen",
@@ -147,6 +147,8 @@ const dict = {
       submitSending: "發送中...",
       submitSent: "已收到！我哋會盡快聯絡你",
       submitError: "發送失敗，請直接 email 或稍後再試",
+      submitErrorTooLong: "訊息太長（上限 2000 字），請縮短啲再試",
+      submitErrorRateLimit: "試多咗幾次，請等幾分鐘再試，或直接 email 我哋",
       orEmail: "或直接 email：",
       note: "適合做堂食、外賣同雲廚房嘅小型餐廳。",
     },
@@ -161,7 +163,7 @@ const dict = {
         "Deliveroo、Uber Eats 每张单抽 25–35%。ShopOps 一个固定月费、零抽佣 —— QR 自助点餐、员工 POS、后台订单、断网照做，一个系统打通顾客、前厅、厨房。",
       ctaPrimary: "预约 Demo",
       ctaSecondary: "看看有什么功能",
-      reassure: "免费试用 1 天 (无合约 · 不用信用卡登记)",
+      reassure: "免费试用 3 天 (无合约 · 不用信用卡登记)",
     },
     pains: {
       title: "外卖平台没告诉你的三件事",
@@ -173,7 +175,7 @@ const dict = {
         },
         {
           icon: "painCommission",
-          title: "抽你两三成",
+          title: "一张单抽走三成",
           desc: "每张 £50 的单抽走 £15，毛利本来就薄的餐厅，几乎是白干。",
         },
         {
@@ -224,7 +226,7 @@ const dict = {
       subtitle: "每间餐厅规模不同，留下资料我们帮你度身报价。",
       price: "请联系我们",
       unit: "",
-      trial: "首月免费试用",
+      trial: "免费试用 3 天 · 确认后首 30 天免费",
       features: [
         "QR 点餐 + 员工 POS + 后台 + 离线备援，全部包",
         "进阶模块（订位候位、食安记录、报表成本等）按需要加",
@@ -261,7 +263,7 @@ const dict = {
     },
     contact: {
       title: "想看 demo 或了解更多？",
-      subtitle: "留下资料我们会联系你，安排免费试用 1 天。",
+      subtitle: "留下资料我们会联系你，安排免费试用 3 天 —— 不用填太多资料。确认采用后首 30 天免费，我们还会帮你录入资料。",
       reassure: "无合约 · 不用信用卡登记",
       nameLabel: "你的名字 / 餐厅名",
       namePlaceholder: "例：陈先生 / Joy Kitchen",
@@ -273,6 +275,8 @@ const dict = {
       submitSending: "发送中...",
       submitSent: "已收到！我们会尽快联系你",
       submitError: "发送失败，请直接 email 或稍后再试",
+      submitErrorTooLong: "信息太长（上限 2000 字），请缩短后再试",
+      submitErrorRateLimit: "尝试次数过多，请几分钟后再试，或直接 email 我们",
       orEmail: "或直接 email：",
       note: "适合做堂食、外卖和云厨房的小型餐厅。",
     },
@@ -287,7 +291,7 @@ const dict = {
         "Deliveroo and Uber Eats take 25–35% of every order. ShopOps is one flat monthly fee with zero commission — QR self-ordering, staff POS, back-office orders and an offline backup, connecting your customers, floor and kitchen.",
       ctaPrimary: "Book a Demo",
       ctaSecondary: "See features",
-      reassure: "Free 1-day trial (no contract · no card needed)",
+      reassure: "Free 3-day trial (no contract · no card needed)",
     },
     pains: {
       title: "Three things delivery apps don't tell you",
@@ -350,7 +354,7 @@ const dict = {
       subtitle: "Every venue is different — leave your details and we'll quote you.",
       price: "Contact us",
       unit: "",
-      trial: "First month free",
+      trial: "Free 3-day trial · first 30 days free once you join",
       features: [
         "QR ordering, staff POS, back-office and offline backup — all included",
         "Add-on modules to suit (reservations, food safety, reports and more)",
@@ -393,7 +397,7 @@ const dict = {
     },
     contact: {
       title: "Want a demo or just have questions?",
-      subtitle: "Leave your details and we'll set up your free 1-day trial.",
+      subtitle: "Leave your details and we'll set up your free 3-day trial — hardly any setup needed. Once you're on board, your first 30 days are free and we'll load your data in for you.",
       reassure: "No contract · No card needed",
       nameLabel: "Your name / restaurant",
       namePlaceholder: "e.g. Joy Kitchen",
@@ -405,6 +409,8 @@ const dict = {
       submitSending: "Sending...",
       submitSent: "Got it! We'll be in touch shortly.",
       submitError: "Send failed. Please email us directly or try again.",
+      submitErrorTooLong: "Message too long (2,000 characters max) — please shorten it.",
+      submitErrorRateLimit: "Too many attempts — please wait a few minutes or email us directly.",
       orEmail: "Or email directly:",
       note: "Built for small restaurants doing dine-in, takeaway and cloud-kitchen orders.",
     },
