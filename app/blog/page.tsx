@@ -16,6 +16,12 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "ShopOps",
   },
+  twitter: {
+    card: "summary",
+    title: "ShopOps Blog — Running a UK Restaurant Smarter",
+    description:
+      "Practical guides for UK independent restaurants and cafes: cutting delivery commission and moving your regulars to direct ordering.",
+  },
 };
 
 export default function BlogIndex() {
