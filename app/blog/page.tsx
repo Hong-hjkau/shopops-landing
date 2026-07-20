@@ -6,12 +6,12 @@ import BlogList from "@/components/blog/BlogList";
 export const metadata: Metadata = {
   title: "ShopOps Blog — Running a UK Restaurant Smarter",
   description:
-    "Practical guides for UK independent restaurants and cafes: cutting delivery commission, choosing a POS, taking bookings without fees, and getting more reviews.",
+    "Practical guides for UK independent restaurants and cafes: cutting delivery commission and moving your regulars to direct ordering.",
   alternates: { canonical: "/blog" },
   openGraph: {
     title: "ShopOps Blog — Running a UK Restaurant Smarter",
     description:
-      "Practical guides for UK independent restaurants and cafes: cutting delivery commission, choosing a POS, taking bookings without fees, and getting more reviews.",
+      "Practical guides for UK independent restaurants and cafes: cutting delivery commission and moving your regulars to direct ordering.",
     url: `${SITE_URL}/blog`,
     type: "website",
     siteName: "ShopOps",
