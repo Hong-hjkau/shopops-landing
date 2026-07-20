@@ -10,7 +10,7 @@
 **SHOPOPS = 一隊軟件開發公司**（唔係齋 POS）。SNS 帳號代表**成間公司**。
 
 - **做咩**：① 業務流程自動化　② 度身訂造軟件／系統　③ AI／數據分析
-- **自家現成產品**：🍽️ ShopOps POS（餐廳點餐）／⭐ Reviewscope（評價監察）／🗓️ Rota（排班打卡）
+- **自家現成產品**：🍽️ ShopOps POS（餐廳點餐）／🗓️ Rota（排班打卡）
 - **最強賣點**：真生意日日用住磨出嚟（唔係 demo ware）＋ 零佣金、唔鎖數據、唔綁約
 - **主要客群**：英國餐廳老闆 / 小生意（B2B）
 - **網站**：shopops.co.uk
@@ -28,7 +28,7 @@
 ```
 Custom software & automation for small businesses ⚙️
 Built & proven in a real business — no commission, no lock-in.
-Products: POS · Reviewscope · Rota
+Products: POS · Rota
 👇
 ```
 （網址填喺 profile「網站」格 = shopops.co.uk）
@@ -48,7 +48,6 @@ What we do:
 
 Ready-made products (already running in real businesses):
 🍽️ ShopOps POS — restaurant ordering, POS & kitchen board
-⭐ Reviewscope — all your reviews in one dashboard
 🗓️ Rota — staff scheduling & clock-in
 
 Talk to the person who actually builds it. 👉 shopops.co.uk
@@ -69,7 +68,6 @@ Services:
 
 Ready-made products, already running in real businesses:
 • ShopOps POS — restaurant ordering, POS, kitchen board & offline backup
-• Reviewscope — every platform's reviews in one dashboard
 • Rota — staff scheduling & clock-in attendance
 
 Why SHOPOPS: you talk to the maker (no outsourcing), our tools are forged in real daily use (not demo ware), and what's yours stays yours — zero commission, no data lock-in, no contracts.
@@ -90,7 +88,6 @@ A small software team that builds the boring-but-essential stuff for small busin
 The twist? We don't just build it and walk away. Everything we make is used every day in a real, running business first. If it survives a busy service, it ships.
 
 🍽️ ShopOps POS — restaurant ordering & kitchen board
-⭐ Reviewscope — all your reviews in one place
 🗓️ Rota — staff scheduling & clock-in
 
 No commission. No data lock-in. No contracts.
@@ -110,7 +107,6 @@ A small software team building the boring-but-essential stuff for small business
 The twist? Everything we make runs in a real, working business first. If it survives a busy service, it ships.
 
 🍽️ ShopOps POS — restaurant ordering & kitchen board
-⭐ Reviewscope — all your reviews in one place
 🗓️ Rota — staff scheduling & clock-in
 
 No commission. No data lock-in. No contracts.
@@ -130,7 +126,7 @@ No commission. No data lock-in. No contracts.
 | 💡 痛點 | 教育（生意常見痛點）| 引到啱嘅人 |
 | 🎬 Demo | 功能短 demo | show 真本事 |
 | 🍜 幕後 | 真實案例／幕後 | 建立信任（最強）|
-| ⭐ 產品 | 單一產品聚焦 | 輪流推 POS／Reviewscope／Rota |
+| ⭐ 產品 | 單一產品聚焦 | 輪流推 POS／Rota／POS 獨家功能 |
 
 ---
 
@@ -144,7 +140,7 @@ No commission. No data lock-in. No contracts.
 | W2 | 五 | LinkedIn | ⭐ POS | ShopOps POS 解決餐廳三痛（漏單／佣金／鎖數據）|
 | W3 | 二 | IG+FB | 🎬 Demo | 30 秒短片：離線後備「斷網都照落單」或叫號屏 |
 | W3 | 五 | LinkedIn | 💡 痛點 | 「點解現成軟件成日唔啱用？」帶出度身訂造服務 |
-| W4 | 二 | IG+FB | ⭐ Reviewscope | 各平台評分一個版面睇晒，差評即時知 |
+| W4 | 二 | IG+FB | ⭐ POS 獨家功能 | 輪住介紹一個：過敏原落單警示／天氣客流報表／食安日誌 |
 | W4 | 五 | 全部 | 🍜 幕後 | 月結回顧／founder 理念（點解唔收佣金、唔鎖數據）|
 
 ---
