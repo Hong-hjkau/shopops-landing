@@ -11,14 +11,14 @@ Marketing site，對外推廣 ShopOps（核心 POS 產品）。Live: [shopops-la
   - 🟢 **2026-06-08 已正式上線**（`shopops.co.uk` + `www.shopops.co.uk` 308→apex）。`NEXT_PUBLIC_SITE_URL=https://shopops.co.uk` 已設，sitemap/canonical/og 全指新域名；GSC Domain property 已驗證 + 交 sitemap。
   - （歷史：2026-06-07 曾用 `proxy.ts` Coming Soon gate 暫時下架，06-08 已移除。）
 - **SHOPOPS Email（Google Workspace）** —— 主址 `hong@shopops.co.uk` + 免費 alias `hello@shopops.co.uk`（客用，同一 inbox）。SPF / DKIM / DMARC 全開。入信箱：[mail.google.com](https://mail.google.com)。
-- 詳情同完整未完成 LIST 見 OneDrive memory `shopops_landing_followups.md`。
+- 詳情同完整未完成 LIST 見 memory `shopops_landing_followups.md`。
 
 ## Tech stack
 
 - Next.js 16 (App Router) + React 19 + TypeScript
 - Tailwind v4
 - Resend (contact form 後端)
-- Upstash Redis（rate limit，見 OneDrive memory `reference_upstash_ratelimit.md`）
+- Upstash Redis（rate limit，見 memory `reference_upstash_ratelimit.md`）
 
 ## 部署
 
@@ -48,7 +48,7 @@ Marketing site，對外推廣 ShopOps（核心 POS 產品）。Live: [shopops-la
 
 ## 待動工 phase
 
-詳見 OneDrive memory `shopops_landing_followups.md`（完整 LIST）。域名 / Email：
+詳見 memory `shopops_landing_followups.md`（完整 LIST）。域名 / Email：
 
 - [x] ✅ **`hello@` send-as**（2026-06-08，Workspace 自動加，Gmail 可揀 from `hello@`）
 - [x] ✅ **`www.shopops.co.uk`**（2026-06-08，308 永久轉去 apex）
@@ -73,4 +73,4 @@ SHOPOPS Landing 係為〔SHOPOPS〕**所有開發品**做 marketing & sales 嘅�
    - 市場上某啲商品好用又多人用嘅做法（值得借鏡嘅 reference）
 3. **宣傳設計** —— 網頁、海報等對外視覺物料
 
-> 第 2 點「網上搵 IDEA」已有 AI 自動掃描模組：`D:\Claude\ai-automations\shopops_market\`（4 個模組：gap 對手功能 gap／copy 對手宣傳技巧／ref 好用 reference 商品／visual 截圖視覺靈感），每週一 UK 09:00 跑，推 Telegram `SHOPOPS_MARKET` channel。詳見該 folder README + OneDrive memory `shopops_market_plan.md`。gap 判斷會即場讀 POS live code routes，自動跟住 ShopOps 新功能更新。
+> 第 2 點「網上搵 IDEA」已有 AI 自動掃描模組：`~/Claude/ai-automations/shopops_market/`（4 個模組：gap 對手功能 gap／copy 對手宣傳技巧／ref 好用 reference 商品／visual 截圖視覺靈感），每週一 UK 09:00 跑，推 Telegram `SHOPOPS_MARKET` channel。詳見該 folder README + memory `shopops_market_plan.md`。gap 判斷會即場讀 POS live code routes，自動跟住 ShopOps 新功能更新。

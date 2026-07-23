@@ -1,0 +1,3 @@
+# Windows→Mac 搬機（2026-07）後統一 LF，防 CRLF 復發
+* text=auto eol=lf
+
