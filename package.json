@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "contrast": "node scripts/check-contrast.mjs",
-    "social": "node scripts/gen-social.mjs"
+    "social": "node scripts/gen-social.mjs",
+    "test:content": "node --test tests/*.test.mjs",
+    "verify": "npm run test:content && npm run lint && npx tsc --noEmit && npm run contrast && npm run build"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
