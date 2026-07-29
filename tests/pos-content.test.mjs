@@ -115,3 +115,43 @@ test("workflow renders the four approved POS demo screenshots in journey order",
   assert.match(workflow, /copy\.steps\.map\(\(step, index\) => \(\s*[\s\S]*?src=\{WORKFLOW_IMAGES\[index\]\}/);
   assert.match(workflow, /id="workflow"/);
 });
+
+test("homepage assembles the POS journey before secondary offerings and contact", () => {
+  const home = readFileSync(
+    new URL("../components/CompanyHome.tsx", import.meta.url),
+    "utf8",
+  );
+  const requiredOrder = [
+    "<PosHero",
+    "<PosWorkflow",
+    "<PosBenefits",
+    'id="core-features"',
+    'id="bilingual"',
+    "<HardwareOptions",
+    "<TrialJourney",
+    'id="secondary-offerings"',
+    "<ContactSection",
+  ];
+
+  let previousIndex = -1;
+  for (const token of requiredOrder) {
+    const index = home.indexOf(token);
+    assert.ok(index >= 0, `homepage should include ${token}`);
+    assert.ok(index > previousIndex, `${token} should follow the previous homepage section`);
+    previousIndex = index;
+  }
+});
+
+test("homepage keeps POS demo enquiries distinct and delays the full nav until wide screens", () => {
+  const home = readFileSync(
+    new URL("../components/CompanyHome.tsx", import.meta.url),
+    "utf8",
+  );
+  const header = readFileSync(
+    new URL("../components/SiteHeader.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(home, /<ContactSection copy=\{contact\} source="pos" \/>/);
+  assert.match(header, /hidden lg:flex items-center gap-6/);
+});

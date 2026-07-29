@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
 import CompanyHome from "@/components/CompanyHome";
 
-const TITLE = "ShopOps — 度身訂造軟件與業務自動化｜Custom Software";
+const TITLE = "ShopOps POS — Bilingual Restaurant POS for UK Restaurants";
 const DESCRIPTION =
-  "業務流程自動化、度身訂造軟件、AI 數據分析同即裝即用產品(POS 等)。Software team: automation, custom software, AI & data and ready-made products.";
-// 分享預覽（OG / Twitter）用英文 —— 主要對象係英國客
-const OG_TITLE_EN = "ShopOps — Custom Software & Business Automation";
+  "Bilingual restaurant POS for UK independent restaurants, with QR ordering, staff POS, live kitchen screens and offline backup.";
+const OG_TITLE_EN = "ShopOps POS — Bilingual Restaurant POS for UK Restaurants";
 const OG_DESC_EN =
-  "A software team: business process automation, custom software & systems, AI/data analysis, and ready-made products.";
+  "QR ordering, staff POS, live kitchen screens and offline backup for independent UK restaurants.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -29,7 +28,6 @@ export const metadata: Metadata = {
   },
 };
 
-// JSON-LD:公司導向 Organization(不綁地區)
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -37,7 +35,8 @@ const jsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
   description:
-    "Software team building business process automation, custom software and systems, AI/data analysis, and ready-made products.",
+    "ShopOps builds bilingual restaurant POS software for independent UK restaurants, alongside custom software and automation services.",
+  areaServed: { "@type": "Country", name: "United Kingdom" },
 };
 
 export default function HomePage() {
@@ -45,7 +44,7 @@ export default function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
       <CompanyHome />
     </>

@@ -29,7 +29,7 @@ export default function SiteHeader({
           <Image src="/logo-icon.png" alt="" width={512} height={496} className="h-8 w-auto" />
           <span className="font-bold text-text text-lg tracking-tight">ShopOps</span>
         </Link>
-        <nav className="hidden sm:flex items-center gap-6 text-sm text-text-secondary">
+        <nav className="hidden lg:flex items-center gap-6 text-sm text-text-secondary">
           {navLinks.map((l) => (
             <a key={l.href} href={l.href} className="hover:text-text transition">
               {l.label}
