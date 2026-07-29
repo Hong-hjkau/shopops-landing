@@ -155,3 +155,49 @@ test("homepage keeps POS demo enquiries distinct and delays the full nav until w
   assert.match(home, /<ContactSection copy=\{contact\} source="pos" \/>/);
   assert.match(header, /hidden lg:flex items-center gap-6/);
 });
+
+test("homepage preserves the approved dark header palette", () => {
+  const header = readFileSync(
+    new URL("../components/SiteHeader.tsx", import.meta.url),
+    "utf8",
+  );
+
+  for (const token of [
+    "bg-hero-bg/95",
+    "border-hero-border",
+    "text-hero-text",
+    "text-hero-text-secondary",
+    "bg-white/10",
+    "focus:ring-accent",
+    "focus:ring-offset-hero-bg",
+  ]) {
+    assert.ok(header.includes(token), `header should use ${token}`);
+  }
+  assert.doesNotMatch(header, /bg-bg\/80/);
+});
+
+test("homepage places the approved three-language FAQ before contact", () => {
+  const home = readFileSync(
+    new URL("../components/CompanyHome.tsx", import.meta.url),
+    "utf8",
+  );
+  const secondaryIndex = home.indexOf('id="secondary-offerings"');
+  const faqIndex = home.indexOf("<Faq");
+  const contactIndex = home.indexOf("<ContactSection");
+
+  assert.ok(secondaryIndex >= 0 && faqIndex > secondaryIndex && contactIndex > faqIndex);
+  assert.equal((home.match(/faq: \{/g) ?? []).length, 3);
+  assert.match(home, /<Faq title=\{t\.faq\.title\} items=\{faqItems\} \/>/);
+  assert.doesNotMatch(home, /schemaItems=\{dict\.en\.faq\.items\}/);
+  for (const token of [
+    "a: pos.trial.steps[3].detail",
+    "pos.trial.steps[4].detail",
+    "pos.trial.steps[5].detail",
+    "pos.hardware.existingDeviceCopy",
+    "pos.hardware.readyHardwareCopy",
+    "pos.trial.steps[1].detail",
+    "pos.trial.steps[2].detail",
+  ]) {
+    assert.ok(home.includes(token), `FAQ should use the shared POS fact ${token}`);
+  }
+});

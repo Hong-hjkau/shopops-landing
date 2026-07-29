@@ -5,6 +5,7 @@ import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection, { type ContactCopy } from "@/components/ContactSection";
 import CardGrid from "@/components/CardGrid";
+import Faq from "@/components/Faq";
 import PosHero from "@/components/PosHero";
 import PosWorkflow from "@/components/PosWorkflow";
 import PosBenefits from "@/components/PosBenefits";
@@ -50,6 +51,17 @@ const dict = {
       body: "POS 是目前的重點；如你有其他營運需要，也可以了解以下選項。",
       rota: { title: "Rota", body: "員工排班及打卡出席工具，幫你管理班表和工時。", cta: "了解 Rota" },
       custom: { title: "度身訂造軟件", body: "按你的流程建立內部工具、管理系統或自動化。", cta: "傾下你的需要" },
+    },
+    faq: {
+      title: "常見問題",
+      questions: {
+        trial: "免費試用需要信用卡嗎？",
+        afterTrial: "試用後會怎樣？",
+        hardware: "需要購買新硬件嗎？",
+        area: "Edinburgh 以外的餐廳可以使用嗎？",
+        menu: "餐牌需要自己輸入嗎？",
+      },
+      areaAnswer: "ShopOps POS 為英國獨立餐廳而設。ShopOps 以 Edinburgh 為基地。",
     },
     contact: {
       title: "預約示範及免費試用設定",
@@ -106,6 +118,17 @@ const dict = {
       rota: { title: "Rota", body: "员工排班及打卡考勤工具，帮你管理班表和工时。", cta: "了解 Rota" },
       custom: { title: "定制软件", body: "按你的流程建立内部工具、管理系统或自动化。", cta: "聊聊你的需要" },
     },
+    faq: {
+      title: "常见问题",
+      questions: {
+        trial: "免费试用需要信用卡吗？",
+        afterTrial: "试用后会怎样？",
+        hardware: "需要购买新硬件吗？",
+        area: "Edinburgh 以外的餐厅可以使用吗？",
+        menu: "菜单需要自己录入吗？",
+      },
+      areaAnswer: "ShopOps POS 为英国独立餐厅而设。ShopOps 以 Edinburgh 为基地。",
+    },
     contact: {
       title: "预约演示及免费试用设置",
       subtitle: "告诉我们你的餐厅情况。我们会安排演示，了解流程，并在试用前协助录入菜单及设置。",
@@ -161,6 +184,17 @@ const dict = {
       rota: { title: "Rota", body: "Staff scheduling and clock-in attendance to help manage shifts and hours.", cta: "Explore Rota" },
       custom: { title: "Custom software", body: "Internal tools, management systems or automation built around your workflow.", cta: "Talk about your needs" },
     },
+    faq: {
+      title: "Frequently asked questions",
+      questions: {
+        trial: "Do I need a card for the free trial?",
+        afterTrial: "What happens after the trial?",
+        hardware: "Do I need to buy new hardware?",
+        area: "Can restaurants outside Edinburgh use it?",
+        menu: "Do I need to enter my menu myself?",
+      },
+      areaAnswer: "ShopOps POS is for independent UK restaurants. ShopOps is based in Edinburgh.",
+    },
     contact: {
       title: "Book a demo and free trial setup",
       subtitle: "Tell us about your restaurant. We will arrange a demo, understand your workflow and help set up your menu before the trial.",
@@ -188,6 +222,13 @@ export default function CompanyHome() {
   const t = dict[lang];
   const pos = POS_CONTENT[lang];
   const contact: ContactCopy = { ...t.contact, reassure: pos.hero.reassurance };
+  const faqItems = [
+    { q: t.faq.questions.trial, a: pos.trial.steps[3].detail },
+    { q: t.faq.questions.afterTrial, a: `${pos.trial.steps[4].detail} ${pos.trial.steps[5].detail}` },
+    { q: t.faq.questions.hardware, a: `${pos.hardware.existingDeviceCopy} ${pos.hardware.readyHardwareCopy}` },
+    { q: t.faq.questions.area, a: t.faq.areaAnswer },
+    { q: t.faq.questions.menu, a: `${pos.trial.steps[1].detail} ${pos.trial.steps[2].detail}` },
+  ];
 
   return (
     <main className="flex flex-col">
@@ -266,6 +307,7 @@ export default function CompanyHome() {
         </div>
       </section>
 
+      <Faq title={t.faq.title} items={faqItems} />
       <ContactSection copy={contact} source="pos" />
       <SiteFooter text={t.footer} />
     </main>

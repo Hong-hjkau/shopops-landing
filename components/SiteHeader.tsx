@@ -23,29 +23,36 @@ export default function SiteHeader({
   const { lang, setLang } = useLang();
 
   return (
-    <header className="sticky top-0 z-20 bg-bg/80 backdrop-blur border-b border-border">
+    <header className="sticky top-0 z-20 border-b border-hero-border bg-hero-bg/95 backdrop-blur">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg"
+        >
           <Image src="/logo-icon.png" alt="" width={512} height={496} className="h-8 w-auto" />
-          <span className="font-bold text-text text-lg tracking-tight">ShopOps</span>
+          <span className="text-lg font-bold tracking-tight text-hero-text">ShopOps</span>
         </Link>
-        <nav className="hidden lg:flex items-center gap-6 text-sm text-text-secondary">
+        <nav className="hidden lg:flex items-center gap-6 text-sm text-hero-text-secondary">
           {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className="hover:text-text transition">
+            <a
+              key={l.href}
+              href={l.href}
+              className="rounded transition hover:text-hero-text focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg"
+            >
               {l.label}
             </a>
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-surface rounded-full p-0.5 text-xs font-medium">
+          <div className="flex items-center rounded-full bg-white/10 p-0.5 text-xs font-medium ring-1 ring-white/10">
             {LANGS.map((l) => (
               <button
                 key={l.key}
                 onClick={() => setLang(l.key)}
-                className={`px-3 py-1 rounded-full transition ${
-                  // 當前語言用中性色，唔用橙 —— 橙留返畀 CTA，
-                  // 一個語言掣搶咗主色會攤薄真正想人撳嘅嘢
-                  lang === l.key ? "bg-text text-bg" : "text-text-secondary hover:text-text"
+                className={`rounded-full px-3 py-1 transition focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg ${
+                  lang === l.key
+                    ? "bg-hero-text text-hero-bg"
+                    : "text-hero-text-secondary hover:text-hero-text"
                 }`}
                 aria-pressed={lang === l.key}
               >
@@ -55,9 +62,7 @@ export default function SiteHeader({
           </div>
           <a
             href={cta.href}
-            // header CTA 維持原本嘅深色掣（唔跟 hero 用橙）—— hero 個橙 CTA
-            // 先係主行動，header 呢個係常駐入口，兩者分工，唔好成頁都係橙
-            className="hidden sm:inline-flex px-4 py-2 bg-text text-bg text-sm font-semibold rounded-lg hover:bg-text-secondary transition"
+            className="hidden rounded-lg bg-hero-text px-4 py-2 text-sm font-semibold text-hero-bg transition hover:bg-hero-text-secondary focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg sm:inline-flex"
           >
             {cta.label}
           </a>
