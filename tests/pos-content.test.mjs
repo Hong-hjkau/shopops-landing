@@ -59,3 +59,19 @@ test("POS FAQ uses the shared pricing and direct-order commission facts", () => 
   assert.match(page, /pos\.commission\.body/);
   assert.doesNotMatch(page, /ShopOps is one flat monthly fee with zero commission/);
 });
+
+test("POS contact has no shadow offer copy outside the shared content", () => {
+  const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  for (const pattern of [
+    /free 3-day trial/i,
+    /first 30 days are free/i,
+    /免費試用 3 天/,
+    /首 30 天免費/,
+    /免费试用 3 天/,
+    /首 30 天免费/,
+  ]) {
+    assert.doesNotMatch(page, pattern);
+  }
+  assert.match(page, /subtitle: `\$\{pos\.trial\.steps\[3\]\.detail\}/);
+  assert.match(page, /reassure: pos\.hero\.reassurance/);
+});

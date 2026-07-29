@@ -117,8 +117,6 @@ const dict = {
     },
     contact: {
       title: "想睇 demo 或者了解多啲？",
-      subtitle: "留低資料我哋會聯絡你，安排免費試用 3 天 —— 唔使入太多資料。確認採用後首 30 天免費，我哋仲會幫你入齊資料。",
-      reassure: "無合約 · 唔使信用卡登記",
       nameLabel: "你嘅名 / 餐廳名",
       namePlaceholder: "例：陳生 / Joy Kitchen",
       emailLabel: "Email",
@@ -229,8 +227,6 @@ const dict = {
     },
     contact: {
       title: "想看 demo 或了解更多？",
-      subtitle: "留下资料我们会联系你，安排免费试用 3 天 —— 不用填太多资料。确认采用后首 30 天免费，我们还会帮你录入资料。",
-      reassure: "无合约 · 不用信用卡登记",
       nameLabel: "你的名字 / 餐厅名",
       namePlaceholder: "例：陈先生 / Joy Kitchen",
       emailLabel: "Email",
@@ -347,8 +343,6 @@ const dict = {
     },
     contact: {
       title: "Want a demo or just have questions?",
-      subtitle: "Leave your details and we'll set up your free 3-day trial — hardly any setup needed. Once you're on board, your first 30 days are free and we'll load your data in for you.",
-      reassure: "No contract · No card needed",
       nameLabel: "Your name / restaurant",
       namePlaceholder: "e.g. Joy Kitchen",
       emailLabel: "Email",
