@@ -30,7 +30,11 @@ export function LangProvider({
   const hasPersistedInitialLang = useRef(false);
 
   useEffect(() => {
-    if (initialLang !== undefined) return;
+    // /pos 由 nested route provider 處理 query / storage。root provider 喺呢度
+    // restore 舊 storage 會同 route 指定嘅 initial language 競爭。
+    if (initialLang !== undefined || (parentContext === null && pathname.startsWith("/pos"))) {
+      return;
+    }
 
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -42,6 +46,10 @@ export function LangProvider({
         // → hydration mismatch 爆 error。個 lint 規則唔知呢個 SSR context。
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLangState(saved);
+
+        if (parentContext !== null && parentContext.lang !== saved) {
+          parentContext.setLang(saved);
+        }
       }
     } catch {
       // localStorage read 唔可用(cookies 全禁/SecurityError)→ 維持預設語言,唔好 crash 成頁
