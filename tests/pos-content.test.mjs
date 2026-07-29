@@ -75,3 +75,43 @@ test("POS contact has no shadow offer copy outside the shared content", () => {
   assert.match(page, /subtitle: `\$\{pos\.trial\.steps\[3\]\.detail\}/);
   assert.match(page, /reassure: pos\.hero\.reassurance/);
 });
+
+test("all languages keep the approved workflow, trial, and existing-device scope", () => {
+  for (const lang of languages) {
+    assert.equal(POS_CONTENT[lang].workflow.steps.length, 4);
+    assert.equal(POS_CONTENT[lang].trial.steps.length, 6);
+
+    const existingDevices = POS_CONTENT[lang].hardware.existingDeviceCopy;
+    const supportedDevices = {
+      en: ["iPad", "Android", "computer", "phone"],
+      "zh-Hant": ["iPad", "Android", "電腦", "手機"],
+      "zh-Hans": ["iPad", "Android", "电脑", "手机"],
+    }[lang];
+    for (const device of supportedDevices) assert.match(existingDevices, new RegExp(device, "i"));
+  }
+});
+
+test("workflow renders the four approved POS demo screenshots in journey order", () => {
+  const workflow = readFileSync(
+    new URL("../components/PosWorkflow.tsx", import.meta.url),
+    "utf8",
+  );
+
+  const approvedAssets = [
+    ["orderEntry", "order-entry.webp"],
+    ["kitchenOrder", "kitchen-order.webp"],
+    ["floorProgress", "floor-progress.webp"],
+    ["checkoutReport", "checkout-report.webp"],
+  ];
+
+  for (const [name, file] of approvedAssets) {
+    assert.match(
+      workflow,
+      new RegExp(`import ${name} from "@/public/pos-demo/${file}";`),
+    );
+  }
+
+  assert.match(workflow, /const WORKFLOW_IMAGES = \[orderEntry, kitchenOrder, floorProgress, checkoutReport\] as const;/);
+  assert.match(workflow, /copy\.steps\.map\(\(step, index\) => \(\s*[\s\S]*?src=\{WORKFLOW_IMAGES\[index\]\}/);
+  assert.match(workflow, /id="workflow"/);
+});
