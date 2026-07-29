@@ -7,9 +7,10 @@ import SiteFooter from "@/components/SiteFooter";
 import ContactSection, { type ContactCopy } from "@/components/ContactSection";
 import CardGrid from "@/components/CardGrid";
 import { ICONS, type IconName } from "@/components/icons";
+import { POS_CONTENT } from "@/lib/pos-content";
 
 type Pillar = { icon: IconName; title: string; desc: string };
-type Product = { icon: IconName; name: string; desc: string; href: string; cta: string };
+type Product = { icon: IconName; name: string; desc: string; href: string; cta: string; isPos?: boolean };
 type Reason = { icon: IconName; title: string; desc: string };
 
 const dict = {
@@ -33,9 +34,9 @@ const dict = {
     },
     products: {
       title: "自家產品",
-      subtitle: "已經喺真實生意度用緊嘅系統，即裝即用。",
+      subtitle: "為實際工作流程而設的現成產品，亦可先安排示範了解。",
       items: [
-        { icon: "pos", name: "ShopOps POS", desc: "餐廳點餐 / POS / 廚房看板 / 離線後備，零佣金、唔鎖數據。", href: "/pos", cta: "了解更多" },
+        { icon: "pos", name: "ShopOps POS", desc: "", href: "/pos", cta: "了解更多", isPos: true },
         { icon: "rota", name: "Rota", desc: "員工排班 + 打卡出席，定位簽到、自動計時數。", href: "/rota", cta: "了解更多" },
       ] as Product[],
     },
@@ -43,7 +44,7 @@ const dict = {
       title: "點解揀 SHOPOPS",
       items: [
         { icon: "direct", title: "直接溝通、唔外判", desc: "同實際做嘢嗰個人傾，唔使隔幾層、唔使等外判。" },
-        { icon: "forged", title: "由實戰磨出嚟", desc: "產品喺真生意日日用住改出嚟，唔係 demo ware。" },
+        { icon: "forged", title: "清楚設定每一步", desc: "由示範到設定，我們會清楚說明下一步。" },
         { icon: "yours", title: "你嘅嘢係你嘅", desc: "零佣金、唔鎖數據、唔綁約。" },
       ] as Reason[],
     },
@@ -88,9 +89,9 @@ const dict = {
     },
     products: {
       title: "自家产品",
-      subtitle: "已经在真实生意里使用的系统，即装即用。",
+      subtitle: "为实际工作流程而设的现成产品，也可先安排演示了解。",
       items: [
-        { icon: "pos", name: "ShopOps POS", desc: "餐厅点餐 / POS / 厨房看板 / 离线备援，零佣金、不锁数据。", href: "/pos", cta: "了解更多" },
+        { icon: "pos", name: "ShopOps POS", desc: "", href: "/pos", cta: "了解更多", isPos: true },
         { icon: "rota", name: "Rota", desc: "员工排班 + 打卡考勤，定位签到、自动算工时。", href: "/rota", cta: "了解更多" },
       ] as Product[],
     },
@@ -98,7 +99,7 @@ const dict = {
       title: "为什么选 SHOPOPS",
       items: [
         { icon: "direct", title: "直接沟通、不外包", desc: "跟实际做事的人聊，不用隔几层、不用等外包。" },
-        { icon: "forged", title: "实战打磨出来", desc: "产品在真实生意里天天用着改出来，不是 demo ware。" },
+        { icon: "forged", title: "清楚设置每一步", desc: "从演示到设置，我们会清楚说明下一步。" },
         { icon: "yours", title: "你的东西是你的", desc: "零佣金、不锁数据、不绑约。" },
       ] as Reason[],
     },
@@ -143,9 +144,9 @@ const dict = {
     },
     products: {
       title: "Our products",
-      subtitle: "Systems already running in real businesses, ready to use.",
+      subtitle: "Ready-made products designed around practical workflows, with a demo available first.",
       items: [
-        { icon: "pos", name: "ShopOps POS", desc: "Restaurant ordering / POS / kitchen board / offline backup. Zero commission, your data stays yours.", href: "/pos", cta: "Learn more" },
+        { icon: "pos", name: "ShopOps POS", desc: "", href: "/pos", cta: "Learn more", isPos: true },
         { icon: "rota", name: "Rota", desc: "Staff scheduling and clock-in attendance — location check-in, automatic hours.", href: "/rota", cta: "Learn more" },
       ] as Product[],
     },
@@ -153,7 +154,7 @@ const dict = {
       title: "Why SHOPOPS",
       items: [
         { icon: "direct", title: "Talk to the maker, no outsourcing", desc: "You deal with the person actually building it — no layers, no offshore handoffs." },
-        { icon: "forged", title: "Forged in real use", desc: "Our products are used and refined daily in a real business — not demo ware." },
+        { icon: "forged", title: "Clear setup, step by step", desc: "From the demo to setup, we explain each next step clearly." },
         { icon: "yours", title: "What's yours stays yours", desc: "Zero commission, no data lock-in, no contracts." },
       ] as Reason[],
     },
@@ -183,6 +184,7 @@ const dict = {
 export default function CompanyHome() {
   const { lang } = useLang();
   const t = dict[lang];
+  const pos = POS_CONTENT[lang];
 
   return (
     <main className="flex flex-col">
@@ -252,7 +254,7 @@ export default function CompanyHome() {
                 <div key={p.name} className="bg-surface rounded-xl border border-border p-6 flex flex-col">
                   <Icon className="w-8 h-8 mb-4 text-accent-strong" strokeWidth={2} aria-hidden />
                   <h3 className="text-xl font-bold text-text mb-2">{p.name}</h3>
-                  <p className="text-text-secondary leading-relaxed text-sm sm:text-base flex-1">{p.desc}</p>
+                  <p className="text-text-secondary leading-relaxed text-sm sm:text-base flex-1">{p.isPos ? pos.benefits[1] : p.desc}</p>
                   <a href={p.href} className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-accent-strong hover:text-accent-strong-hover transition">
                     {p.cta} →
                   </a>

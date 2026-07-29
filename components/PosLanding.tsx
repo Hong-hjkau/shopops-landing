@@ -19,24 +19,14 @@ import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection from "@/components/ContactSection";
 import { useLang } from "@/components/LangProvider";
+import { POS_CONTENT } from "@/lib/pos-content";
 
 const MOCKUPS = [SafetyMockup, MarginMockup, InsightsMockup, AllergenMockup, TelegramMockup, WaitlistMockup];
-
-// Hero 大標題 A/B：A = 純痛點、B = 痛點 + 方案。live 比完揀邊個順眼，改呢一行就切換。
-const HERO_VARIANT: "A" | "B" = "B";
 
 const dict = {
   "zh-Hant": {
     nav: { features: "功能", savings: "慳幾多", pricing: "定價", blog: "網誌", contact: "聯絡我們", cta: "預約 Demo", company: "公司首頁" },
-    hero: {
-      titleA: "外賣平台抽走你三成生意，係時候攞返。",
-      titleB: "唔使再畀三成佣金\n一套 ShopOps 搞掂全店點餐。",
-      subtitle:
-        "Deliveroo、Uber Eats 每張單抽 25–35%。ShopOps 一個固定月費、零抽佣 —— QR 自助點餐、員工 POS、後台訂單、斷網照做，一個系統打通客人、樓面、廚房。",
-      ctaPrimary: "預約 Demo",
-      ctaSecondary: "睇下有咩功能",
-      reassure: "免費試用 3 天 (無合約 · 唔使信用卡登記)",
-    },
+    hero: { ctaSecondary: "睇下有咩功能" },
     pains: {
       title: "外賣平台冇講你知嘅三件事",
       items: [
@@ -94,20 +84,12 @@ const dict = {
     },
     pricing: {
       eyebrow: "定價",
-      title: "一個價，全部包，唔使估",
-      subtitle: "每間餐廳規模唔同，留低資料我哋幫你度身報價。",
       price: "請聯絡我們",
       unit: "",
-      trial: "免費試用 3 天 · 確認後首 30 天免費",
       features: [
-        "QR 點餐 + 員工 POS + 後台 + 離線後備，全部包",
-        "進階模組（訂位候位、食安記錄、報表成本等）按需要加",
-        "零交易抽佣",
-        "無合約，月繳隨時取消",
-        "免費 setup + 幫你搬餐單",
+        "落單、廚房及結帳的核心 POS 工具",
       ],
       cta: "預約免費 Demo",
-      note: "客人碌卡畀錢時嗰個手續費，係你嘅收款公司收，唔關 ShopOps 事。",
     },
     faq: {
       title: "常見問題",
@@ -121,11 +103,11 @@ const dict = {
         },
         {
           q: "同 Deliveroo、Uber Eats 有咩分別？",
-          a: "佢哋抽你每張單兩三成、客係佢哋嘅；ShopOps 一個固定月費、零抽佣，客同數據都係你嘅。",
+          a: "請參考以下收費及直接訂單佣金說明。",
         },
         {
           q: "你哋收唔收交易佣金？",
-          a: "零抽佣，你淨係俾固定月費。至於客人碌卡嗰個手續費，係你嘅收款公司收，唔關我哋事。",
+          a: "請參考以下收費及直接訂單佣金說明。",
         },
         {
           q: "而家邊度有得用？",
@@ -156,15 +138,7 @@ const dict = {
   },
   "zh-Hans": {
     nav: { features: "功能", savings: "省多少", pricing: "定价", blog: "博客", contact: "联系我们", cta: "预约 Demo", company: "公司首页" },
-    hero: {
-      titleA: "外卖平台抽走你三成生意，是时候拿回来。",
-      titleB: "不用再付三成佣金\n一套 ShopOps 搞定全店点餐。",
-      subtitle:
-        "Deliveroo、Uber Eats 每张单抽 25–35%。ShopOps 一个固定月费、零抽佣 —— QR 自助点餐、员工 POS、后台订单、断网照做，一个系统打通顾客、前厅、厨房。",
-      ctaPrimary: "预约 Demo",
-      ctaSecondary: "看看有什么功能",
-      reassure: "免费试用 3 天 (无合约 · 不用信用卡登记)",
-    },
+    hero: { ctaSecondary: "看看有什么功能" },
     pains: {
       title: "外卖平台没告诉你的三件事",
       items: [
@@ -222,20 +196,12 @@ const dict = {
     },
     pricing: {
       eyebrow: "定价",
-      title: "一个价，全部包，不用猜",
-      subtitle: "每间餐厅规模不同，留下资料我们帮你度身报价。",
       price: "请联系我们",
       unit: "",
-      trial: "免费试用 3 天 · 确认后首 30 天免费",
       features: [
-        "QR 点餐 + 员工 POS + 后台 + 离线备援，全部包",
-        "进阶模块（订位候位、食安记录、报表成本等）按需要加",
-        "零交易抽佣",
-        "无合约，月付随时取消",
-        "免费 setup + 帮你搬菜单",
+        "点餐、厨房及结账的核心 POS 工具",
       ],
       cta: "预约免费 Demo",
-      note: "顾客刷卡付款时的手续费，是你的收款公司收取，与 ShopOps 无关。",
     },
     faq: {
       title: "常见问题",
@@ -249,11 +215,11 @@ const dict = {
         },
         {
           q: "跟 Deliveroo、Uber Eats 有什么分别？",
-          a: "他们抽你每张单两三成、客是他们的；ShopOps 一个固定月费、零抽佣，客和数据都是你的。",
+          a: "请参考以下收费及直接订单佣金说明。",
         },
         {
           q: "你们收交易佣金吗？",
-          a: "零抽佣，你只付固定月费。至于顾客刷卡的那个手续费，是你的收款公司收，跟我们无关。",
+          a: "请参考以下收费及直接订单佣金说明。",
         },
         {
           q: "现在哪里能用？",
@@ -284,15 +250,7 @@ const dict = {
   },
   en: {
     nav: { features: "Features", savings: "Savings", pricing: "Pricing", blog: "Blog", contact: "Contact", cta: "Book a Demo", company: "Company" },
-    hero: {
-      titleA: "Delivery apps take a third of your sales. Time to take it back.",
-      titleB: "Stop paying a third in commission.\nOne ShopOps runs every order.",
-      subtitle:
-        "Deliveroo and Uber Eats take 25–35% of every order. ShopOps is one flat monthly fee with zero commission — QR self-ordering, staff POS, back-office orders and an offline backup, connecting your customers, floor and kitchen.",
-      ctaPrimary: "Book a Demo",
-      ctaSecondary: "See features",
-      reassure: "Free 3-day trial (no contract · no card needed)",
-    },
+    hero: { ctaSecondary: "See features" },
     pains: {
       title: "Three things delivery apps don't tell you",
       items: [
@@ -350,20 +308,12 @@ const dict = {
     },
     pricing: {
       eyebrow: "Pricing",
-      title: "One price, everything included, no guessing",
-      subtitle: "Every venue is different — leave your details and we'll quote you.",
       price: "Contact us",
       unit: "",
-      trial: "Free 3-day trial · first 30 days free once you join",
       features: [
-        "QR ordering, staff POS, back-office and offline backup — all included",
-        "Add-on modules to suit (reservations, food safety, reports and more)",
-        "Zero transaction commission",
-        "No contract, monthly, cancel anytime",
-        "Free setup and menu migration",
+        "Core POS tools for ordering, kitchen and checkout",
       ],
       cta: "Book a free demo",
-      note: "When customers pay by card, that fee comes from your own card-payment provider, not ShopOps.",
     },
     faq: {
       title: "FAQ",
@@ -383,11 +333,11 @@ const dict = {
         },
         {
           q: "How is this different from Deliveroo or Uber Eats?",
-          a: "They take 25–35% of every order and own your customers. ShopOps is one flat monthly fee with zero commission — the customers and the data are yours.",
+          a: "See the pricing and direct-order commission details below.",
         },
         {
           q: "Do you charge transaction commission?",
-          a: "Zero commission — you only pay the flat monthly fee. The fee on customers' card payments comes from your own card-payment provider, nothing to do with us.",
+          a: "See the pricing and direct-order commission details below.",
         },
         {
           q: "Where is it available?",
@@ -421,7 +371,36 @@ const dict = {
 export default function PosLanding() {
   const { lang } = useLang();
   const t = dict[lang];
-  const heroTitle = HERO_VARIANT === "A" ? t.hero.titleA : t.hero.titleB;
+  const pos = POS_CONTENT[lang];
+  const pricing = {
+    eyebrow: t.pricing.eyebrow,
+    title: pos.pricing.title,
+    subtitle: pos.pricing.body,
+    trial: pos.trial.title,
+    price: t.pricing.price,
+    unit: t.pricing.unit,
+    cta: pos.hero.cta,
+    note: pos.commission.disclaimer,
+    features: t.pricing.features,
+  };
+  const contact = {
+    ...t.contact,
+    subtitle: `${pos.trial.steps[3].detail} ${pos.trial.steps[4].detail} ${pos.trial.steps[5].detail}`,
+    reassure: pos.hero.reassurance,
+  };
+  const faqItems = t.faq.items.map((item, index) =>
+    index === 4 || index === 5
+      ? { ...item, a: `${pos.pricing.body} ${pos.commission.body} ${pos.commission.disclaimer}` }
+      : item,
+  );
+  const schemaItems = dict.en.faq.items.map((item, index) =>
+    index === 4 || index === 5
+      ? {
+          ...item,
+          a: `${POS_CONTENT.en.pricing.body} ${POS_CONTENT.en.commission.body} ${POS_CONTENT.en.commission.disclaimer}`,
+        }
+      : item,
+  );
 
   return (
     <main className="flex flex-col">
@@ -450,21 +429,21 @@ export default function PosLanding() {
             className="mx-auto mb-6 sm:mb-8 w-56 sm:w-72 h-auto glow-accent"
           />
           <h1 className="text-4xl sm:text-6xl font-bold text-hero-text leading-tight tracking-tight">
-            {heroTitle.split("\n").map((line) => (
+            {pos.hero.title.split("\n").map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
             ))}
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-hero-text-secondary leading-relaxed max-w-2xl mx-auto">
-            {t.hero.subtitle}
+            {pos.hero.subtitle}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="#contact"
               className="px-6 py-4 bg-accent text-on-accent rounded-xl font-bold text-base hover:bg-accent-hover transition glow-accent"
             >
-              {t.hero.ctaPrimary}
+              {pos.hero.cta}
             </a>
             <a
               href="#features"
@@ -473,7 +452,7 @@ export default function PosLanding() {
               {t.hero.ctaSecondary}
             </a>
           </div>
-          <p className="mt-5 text-sm text-text-secondary">{t.hero.reassure}</p>
+          <p className="mt-5 text-sm text-text-secondary">{pos.hero.reassurance}</p>
         </div>
       </section>
 
@@ -527,13 +506,13 @@ export default function PosLanding() {
       <SavingsCalculator lang={lang} />
 
       {/* Pricing（共享 PricingCard，POS 帶 features 清單） */}
-      <PricingCard pricing={t.pricing} />
+      <PricingCard pricing={pricing} />
 
       {/* FAQ — schema 固定出英文版（本地 SEO 價值最大），畫面顯示跟當前語言 */}
-      <Faq title={t.faq.title} items={t.faq.items} schemaItems={dict.en.faq.items} />
+      <Faq title={t.faq.title} items={faqItems} schemaItems={schemaItems} />
 
       {/* Contact */}
-      <ContactSection copy={t.contact} source="pos" />
+      <ContactSection copy={contact} source="pos" />
 
       {/* Footer */}
       <SiteFooter text={t.footer} />
