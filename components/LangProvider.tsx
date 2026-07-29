@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import type { Lang } from "@/lib/i18n";
 
 const STORAGE_KEY = "shopops-lang";
@@ -9,13 +9,29 @@ const STORAGE_KEY = "shopops-lang";
 type LangCtx = { lang: Lang; setLang: (l: Lang) => void };
 const LangContext = createContext<LangCtx | null>(null);
 
-export function LangProvider({ children }: { children: React.ReactNode }) {
+type LangProviderProps = {
+  children: React.ReactNode;
+  initialLang?: Lang;
+  persistInitialLang?: boolean;
+  ownsDocumentLang?: boolean;
+};
+
+export function LangProvider({
+  children,
+  initialLang,
+  persistInitialLang = false,
+  ownsDocumentLang = true,
+}: LangProviderProps) {
   // SSR 同首次 client render 都用預設,避免 hydration mismatch;mount 後先由 localStorage 還原
   // 預設英文 —— 對外主要客群係英國;香港用戶切一次中文會記入 localStorage
-  const [lang, setLangState] = useState<Lang>("en");
+  const [lang, setLangState] = useState<Lang>(initialLang ?? "en");
   const pathname = usePathname();
+  const parentContext = useContext(LangContext);
+  const hasPersistedInitialLang = useRef(false);
 
   useEffect(() => {
+    if (initialLang !== undefined) return;
+
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved === "zh-Hant" || saved === "zh-Hans" || saved === "en") {
@@ -31,7 +47,30 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
       // localStorage read 唔可用(cookies 全禁/SecurityError)→ 維持預設語言,唔好 crash 成頁
       // (下面個 setLang setter 已有對應 guard)
     }
+    // initialLang is deliberately read only at mount: the server and first client render
+    // must use the same value, and route navigation mounts a new route-level provider.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!persistInitialLang || initialLang === undefined || hasPersistedInitialLang.current) {
+      return;
+    }
+
+    hasPersistedInitialLang.current = true;
+
+    try {
+      localStorage.setItem(STORAGE_KEY, initialLang);
+    } catch {
+      // localStorage 唔可用(隱私模式等)→ 保持 server 指定嘅初始語言
+    }
+
+    // /pos route provider 係 nested；同步外層 state，令 client-side 離開 POS 後
+    // 唔會即時跳返舊語言。
+    if (parentContext !== null && parentContext.lang !== initialLang) {
+      parentContext.setLang(initialLang);
+    }
+  }, [initialLang, parentContext, persistInitialLang]);
 
   // 同步 <html lang> 同當前語言。SSR 時 layout.tsx hardcode "en"（同上面預設
   // 一致，避 hydration mismatch）；client 端語言一變就更新 DOM。
@@ -45,8 +84,12 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
   // 要明確設返 "en" 而唔係「跳過唔設」—— 由 /pos（繁體）client-side navigate
   // 入 /blog，唔設就會殘留住 zh-Hant。
   useEffect(() => {
+    // /pos 會嵌套 route-level provider。root provider 喺呢條 route 跳過，避免
+    // 兩個 effect 爭住改 <html lang>；內層 provider 則唯一負責同步。
+    if (!ownsDocumentLang || (pathname.startsWith("/pos") && parentContext === null)) return;
+
     document.documentElement.lang = pathname.startsWith("/blog") ? "en" : lang;
-  }, [lang, pathname]);
+  }, [lang, ownsDocumentLang, parentContext, pathname]);
 
   function setLang(l: Lang) {
     setLangState(l);
@@ -54,6 +97,10 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(STORAGE_KEY, l);
     } catch {
       // localStorage 唔可用(隱私模式等)→ 純記憶體 fallback,唔影響切換
+    }
+
+    if (parentContext !== null && parentContext.lang !== l) {
+      parentContext.setLang(l);
     }
   }
 

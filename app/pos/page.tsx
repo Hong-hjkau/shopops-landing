@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
 import PosLanding from "@/components/PosLanding";
+import { LangProvider } from "@/components/LangProvider";
+import { parseQueryLang } from "@/lib/language";
 
 const TITLE = "ShopOps POS — Edinburgh 餐廳點餐系統｜Restaurant POS";
 const DESCRIPTION =
@@ -48,14 +50,27 @@ const jsonLd = {
   },
 };
 
-export default function PosPage() {
+type PosPageProps = {
+  searchParams: Promise<{ lang?: string | string[] }>;
+};
+
+export default async function PosPage({ searchParams }: PosPageProps) {
+  const requestedLang = parseQueryLang((await searchParams).lang);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PosLanding />
+      <LangProvider
+        key={requestedLang ?? "stored"}
+        initialLang={requestedLang}
+        persistInitialLang={requestedLang !== undefined}
+        ownsDocumentLang
+      >
+        <PosLanding />
+      </LangProvider>
     </>
   );
 }
