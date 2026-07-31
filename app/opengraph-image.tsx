@@ -8,7 +8,7 @@ export const contentType = OG_CONTENT_TYPE;
 
 export default async function OpengraphImage() {
   return renderOgImage({
-    eyebrow: POS_CONTENT.en.hero.eyebrow,
+    eyebrow: "POS FOR UK RESTAURANTS · ENGLISH + 中文",
     title: POS_CONTENT.en.hero.title,
     tags: ["QR ordering", "Kitchen screens", "Offline backup"],
     cta: "Book a demo",

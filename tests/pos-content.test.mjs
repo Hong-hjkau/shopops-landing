@@ -386,3 +386,19 @@ test("Rota pricing avoids unsupported bundle and trial CTA claims", () => {
     assert.doesNotMatch(pricingCopy, unsupported);
   }
 });
+
+test("homepage sharing positions the POS across the UK", () => {
+  const ogImage = readFileSync(
+    new URL("../app/opengraph-image.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(ogImage, /return renderOgImage\(\{/);
+  assert.match(ogImage, /title: POS_CONTENT\.en\.hero\.title/);
+  assert.ok(
+    ogImage.includes(
+      'eyebrow: "POS FOR UK RESTAURANTS · ENGLISH + 中文"',
+    ),
+  );
+  assert.doesNotMatch(ogImage, /Edinburgh/i);
+});
