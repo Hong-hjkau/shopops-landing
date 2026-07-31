@@ -3,35 +3,39 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { POS_CONTENT } from "@/lib/pos-content";
 
 type Lang = "hant" | "hans" | "en";
 
-const L: Record<Lang, { label: string; img: string; w: number; h: number; cta: string; sub: string; foot: string }> = {
+const L: Record<Lang, { label: string; img: string; alt: string; w: number; h: number; cta: string; sub: string; foot: string }> = {
   hant: {
     label: "繁",
     img: "/comic-hant.webp",
+    alt: "小店老闆面對文書、點餐系統、重複工作同資料整理嘅日常情況",
     w: 864,
     h: 1820,
     cta: "了解更多 / 預約 Demo →",
-    sub: "免費試用 3 天 · 無合約 · 零抽佣",
+    sub: POS_CONTENT["zh-Hant"].hero.reassurance,
     foot: "© 2026 ShopOps 店管家 · Edinburgh",
   },
   hans: {
     label: "简",
     img: "/comic-hans.webp",
+    alt: "小店老板面对文书、点餐系统、重复工作和资料整理的日常情况",
     w: 864,
     h: 1821,
     cta: "了解更多 / 预约 Demo →",
-    sub: "免费试用 3 天 · 无合约 · 零抽佣",
+    sub: POS_CONTENT["zh-Hans"].hero.reassurance,
     foot: "© 2026 ShopOps 店管家 · Edinburgh",
   },
   en: {
     label: "EN",
     img: "/comic-en.webp",
+    alt: "A small business owner dealing with paperwork, ordering systems, repetitive work and scattered information",
     w: 876,
     h: 1796,
     cta: "Learn more / Book a Demo →",
-    sub: "Free 3-day trial · No contract · No commission",
+    sub: POS_CONTENT.en.hero.reassurance,
     foot: "© 2026 ShopOps · Edinburgh",
   },
 };
@@ -67,7 +71,7 @@ export default function ComicAd() {
 
         <Image
           src={t.img}
-          alt="小店老闆嘅日常煩惱：收工後文書做不完、買咗 POS 但功能唔啱用、日日重複悶到爆、要搵嘅資料太多做唔哂——店管家 ShopOps 度身訂造解決方案，營運智能化效率倍增"
+          alt={t.alt}
           width={t.w}
           height={t.h}
           priority

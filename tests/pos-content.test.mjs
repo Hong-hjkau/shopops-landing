@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { POS_CONTENT } from "../lib/pos-content.ts";
 
 const languages = ["en", "zh-Hant", "zh-Hans"];
@@ -421,4 +421,65 @@ test("homepage sharing positions the POS across the UK", () => {
     ),
   );
   assert.doesNotMatch(ogImage, /Edinburgh/i);
+});
+
+test("this-is-you metadata and comic use neutral shared claims", () => {
+  const page = readFileSync(
+    new URL("../app/this-is-you/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const comic = readFileSync(
+    new URL("../app/this-is-you/ComicAd.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.equal((page.match(/減少重複工作，令營運更清晰/g) ?? []).length, 2);
+  assert.doesNotMatch(page, /效率倍增/);
+  for (const wiring of [
+    'sub: POS_CONTENT["zh-Hant"].hero.reassurance',
+    'sub: POS_CONTENT["zh-Hans"].hero.reassurance',
+    'sub: POS_CONTENT.en.hero.reassurance',
+  ]) {
+    assert.ok(comic.includes(wiring), `comic should use ${wiring}`);
+  }
+  for (const alt of [
+    'alt: "小店老闆面對文書、點餐系統、重複工作同資料整理嘅日常情況"',
+    'alt: "小店老板面对文书、点餐系统、重复工作和资料整理的日常情况"',
+    'alt: "A small business owner dealing with paperwork, ordering systems, repetitive work and scattered information"',
+  ]) {
+    assert.ok(comic.includes(alt), `comic should include ${alt}`);
+  }
+  assert.match(comic, /alt=\{t\.alt\}/);
+});
+
+test("all public app and component sources avoid exact unsupported claims", () => {
+  const collectSourceFiles = (directory) =>
+    readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+      const target = new URL(`${entry.name}${entry.isDirectory() ? "/" : ""}`, directory);
+      if (entry.isDirectory()) return collectSourceFiles(target);
+      return entry.isFile() && /\.(?:js|jsx|ts|tsx)$/.test(entry.name) ? [target] : [];
+    });
+  const publicFiles = ["../app/", "../components/"].flatMap((directory) =>
+    collectSourceFiles(new URL(directory, import.meta.url)),
+  );
+  const unsupportedNoCommission = /No commission/i;
+  const unsupported = [
+    /效率倍增/,
+    /零抽佣/,
+    unsupportedNoCommission,
+    /無合約/,
+    /无合约/,
+    /No contract/i,
+  ];
+  assert.doesNotMatch(
+    "No ShopOps commission for direct orders",
+    unsupportedNoCommission,
+  );
+
+  for (const file of publicFiles) {
+    const source = readFileSync(file, "utf8");
+    for (const pattern of unsupported) {
+      assert.doesNotMatch(source, pattern, file.pathname);
+    }
+  }
 });
