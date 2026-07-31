@@ -1,6 +1,6 @@
 # ShopOps Landing Page
 
-對外推廣 ShopOps（Edinburgh 餐廳點餐管理系統）嘅 marketing landing page，獨立於 ShopOps app。
+對外向全英國餐廳推廣 ShopOps POS 嘅 UK-wide marketing landing page；ShopOps 公司基地位於 Edinburgh，網站獨立於 ShopOps app。
 
 ## 技術 stack
 
@@ -18,6 +18,13 @@ npm run dev
 ```
 
 預設 port 3000，被佔住會自動跳 3001。
+
+## 驗證
+
+```powershell
+npm run test:content
+npm run verify
+```
 
 ## 環境變數
 

@@ -259,6 +259,73 @@ test("homepage preserves the approved dark header palette", () => {
   assert.doesNotMatch(header, /bg-bg\/80/);
 });
 
+test("POS metadata and sharing position the product across the UK", () => {
+  const page = readFileSync(new URL("../app/pos/page.tsx", import.meta.url), "utf8");
+  const ogImage = readFileSync(
+    new URL("../app/pos/opengraph-image.tsx", import.meta.url),
+    "utf8",
+  );
+  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+
+  assert.ok(
+    page.includes(
+      'const TITLE = "ShopOps POS — Bilingual Restaurant POS for UK Restaurants";',
+    ),
+  );
+  assert.ok(
+    page.includes(
+      '"ShopOps is a bilingual restaurant POS for UK restaurants, with QR ordering, staff POS, a live kitchen screen and offline backup.";',
+    ),
+  );
+  assert.match(page, /const OG_TITLE_EN = TITLE;/);
+  assert.match(page, /const OG_DESC_EN = DESCRIPTION;/);
+  assert.match(page, /export const metadata: Metadata = \{\s*title: TITLE,\s*description: DESCRIPTION,/);
+  assert.match(page, /openGraph: \{\s*title: OG_TITLE_EN,\s*description: OG_DESC_EN,/);
+  assert.match(page, /twitter: \{\s*card: "summary_large_image",\s*title: OG_TITLE_EN,\s*description: OG_DESC_EN,/);
+  for (const phrase of [
+    "bilingual restaurant POS",
+    "QR ordering",
+    "staff POS",
+    "kitchen screen",
+    "offline backup",
+  ]) {
+    assert.match(page, new RegExp(phrase, "i"));
+  }
+  assert.match(page, /alternates: \{ canonical: "\/pos" \}/);
+  assert.ok(
+    page.includes(
+      'areaServed: { "@type": "Country", name: "United Kingdom" }',
+    ),
+  );
+  assert.ok(
+    page.includes('JSON.stringify(jsonLd).replace(/</g, "\\\\u003c")'),
+  );
+  assert.doesNotMatch(page, /Edinburgh/i);
+
+  assert.match(ogImage, /renderOgImage/);
+  assert.ok(
+    ogImage.includes(
+      'export const alt = "ShopOps POS — Bilingual Restaurant POS for UK Restaurants";',
+    ),
+  );
+  assert.match(ogImage, /UK restaurants/i);
+  for (const phrase of [
+    "Bilingual POS",
+    "QR ordering",
+    "Staff POS",
+    "Kitchen screen",
+    "Offline backup",
+  ]) {
+    assert.match(ogImage, new RegExp(phrase, "i"));
+  }
+  assert.doesNotMatch(ogImage, /Edinburgh/i);
+
+  assert.match(readme, /across the (?:UK|United Kingdom)|UK-wide/i);
+  assert.match(readme, /based in Edinburgh|基地位於 Edinburgh/i);
+  assert.match(readme, /npm run test:content/);
+  assert.match(readme, /npm run verify/);
+});
+
 test("homepage places the approved three-language FAQ before contact", () => {
   const home = readFileSync(
     new URL("../components/CompanyHome.tsx", import.meta.url),

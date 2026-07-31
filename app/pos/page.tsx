@@ -4,13 +4,12 @@ import PosLanding from "@/components/PosLanding";
 import { LangProvider } from "@/components/LangProvider";
 import { parseQueryLang } from "@/lib/language";
 
-const TITLE = "ShopOps POS — Edinburgh 餐廳點餐系統｜Restaurant POS";
+const TITLE = "ShopOps POS — Bilingual Restaurant POS for UK Restaurants";
 const DESCRIPTION =
-  "為 Edinburgh 細餐廳而設嘅點餐系統：QR 點餐、員工 POS、廚房看板、離線後備。Ordering for Edinburgh restaurants — QR, POS, kitchen board, offline.";
+  "ShopOps is a bilingual restaurant POS for UK restaurants, with QR ordering, staff POS, a live kitchen screen and offline backup.";
 // 分享預覽（OG / Twitter）用英文 —— 主要對象係英國客
-const OG_TITLE_EN = "ShopOps POS — Restaurant ordering for Edinburgh";
-const OG_DESC_EN =
-  "All-in-one ordering for small Edinburgh restaurants — QR self-ordering, staff POS, live kitchen board and offline backup.";
+const OG_TITLE_EN = TITLE;
+const OG_DESC_EN = DESCRIPTION;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -31,7 +30,7 @@ export const metadata: Metadata = {
   },
 };
 
-// JSON-LD:POS 產品 + 服務 Edinburgh,搬自原 root layout
+// JSON-LD: POS product and UK-wide service coverage
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -39,9 +38,8 @@ const jsonLd = {
   applicationCategory: "BusinessApplication",
   operatingSystem: "Web",
   url: `${SITE_URL}/pos`,
-  description:
-    "All-in-one ordering system for small Edinburgh restaurants — QR self-ordering, staff POS, live kitchen board and offline backup.",
-  areaServed: { "@type": "City", name: "Edinburgh" },
+  description: DESCRIPTION,
+  areaServed: { "@type": "Country", name: "United Kingdom" },
   publisher: {
     "@type": "Organization",
     name: "ShopOps",
@@ -61,7 +59,9 @@ export default async function PosPage({ searchParams }: PosPageProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+        }}
       />
       <LangProvider
         key={requestedLang ?? "stored"}
