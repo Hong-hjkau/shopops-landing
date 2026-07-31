@@ -44,7 +44,7 @@ const dict = {
     pricing: {
       eyebrow: "簡單定價",
       title: "清晰月費方案",
-      subtitle: "先免費試用，全包、無合約、隨時取消。留低資料我哋同你傾報價。",
+      subtitle: "留下資料，我們會按你的業務需要說明方案及報價。",
       trial: "免費試用",
       price: "請聯絡我們",
       unit: "",
@@ -111,7 +111,7 @@ const dict = {
     pricing: {
       eyebrow: "简单定价",
       title: "清晰月费方案",
-      subtitle: "先免费试用，全包、无合约、随时取消。留下资料我们和你谈报价。",
+      subtitle: "留下资料，我们会按你的业务需要说明方案及报价。",
       trial: "免费试用",
       price: "请联系我们",
       unit: "",
@@ -178,7 +178,7 @@ const dict = {
     pricing: {
       eyebrow: "Simple pricing",
       title: "Straightforward monthly pricing",
-      subtitle: "Start with a free trial — all in, no contract, cancel anytime. Leave your details and we'll quote you.",
+      subtitle: "Leave your details and we'll explain the plan and quote for your business.",
       trial: "Free trial",
       price: "Contact us",
       unit: "",

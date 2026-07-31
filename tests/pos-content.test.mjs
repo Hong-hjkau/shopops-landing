@@ -362,9 +362,21 @@ test("Rota pricing avoids unsupported bundle and trial CTA claims", () => {
   const pricingCopy = pricingBlocks.map((match) => match[1]).join("\n");
 
   const approvedByLanguage = [
-    ['title: "清晰月費方案"', 'cta: "查詢 Rota"'],
-    ['title: "清晰月费方案"', 'cta: "咨询 Rota"'],
-    ['title: "Straightforward monthly pricing"', 'cta: "Ask about Rota"'],
+    [
+      'title: "清晰月費方案"',
+      'subtitle: "留下資料，我們會按你的業務需要說明方案及報價。"',
+      'cta: "查詢 Rota"',
+    ],
+    [
+      'title: "清晰月费方案"',
+      'subtitle: "留下资料，我们会按你的业务需要说明方案及报价。"',
+      'cta: "咨询 Rota"',
+    ],
+    [
+      'title: "Straightforward monthly pricing"',
+      'subtitle: "Leave your details and we\'ll explain the plan and quote for your business."',
+      'cta: "Ask about Rota"',
+    ],
   ];
   for (const [index, approvedCopy] of approvedByLanguage.entries()) {
     for (const approved of approvedCopy) {
@@ -382,6 +394,14 @@ test("Rota pricing avoids unsupported bundle and trial CTA claims", () => {
     /cta: "免費試用"/,
     /title: "一个价，全部包"/,
     /cta: "免费试用"/,
+    /全包/,
+    /無合約/,
+    /无合约/,
+    /隨時取消/,
+    /随时取消/,
+    /all in/i,
+    /no contract/i,
+    /cancel anytime/i,
   ]) {
     assert.doesNotMatch(pricingCopy, unsupported);
   }
