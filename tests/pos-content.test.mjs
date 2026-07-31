@@ -351,3 +351,38 @@ test("homepage places the approved three-language FAQ before contact", () => {
     assert.ok(home.includes(token), `FAQ should use the shared POS fact ${token}`);
   }
 });
+
+test("Rota pricing avoids unsupported bundle and trial CTA claims", () => {
+  const rota = readFileSync(
+    new URL("../components/RotaLanding.tsx", import.meta.url),
+    "utf8",
+  );
+  const pricingBlocks = [...rota.matchAll(/pricing: \{([\s\S]*?)\n    \},\n    faq:/g)];
+  assert.equal(pricingBlocks.length, 3);
+  const pricingCopy = pricingBlocks.map((match) => match[1]).join("\n");
+
+  const approvedByLanguage = [
+    ['title: "清晰月費方案"', 'cta: "查詢 Rota"'],
+    ['title: "清晰月费方案"', 'cta: "咨询 Rota"'],
+    ['title: "Straightforward monthly pricing"', 'cta: "Ask about Rota"'],
+  ];
+  for (const [index, approvedCopy] of approvedByLanguage.entries()) {
+    for (const approved of approvedCopy) {
+      assert.ok(
+        pricingBlocks[index][1].includes(approved),
+        `Rota pricing block ${index + 1} should include ${approved}`,
+      );
+    }
+  }
+
+  for (const unsupported of [
+    /title: "One price, everything included"/i,
+    /cta: "Start free trial"/i,
+    /title: "一個價，全部包"/,
+    /cta: "免費試用"/,
+    /title: "一个价，全部包"/,
+    /cta: "免费试用"/,
+  ]) {
+    assert.doesNotMatch(pricingCopy, unsupported);
+  }
+});
