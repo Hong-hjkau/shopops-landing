@@ -7,9 +7,8 @@ import type { Lang } from "@/lib/i18n";
 // 跟 component-first 原則抽成獨立檔。佢只食 `lang` prop，自帶 zh/en 文案，
 // 由 page.tsx 嘅同一個 lang state 驅動，維持全站雙語一致。
 //
-// 對比對象係「外賣平台抽佣」(Deliveroo/Uber Eats 25–35%、Just Eat 14–17%)，
-// 唔係卡機過卡費 —— ShopOps 唔做卡機，過卡費轉咗都照俾，講卡機會誤導。
-// ShopOps 慳到嘅係：引導熟客 / 回頭客去自家 QR / 外賣網落單，嗰部分唔使俾平台抽。
+// 呢個只係一個「直接訂單」使用場景：餐廳自行輸入合約佣金率，
+// 睇下可轉去自家落單嘅部分一年涉及幾多平台佣金。
 //
 // 注意：呢度刻意唔顯示 ShopOps 月費（網站已改成「請聯絡我們」報價），
 // 所以「慳返」= 呢部分生意轉去自家落單後唔使俾平台嘅佣金，唔再減 ShopOps 月費。
@@ -28,51 +27,51 @@ const RATE_STEP = 1;
 const copy = {
   "zh-Hant": {
     eyebrow: "慳返平台抽佣",
-    title: "外賣平台每張單抽你兩三成？計下一年俾咗幾多",
+    title: "估算可轉去自家落單部分的年度平台佣金",
     subtitle:
-      "Deliveroo、Uber Eats 一張單抽 25–35%，Just Eat 都要 14–17%。熟客、回頭客其實唔需要經平台 —— 用 ShopOps 自家 QR 同外賣網落單，呢部分生意一蚊佣金都唔使俾。拉下面條 bar，睇下你一年慳幾多。",
+      "輸入你可轉去自家落單的營業額，以及你現時合約的佣金率，看看該部分的年度估算。",
     turnoverLabel: "每月外賣平台營業額（可以轉去自家落單嗰部分）",
     rateLabel: "平台抽佣率",
-    rateHint: "Deliveroo / Uber Eats 約 25–35%，Just Eat 約 14–17%",
-    resultLead: "外賣平台一年抽走你",
+    rateHint: "請按你現時的平台合約輸入",
+    resultLead: "這部分訂單的年度估算平台佣金",
     perYear: "／年",
     resultSub:
-      "把熟客、回頭客轉去自家 QR／外賣網落單，呢部分生意一蚊佣金都唔使俾平台 —— 即係一年慳返呢筆。",
-    cta: "預約 Demo，慳返呢筆",
+      "這是按你輸入的營業額和佣金率計算的估算，不包括任何其他費用。",
+    cta: "預約 Demo，了解直接落單",
     disclaimer:
-      "數字只供參考，按你輸入嘅金額同抽佣率即時估算；實際平台收費以各自合約為準，亦視乎你有幾多生意可以轉去自家落單。ShopOps 收固定月費、不抽交易佣金（客人碌卡嗰個手續費仍由你嘅收款公司收，與 ShopOps 無關）。報價請聯絡我哋。",
+      "數字只供參考，按你輸入的金額和佣金率即時估算；實際平台收費視乎各自合約及可轉去自家落單的生意。透過你的 ShopOps 點餐渠道落單，ShopOps 不會收取佣金；信用卡付款處理費另計。",
   },
   "zh-Hans": {
     eyebrow: "省回平台抽佣",
-    title: "外卖平台每张单抽你两三成？算算一年付了多少",
+    title: "估算可转去自家下单部分的年度平台佣金",
     subtitle:
-      "Deliveroo、Uber Eats 一张单抽 25–35%，Just Eat 也要 14–17%。熟客、回头客其实不需要经平台 —— 用 ShopOps 自家 QR 和外卖网下单，这部分生意一分佣金都不用付。拉下面的滑块，看看你一年省多少。",
+      "输入你可转去自家下单的营业额，以及你现时合约的佣金率，看看该部分的年度估算。",
     turnoverLabel: "每月外卖平台营业额（可以转去自家下单的部分）",
     rateLabel: "平台抽佣率",
-    rateHint: "Deliveroo / Uber Eats 约 25–35%，Just Eat 约 14–17%",
-    resultLead: "外卖平台一年抽走你",
+    rateHint: "请按你现时的平台合约输入",
+    resultLead: "这部分订单的年度估算平台佣金",
     perYear: "／年",
     resultSub:
-      "把熟客、回头客转去自家 QR／外卖网下单，这部分生意一分佣金都不用付给平台 —— 也就是一年省回这笔。",
-    cta: "预约 Demo，省回这笔",
+      "这是按你输入的营业额和佣金率计算的估算，不包括任何其他费用。",
+    cta: "预约 Demo，了解直接下单",
     disclaimer:
-      "数字仅供参考，按你输入的金额和抽佣率即时估算；实际平台收费以各自合约为准，也视乎你有多少生意可以转去自家下单。ShopOps 收固定月费、不抽交易佣金（顾客刷卡的手续费仍由你的收款公司收取，与 ShopOps 无关）。报价请联系我们。",
+      "数字仅供参考，按你输入的金额和佣金率即时估算；实际平台收费视乎各自合约及可转去自家下单的生意。通过你的 ShopOps 点餐渠道下单，ShopOps 不会收取佣金；信用卡付款处理费另计。",
   },
   en: {
     eyebrow: "Cut delivery commission",
-    title: "Delivery apps taking 25–35% per order? See the yearly cost",
+    title: "Estimate annual platform commission on the direct-order share",
     subtitle:
-      "Deliveroo and Uber Eats take 25–35% of every order; Just Eat 14–17%. Your regulars and repeat customers don't need the middleman — when they order through ShopOps' own QR and ordering site, you pay zero commission on that business. Drag the sliders to see your yearly saving.",
+      "Enter the turnover you could move to your own ordering and the rate in your current contract to estimate that portion's annual platform commission.",
     turnoverLabel: "Monthly delivery-app turnover (the share you can move to your own ordering)",
     rateLabel: "Platform commission rate",
-    rateHint: "Deliveroo / Uber Eats ~25–35%, Just Eat ~14–17%",
-    resultLead: "Platforms take from you each year",
+    rateHint: "Set this to the rate in your current platform contract",
+    resultLead: "Estimated annual platform commission on this portion",
     perYear: "/year",
     resultSub:
-      "Move regulars and repeat customers to your own QR and ordering site and you pay zero commission on that business — that's what you keep each year.",
-    cta: "Book a demo & keep this",
+      "This estimate uses the turnover and rate you enter, and excludes all other fees.",
+    cta: "Book a demo to discuss direct ordering",
     disclaimer:
-      "Estimate only, based on the amount and rate you enter; actual platform fees depend on each contract and on how much business you can move to your own ordering. ShopOps charges one flat monthly fee with no transaction commission (any card fee on customer payments still comes from your own card-payment provider, separate from ShopOps). Contact us for a quote.",
+      "Estimate only, based on the amount and rate you enter; actual platform fees depend on each contract and on how much business you can move to your own ordering. No ShopOps commission applies to orders placed through your own ShopOps ordering channels. Card-processing fees remain separate.",
   },
 } as const;
 

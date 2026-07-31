@@ -72,8 +72,91 @@ test("POS contact has no shadow offer copy outside the shared content", () => {
   ]) {
     assert.doesNotMatch(page, pattern);
   }
-  assert.match(page, /subtitle: `\$\{pos\.trial\.steps\[3\]\.detail\}/);
+  assert.match(page, /pos\.trial\.steps\[3\]\.detail/);
   assert.match(page, /reassure: pos\.hero\.reassurance/);
+});
+
+test("POS page follows the approved factual product journey", () => {
+  const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  const requiredOrder = [
+    "<PosHero",
+    "<PosWorkflow",
+    'id="order-journey"',
+    'id="restaurant-scenarios"',
+    '<PosFeatureGrid lang={lang} id="core-features"',
+    'id="bilingual"',
+    "<HardwareOptions",
+    'id="optional-modules"',
+    "<SavingsCalculator",
+    "<TrialJourney",
+    "<PricingCard",
+    "<Faq",
+    "<ContactSection",
+  ];
+
+  let previousIndex = -1;
+  for (const token of requiredOrder) {
+    const index = page.indexOf(token);
+    assert.ok(index >= 0, `POS page should include ${token}`);
+    assert.ok(index > previousIndex, `${token} should follow the previous POS section`);
+    previousIndex = index;
+  }
+});
+
+test("POS FAQ and FAQ schema retain the complete six-step trial timeline", () => {
+  const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  assert.match(page, /const trialAnswer = pos\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\);/);
+  assert.match(page, /const englishTrialAnswer = POS_CONTENT\.en\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\);/);
+  assert.match(page, /a: trialAnswer/);
+  assert.match(page, /a: englishTrialAnswer/);
+});
+
+test("POS core features and commission FAQ keep the approved capability and fee boundaries", () => {
+  const features = readFileSync(new URL("../components/PosFeatureGrid.tsx", import.meta.url), "utf8");
+  for (const token of [
+    'title: "QR and staff ordering"',
+    'title: "Kitchen screen"',
+    'title: "Dine-in, takeaway and pre-orders"',
+    'title: "Checkout controls"',
+    'title: "Offline backup"',
+    'title: "Menu and availability"',
+  ]) assert.ok(features.includes(token), `core features should include ${token}`);
+
+  const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  assert.match(page, /providerFeesA/);
+  assert.match(page, /pos\.commission\.body\} \$\{pos\.commission\.disclaimer\} \$\{t\.faq\.providerFeesA\}/);
+  assert.match(page, /the same order in Chinese/);
+  assert.match(page, /同一張訂單/);
+  assert.match(page, /同一张订单/);
+});
+
+test("POS surface avoids unproven, absolute, and competitor-specific claims", () => {
+  const files = [
+    "../components/PosLanding.tsx",
+    "../components/PosFeatureGrid.tsx",
+    "../components/SavingsCalculator.tsx",
+    "../components/PricingCard.tsx",
+  ];
+  const prohibited = [
+    /every order/i,
+    /one price, everything included/i,
+    /all in, no contract/i,
+    /typical POS/i,
+    /most POS/i,
+    /automatically sync/i,
+    /Deliveroo.*25–35%/i,
+    /Uber Eats.*25–35%/i,
+    /Just Eat.*14–17%/i,
+  ];
+
+  for (const file of files) {
+    const source = readFileSync(new URL(file, import.meta.url), "utf8");
+    for (const pattern of prohibited) assert.doesNotMatch(source, pattern, file);
+  }
+
+  const calculator = readFileSync(new URL("../components/SavingsCalculator.tsx", import.meta.url), "utf8");
+  assert.match(calculator, /actual platform fees depend on each contract/i);
+  assert.match(calculator, /Card-processing fees remain separate/i);
 });
 
 test("all languages keep the approved workflow, trial, and existing-device scope", () => {
