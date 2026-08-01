@@ -10,7 +10,7 @@ export default function PosHero({
     <section id="top" className="relative overflow-hidden bg-black">
       <div
         aria-hidden="true"
-        className="relative aspect-[16/9] w-full sm:absolute sm:inset-0 sm:aspect-auto"
+        className="relative aspect-[16/9] w-full lg:absolute lg:inset-0 lg:aspect-auto"
       >
         <Image
           src="/pos-hero-wide.png"
@@ -18,17 +18,17 @@ export default function PosHero({
           fill
           priority
           sizes="100vw"
-          className="object-cover object-left sm:object-center"
+          className="object-cover object-left lg:object-center"
         />
       </div>
       <div
         aria-hidden="true"
-        className="absolute inset-0 hidden bg-gradient-to-l from-black/70 via-black/25 to-transparent sm:block"
+        className="absolute inset-0 hidden bg-gradient-to-l from-black/70 via-black/25 to-transparent lg:block"
       />
 
-      <div className="relative mx-auto grid max-w-6xl px-4 pb-14 sm:min-h-[34rem] sm:grid-cols-2 sm:items-center sm:px-6 sm:py-20">
-        <div aria-hidden="true" className="hidden sm:block" />
-        <div className="max-w-xl pt-8 sm:pt-0">
+      <div className="relative mx-auto grid max-w-6xl px-4 pb-14 sm:px-6 lg:min-h-[34rem] lg:grid-cols-2 lg:items-center lg:py-20">
+        <div aria-hidden="true" className="hidden lg:block" />
+        <div className="max-w-xl pt-8 lg:pt-0">
           <p className="text-sm font-semibold tracking-wide text-accent">{copy.eyebrow}</p>
           <h1 className="mt-4 text-4xl font-bold tracking-tight text-hero-text sm:text-5xl">
             {copy.title}

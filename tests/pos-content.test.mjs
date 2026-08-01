@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { POS_CONTENT } from "../lib/pos-content.ts";
 
 const languages = ["en", "zh-Hant", "zh-Hans"];
@@ -245,11 +245,15 @@ test("shared POS hero uses one seamless responsive artwork with live copy", () =
     "utf8",
   );
 
+  assert.equal(
+    existsSync(new URL("../public/pos-hero-wide.png", import.meta.url)),
+    true,
+  );
   assert.match(hero, /src="\/pos-hero-wide\.png"/);
   assert.match(hero, /alt=""/);
   assert.match(hero, /aria-hidden="true"/);
-  assert.match(hero, /sm:absolute/);
-  assert.match(hero, /sm:grid-cols-2/);
+  assert.match(hero, /lg:absolute/);
+  assert.match(hero, /lg:grid-cols-2/);
   assert.match(hero, /copy\.eyebrow/);
   assert.match(hero, /copy\.title/);
   assert.match(hero, /copy\.subtitle/);
