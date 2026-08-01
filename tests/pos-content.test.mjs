@@ -483,3 +483,31 @@ test("all public app and component sources avoid exact unsupported claims", () =
     }
   }
 });
+
+test("homepage FAQ explains suitable food businesses without Edinburgh", () => {
+  const home = readFileSync(
+    new URL("../components/CompanyHome.tsx", import.meta.url),
+    "utf8",
+  );
+
+  const approved = [
+    [
+      'area: "What types of food businesses is ShopOps POS suitable for?"',
+      'areaAnswer: "It is suitable for independent food businesses such as market stalls, cafés, small restaurants and takeaway shops. We can learn about your setup during the demo."',
+    ],
+    [
+      'area: "ShopOps POS 適合甚麼類型的餐飲生意？"',
+      'areaAnswer: "適合市集攤位、咖啡店、小餐館及外賣店等獨立餐飲生意。我們可以在示範時了解你的營運方式。"',
+    ],
+    [
+      'area: "ShopOps POS 适合什么类型的餐饮生意？"',
+      'areaAnswer: "适合市集摊位、咖啡店、小餐馆及外卖店等独立餐饮生意。我们可以在演示时了解你的营运方式。"',
+    ],
+  ];
+
+  for (const pair of approved) {
+    for (const copy of pair) assert.ok(home.includes(copy), copy);
+  }
+  assert.doesNotMatch(home, /Edinburgh 以外的餐廳可以使用嗎|Edinburgh 以外的餐厅可以使用吗|Can restaurants outside Edinburgh use it/i);
+  assert.doesNotMatch(home, /ShopOps POS 為英國獨立餐廳而設。ShopOps 以 Edinburgh 為基地。|ShopOps POS 为英国独立餐厅而设。ShopOps 以 Edinburgh 为基地。|ShopOps POS is for independent UK restaurants. ShopOps is based in Edinburgh./i);
+});
