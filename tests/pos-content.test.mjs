@@ -197,6 +197,20 @@ test("workflow renders the four approved POS demo screenshots in journey order",
   assert.match(workflow, /const WORKFLOW_IMAGES = \[orderEntry, kitchenOrder, floorProgress, checkoutReport\] as const;/);
   assert.match(workflow, /copy\.steps\.map\(\(step, index\) => \(\s*[\s\S]*?src=\{WORKFLOW_IMAGES\[index\]\}/);
   assert.match(workflow, /id="workflow"/);
+
+  const register = readFileSync(
+    new URL("../docs/pos-demo-screenshot-register.md", import.meta.url),
+    "utf8",
+  );
+  for (const file of [
+    "order-entry.webp",
+    "kitchen-order.webp",
+    "floor-progress.webp",
+    "checkout-report.webp",
+  ]) {
+    assert.match(register, new RegExp(`\\| \`${file}\` [^\\n]*\\| EN \\|`));
+  }
+  assert.match(register, /4 source stages = 4 English assets, zero gap/i);
 });
 
 test("homepage assembles the POS journey before secondary offerings and contact", () => {
