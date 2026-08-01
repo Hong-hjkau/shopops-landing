@@ -7,20 +7,28 @@ export default function PosHero({
   copy: PosSharedContent["hero"];
 }) {
   return (
-    <section id="top" className="bg-hero-bg px-4 py-14 sm:px-6 sm:py-20">
-      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 sm:items-center sm:gap-16">
-        <div className="flex justify-center sm:justify-start">
-          <Image
-            src="/logo.png"
-            alt="ShopOps"
-            width={880}
-            height={495}
-            priority
-            className="glow-accent h-auto w-full max-w-sm"
-          />
-        </div>
+    <section id="top" className="relative overflow-hidden bg-black">
+      <div
+        aria-hidden="true"
+        className="relative aspect-[16/9] w-full sm:absolute sm:inset-0 sm:aspect-auto"
+      >
+        <Image
+          src="/pos-hero-wide.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-left sm:object-center"
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 hidden bg-gradient-to-l from-black/70 via-black/25 to-transparent sm:block"
+      />
 
-        <div className="max-w-xl">
+      <div className="relative mx-auto grid max-w-6xl px-4 pb-14 sm:min-h-[34rem] sm:grid-cols-2 sm:items-center sm:px-6 sm:py-20">
+        <div aria-hidden="true" className="hidden sm:block" />
+        <div className="max-w-xl pt-8 sm:pt-0">
           <p className="text-sm font-semibold tracking-wide text-accent">{copy.eyebrow}</p>
           <h1 className="mt-4 text-4xl font-bold tracking-tight text-hero-text sm:text-5xl">
             {copy.title}

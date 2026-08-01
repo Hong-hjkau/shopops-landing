@@ -239,6 +239,25 @@ test("homepage assembles the POS journey before secondary offerings and contact"
   }
 });
 
+test("shared POS hero uses one seamless responsive artwork with live copy", () => {
+  const hero = readFileSync(
+    new URL("../components/PosHero.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(hero, /src="\/pos-hero-wide\.png"/);
+  assert.match(hero, /alt=""/);
+  assert.match(hero, /aria-hidden="true"/);
+  assert.match(hero, /sm:absolute/);
+  assert.match(hero, /sm:grid-cols-2/);
+  assert.match(hero, /copy\.eyebrow/);
+  assert.match(hero, /copy\.title/);
+  assert.match(hero, /copy\.subtitle/);
+  assert.match(hero, /copy\.cta/);
+  assert.match(hero, /copy\.reassurance/);
+  assert.doesNotMatch(hero, /src="\/logo\.png"/);
+});
+
 test("homepage keeps POS demo enquiries distinct and delays the full nav until wide screens", () => {
   const home = readFileSync(
     new URL("../components/CompanyHome.tsx", import.meta.url),
