@@ -18,7 +18,7 @@ export default function PosHero({
           fill
           priority
           sizes="100vw"
-          className="object-cover object-left lg:object-center"
+          className="object-cover object-left lg:object-center 2xl:object-contain 2xl:object-left"
         />
       </div>
       <div

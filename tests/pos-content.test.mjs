@@ -254,6 +254,8 @@ test("shared POS hero uses one seamless responsive artwork with live copy", () =
   assert.match(hero, /aria-hidden="true"/);
   assert.match(hero, /lg:absolute/);
   assert.match(hero, /lg:grid-cols-2/);
+  assert.match(hero, /2xl:object-contain/);
+  assert.match(hero, /2xl:object-left/);
   assert.match(hero, /copy\.eyebrow/);
   assert.match(hero, /copy\.title/);
   assert.match(hero, /copy\.subtitle/);
