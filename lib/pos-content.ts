@@ -4,8 +4,6 @@ type TrialStep = { title: string; detail: string };
 
 export type PosSharedContent = {
   trialDays: 3;
-  freeActivationDays: 30;
-  firstChargeDay: 31;
   trialNeedsCard: false;
   trialAutoCharges: false;
   hero: {
@@ -35,8 +33,6 @@ export type PosSharedContent = {
 
 const OFFER_TERMS = {
   trialDays: 3,
-  freeActivationDays: 30,
-  firstChargeDay: 31,
   trialNeedsCard: false,
   trialAutoCharges: false,
 } as const;
@@ -83,7 +79,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         { title: "We set up your menu", detail: "ShopOps enters your menu and configures the system with you." },
         { title: `Try it for ${OFFER_TERMS.trialDays} days`, detail: "The free trial needs no card and has no automatic charge." },
         { title: "Choose whether to continue", detail: "Only then do you provide full restaurant, contact and payment details." },
-        { title: `Your first ${OFFER_TERMS.freeActivationDays} activation days are free`, detail: `The first monthly charge is on day ${OFFER_TERMS.firstChargeDay} after activation.` },
+        { title: "One monthly payment covers your first two months", detail: "Your first monthly payment is charged on the day you activate; this single payment covers your first two months, after which billing continues monthly." },
       ],
     },
     pricing: {
@@ -131,7 +127,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         { title: "輸入餐牌及設定", detail: "ShopOps 為你輸入餐牌，並一同完成系統設定。" },
         { title: `免費試用 ${OFFER_TERMS.trialDays} 天`, detail: "試用毋須信用卡，亦不會自動收費。" },
         { title: "決定是否繼續", detail: "只有決定正式使用時，才提交完整餐廳、聯絡及付款資料。" },
-        { title: `啟用後首 ${OFFER_TERMS.freeActivationDays} 天免費`, detail: `啟用後第 ${OFFER_TERMS.firstChargeDay} 天才首次收取月費。` },
+        { title: "首期只收 1 個月費用，可使用首 2 個月", detail: "正式啟用當日收取首期月費；首期只收 1 個月費用，即可使用首 2 個月，其後按月收費。" },
       ],
     },
     pricing: {
@@ -179,7 +175,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         { title: "录入菜单及设置", detail: "ShopOps 为你录入菜单，并一同完成系统设置。" },
         { title: `免费试用 ${OFFER_TERMS.trialDays} 天`, detail: "试用无需信用卡，也不会自动收费。" },
         { title: "决定是否继续", detail: "只有决定正式使用时，才提交完整餐厅、联系及付款资料。" },
-        { title: `启用后首 ${OFFER_TERMS.freeActivationDays} 天免费`, detail: `启用后第 ${OFFER_TERMS.firstChargeDay} 天才首次收取月费。` },
+        { title: "首期只收 1 个月费用，可使用前 2 个月", detail: "正式启用当日收取首期月费；首期只收 1 个月费用，即可使用前 2 个月，之后按月收费。" },
       ],
     },
     pricing: {

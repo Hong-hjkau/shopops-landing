@@ -20,14 +20,24 @@ test("all languages expose identical shared keys", () => {
   }
 });
 
-test("all languages preserve exact numeric offer facts", () => {
+test("all languages preserve the approved trial and first-payment offer", () => {
   for (const lang of languages) {
     assert.equal(POS_CONTENT[lang].trialDays, 3);
-    assert.equal(POS_CONTENT[lang].freeActivationDays, 30);
-    assert.equal(POS_CONTENT[lang].firstChargeDay, 31);
     assert.equal(POS_CONTENT[lang].trialNeedsCard, false);
     assert.equal(POS_CONTENT[lang].trialAutoCharges, false);
   }
+
+  const source = readFileSync(new URL("../lib/pos-content.ts", import.meta.url), "utf8");
+  assert.match(source, /first monthly payment is charged on the day you activate/i);
+  assert.match(source, /single payment covers your first two months/i);
+  assert.match(source, /正式啟用當日收取首期月費/);
+  assert.match(source, /首期只收 1 個月費用，即可使用首 2 個月/);
+  assert.match(source, /正式启用当日收取首期月费/);
+  assert.match(source, /首期只收 1 个月费用，即可使用前 2 个月/);
+  assert.doesNotMatch(
+    source,
+    /first 30 days are free|day 31|首 30 天免費|第 31 天|首 30 天免费/i,
+  );
 });
 
 test("shared offer copy is built from one canonical term set", () => {
