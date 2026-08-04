@@ -274,6 +274,53 @@ test("shared POS hero uses one seamless responsive artwork with live copy", () =
   assert.doesNotMatch(hero, /src="\/logo\.png"/);
 });
 
+test("shared POS hero links all three languages to the owner-situation comic below the main CTA", () => {
+  assert.equal(
+    POS_CONTENT["zh-Hant"].hero.situationCta,
+    "這是你嗎？看看小店老闆每天遇到的情況 →",
+  );
+  assert.equal(
+    POS_CONTENT["zh-Hans"].hero.situationCta,
+    "这是你吗？看看小店老板每天遇到的情况 →",
+  );
+  assert.equal(
+    POS_CONTENT.en.hero.situationCta,
+    "Is this you? See the daily challenges small restaurant owners face →",
+  );
+  assert.equal(POS_CONTENT["zh-Hant"].hero.situationHref, "/this-is-you?lang=zh-Hant");
+  assert.equal(POS_CONTENT["zh-Hans"].hero.situationHref, "/this-is-you?lang=zh-Hans");
+  assert.equal(POS_CONTENT.en.hero.situationHref, "/this-is-you?lang=en");
+
+  const hero = readFileSync(
+    new URL("../components/PosHero.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(hero, /href=\{copy\.situationHref\}/);
+
+  const mainCtaIndex = hero.indexOf("copy.cta");
+  const situationCtaIndex = hero.indexOf("copy.situationCta");
+  const reassuranceIndex = hero.indexOf("copy.reassurance");
+  assert.ok(mainCtaIndex >= 0);
+  assert.ok(situationCtaIndex > mainCtaIndex);
+  assert.ok(reassuranceIndex > situationCtaIndex);
+});
+
+test("this-is-you opens in the language carried from the homepage", () => {
+  const page = readFileSync(
+    new URL("../app/this-is-you/page.tsx", import.meta.url),
+    "utf8",
+  );
+  const comic = readFileSync(
+    new URL("../app/this-is-you/ComicAd.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(page, /parseQueryLang\(lang\)/);
+  assert.match(page, /<ComicAd initialLang=\{initialLang\} \/>/);
+  assert.match(comic, /initialLang: Lang/);
+  assert.match(comic, /useState<Lang>\(initialLang\)/);
+});
+
 test("homepage keeps POS demo enquiries distinct and delays the full nav until wide screens", () => {
   const home = readFileSync(
     new URL("../components/CompanyHome.tsx", import.meta.url),

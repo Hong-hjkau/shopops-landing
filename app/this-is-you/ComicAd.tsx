@@ -4,11 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { POS_CONTENT } from "@/lib/pos-content";
-
-type Lang = "hant" | "hans" | "en";
+import type { Lang } from "@/lib/i18n";
 
 const L: Record<Lang, { label: string; img: string; alt: string; w: number; h: number; cta: string; sub: string; foot: string }> = {
-  hant: {
+  "zh-Hant": {
     label: "繁",
     img: "/comic-hant.webp",
     alt: "小店老闆面對文書、點餐系統、重複工作同資料整理嘅日常情況",
@@ -18,7 +17,7 @@ const L: Record<Lang, { label: string; img: string; alt: string; w: number; h: n
     sub: POS_CONTENT["zh-Hant"].hero.reassurance,
     foot: "© 2026 ShopOps 店管家 · Edinburgh",
   },
-  hans: {
+  "zh-Hans": {
     label: "简",
     img: "/comic-hans.webp",
     alt: "小店老板面对文书、点餐系统、重复工作和资料整理的日常情况",
@@ -40,10 +39,10 @@ const L: Record<Lang, { label: string; img: string; alt: string; w: number; h: n
   },
 };
 
-const ORDER: Lang[] = ["hant", "hans", "en"];
+const ORDER: Lang[] = ["zh-Hant", "zh-Hans", "en"];
 
-export default function ComicAd() {
-  const [lang, setLang] = useState<Lang>("hant");
+export default function ComicAd({ initialLang }: { initialLang: Lang }) {
+  const [lang, setLang] = useState<Lang>(initialLang);
   const t = L[lang];
 
   return (

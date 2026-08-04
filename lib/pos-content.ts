@@ -11,6 +11,8 @@ export type PosSharedContent = {
     title: string;
     subtitle: string;
     cta: string;
+    situationCta: string;
+    situationHref: string;
     reassurance: string;
   };
   workflow: {
@@ -46,6 +48,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       subtitle:
         "A bilingual restaurant POS for independent UK restaurants — QR ordering, staff ordering, live kitchen screens and offline backup in one system.",
       cta: "Book a demo & free trial setup",
+      situationCta: "Is this you? See the daily challenges small restaurant owners face →",
+      situationHref: "/this-is-you?lang=en",
       reassurance:
         `${OFFER_TERMS.trialDays}-day free trial · No card needed for the trial · We set up your menu for you`,
     },
@@ -100,6 +104,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       subtitle:
         "為英國獨立餐廳而設的中英雙語 POS，整合 QR 點餐、員工落單、廚房看板及離線後備。",
       cta: "預約示範及免費試用設定",
+      situationCta: "這是你嗎？看看小店老闆每天遇到的情況 →",
+      situationHref: "/this-is-you?lang=zh-Hant",
       reassurance: `免費試用 ${OFFER_TERMS.trialDays} 天 · 試用毋須信用卡 · 我們會為你輸入餐牌`,
     },
     workflow: {
@@ -148,6 +154,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       subtitle:
         "为英国独立餐厅而设的中英双语 POS，整合扫码点餐、员工点餐、厨房看板及离线备用。",
       cta: "预约演示及免费试用设置",
+      situationCta: "这是你吗？看看小店老板每天遇到的情况 →",
+      situationHref: "/this-is-you?lang=zh-Hans",
       reassurance: `免费试用 ${OFFER_TERMS.trialDays} 天 · 试用无需信用卡 · 我们会为你录入菜单`,
     },
     workflow: {

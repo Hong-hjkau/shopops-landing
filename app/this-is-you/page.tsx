@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { parseQueryLang } from "@/lib/language";
 import ComicAd from "./ComicAd";
 
 // 獨立廣告頁 /this-is-you —— 餐廳老闆煩惱漫畫 + 繁/简/EN 切換。
@@ -18,6 +19,13 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
-export default function Page() {
-  return <ComicAd />;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string | string[] }>;
+}) {
+  const { lang } = await searchParams;
+  const initialLang = parseQueryLang(lang) ?? "zh-Hant";
+
+  return <ComicAd initialLang={initialLang} />;
 }

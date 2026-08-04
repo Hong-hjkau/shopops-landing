@@ -40,6 +40,12 @@ export default function PosHero({
           >
             {copy.cta}
           </a>
+          <a
+            href={copy.situationHref}
+            className="mt-4 block w-fit text-sm font-semibold text-hero-text-secondary underline decoration-hero-text-secondary/50 underline-offset-4 transition hover:text-hero-text"
+          >
+            {copy.situationCta}
+          </a>
           <p className="mt-4 text-sm leading-6 text-hero-text-secondary">{copy.reassurance}</p>
         </div>
       </div>
