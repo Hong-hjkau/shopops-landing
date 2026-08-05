@@ -20,6 +20,76 @@ test("all languages expose identical shared keys", () => {
   }
 });
 
+test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
+  for (const lang of languages) {
+    const pricing = POS_CONTENT[lang].pricing;
+    assert.equal(pricing.core.monthlyPrice, 19);
+    assert.equal(pricing.core.included.length, 3);
+    assert.deepEqual(pricing.addOnGroups.map((group) => group.monthlyPrice), [9, 19]);
+    assert.equal(pricing.addOnGroups[0].items.length, 8);
+    assert.equal(pricing.addOnGroups[1].items.length, 2);
+    assert.match(pricing.perItemLabel, /Each add-on|每項功能|每项功能/);
+    assert.match(pricing.vatNote, /No VAT added|不另收 VAT/);
+    assert.doesNotMatch(JSON.stringify(pricing), /call pop-up|來電彈屏|来电弹屏/i);
+    assert.doesNotMatch(pricing.vatNote, /\+ VAT|excluding VAT|未包 VAT|VAT free|VAT exempt/i);
+  }
+
+  assert.deepEqual(POS_CONTENT.en.pricing.core.included, [
+    "Ordering POS",
+    "Front-of-house and kitchen translation",
+    "Discounts",
+  ]);
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[0].items, [
+    "Rota and clock-in", "Reservations", "Customer reviews", "Food-safety records",
+    "Allergen recognition", "Recipe costing", "Custom domain", "Advertising screen",
+  ]);
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[1].items, [
+    "Takeaway delivery", "Finance and inventory",
+  ]);
+  assert.equal(POS_CONTENT.en.pricing.vatNote, "No VAT added. ShopOps is not currently VAT registered, so the price shown is the total monthly subscription price.");
+
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.core.included, [
+    "落單 POS", "店房翻譯", "優惠折扣",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[0].items, [
+    "排班打卡", "訂位", "顧客評價", "食安記錄",
+    "過敏原辨識", "食譜成本", "自訂網域", "廣告屏",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items, [
+    "外賣送貨", "財務在庫",
+  ]);
+  assert.equal(POS_CONTENT["zh-Hant"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。");
+
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.core.included, [
+    "点餐 POS", "前厅与厨房翻译", "优惠折扣",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[0].items, [
+    "排班打卡", "订位", "顾客评价", "食品安全记录",
+    "过敏原识别", "食谱成本", "自定义域名", "广告屏",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items, [
+    "外卖配送", "财务与库存",
+  ]);
+  assert.equal(POS_CONTENT["zh-Hans"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。");
+});
+
+test("POS uses its dedicated pricing section without changing the shared Rota card", () => {
+  const pos = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  const rota = readFileSync(new URL("../components/RotaLanding.tsx", import.meta.url), "utf8");
+  const section = readFileSync(new URL("../components/PosPricingSection.tsx", import.meta.url), "utf8");
+
+  assert.match(pos, /import PosPricingSection from "@\/components\/PosPricingSection"/);
+  assert.match(pos, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} \/>/);
+  assert.doesNotMatch(pos, /<PricingCard/);
+  assert.match(rota, /import PricingCard from "@\/components\/PricingCard"/);
+  assert.match(rota, /<PricingCard pricing=\{t\.pricing\} \/>/);
+  assert.match(section, /id="pricing"/);
+  assert.match(section, /copy\.addOnGroups\.map/);
+  assert.match(section, /copy\.perItemLabel/);
+  assert.match(section, /\{trial\}/);
+  assert.match(section, /href="#contact"/);
+});
+
 test("all languages preserve the approved trial and first-payment offer", () => {
   for (const lang of languages) {
     assert.equal(POS_CONTENT[lang].trialDays, 3);
@@ -65,7 +135,7 @@ test("shared copy contains no prohibited claim", () => {
 
 test("POS FAQ uses the shared pricing and direct-order commission facts", () => {
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
-  assert.match(page, /pos\.pricing\.body/);
+  assert.match(page, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} \/>/);
   assert.match(page, /pos\.commission\.body/);
   assert.doesNotMatch(page, /ShopOps is one flat monthly fee with zero commission/);
 });
@@ -99,7 +169,7 @@ test("POS page follows the approved factual product journey", () => {
     'id="optional-modules"',
     "<SavingsCalculator",
     "<TrialJourney",
-    "<PricingCard",
+    "<PosPricingSection",
     "<Faq",
     "<ContactSection",
   ];

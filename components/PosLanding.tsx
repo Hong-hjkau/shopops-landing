@@ -7,7 +7,7 @@ import HardwareOptions from "@/components/HardwareOptions";
 import PosFeatureGrid from "@/components/PosFeatureGrid";
 import PosHero from "@/components/PosHero";
 import PosWorkflow from "@/components/PosWorkflow";
-import PricingCard from "@/components/PricingCard";
+import PosPricingSection from "@/components/PosPricingSection";
 import SavingsCalculator from "@/components/SavingsCalculator";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
@@ -30,7 +30,6 @@ const dict = {
     scenarios: { title: "For the ways your restaurant takes orders", body: "Use ShopOps for dine-in, takeaway, delivery and pre-orders, including multi-site setups, with the configuration discussed around your restaurant's own workflow." },
     bilingual: { title: "English and Chinese, where each team needs it", body: "A customer can order in English while floor and kitchen staff view the same order in Chinese, with each person using the language that suits them." },
     optional: { title: "Optional modules can be discussed around your restaurant", body: "The monthly POS plan focuses on ordering, kitchen and checkout. We will confirm what is included in your quote before you begin a trial." },
-    pricing: { eyebrow: "Pricing", price: "Contact us", unit: "", cta: "Book a demo & free trial setup", feature: "Monthly POS plan for ordering, kitchen and checkout" },
     faq: {
       title: "FAQ",
       hardwareQ: "Do I need to buy new hardware?",
@@ -60,7 +59,6 @@ const dict = {
     scenarios: { title: "配合餐廳不同的落單方式", body: "ShopOps 可處理堂食、外賣、送貨及預訂，亦支援多分店設定；設定前會先了解你的餐廳流程。" },
     bilingual: { title: "英文與中文，配合不同崗位", body: "客人可以用英文落單，而樓面及廚房員工以中文查看同一張訂單，讓每個人使用合適的語言。" },
     optional: { title: "可按餐廳需要討論其他功能組", body: "月費 POS 計劃聚焦落單、廚房及結帳。開始試用前，我們會清楚確認報價所包含的功能。" },
-    pricing: { eyebrow: "收費", price: "請聯絡我們", unit: "", cta: "預約示範及免費試用設定", feature: "月費 POS 計劃：落單、廚房及結帳" },
     faq: {
       title: "常見問題",
       hardwareQ: "是否需要購買新硬件？",
@@ -90,7 +88,6 @@ const dict = {
     scenarios: { title: "配合餐厅不同的下单方式", body: "ShopOps 可处理堂食、外卖、配送及预订，也支持多门店设置；设置前会先了解你的餐厅流程。" },
     bilingual: { title: "英文与中文，配合不同岗位", body: "顾客可以用英文下单，而前厅及厨房员工以中文查看同一张订单，让每个人使用合适的语言。" },
     optional: { title: "可按餐厅需要讨论其他功能组", body: "月费 POS 计划聚焦点餐、厨房及结账。开始试用前，我们会清楚确认报价所包含的功能。" },
-    pricing: { eyebrow: "收费", price: "请联系我们", unit: "", cta: "预约演示及免费试用设置", feature: "月费 POS 计划：点餐、厨房及结账" },
     faq: {
       title: "常见问题",
       hardwareQ: "是否需要购买新硬件？",
@@ -112,17 +109,6 @@ export default function PosLanding() {
   const { lang } = useLang();
   const t = dict[lang];
   const pos = POS_CONTENT[lang];
-  const pricing = {
-    eyebrow: t.pricing.eyebrow,
-    title: pos.pricing.title,
-    subtitle: pos.pricing.body,
-    trial: pos.trial.title,
-    price: t.pricing.price,
-    unit: t.pricing.unit,
-    cta: t.pricing.cta,
-    note: pos.commission.disclaimer,
-    features: [t.pricing.feature],
-  };
   const trialAnswer = pos.trial.steps.map((step) => step.detail).join(" ");
   const englishTrialAnswer = POS_CONTENT.en.trial.steps.map((step) => step.detail).join(" ");
   const faqItems = [
@@ -189,7 +175,7 @@ export default function PosLanding() {
       </section>
       <SavingsCalculator lang={lang} />
       <TrialJourney copy={pos.trial} />
-      <PricingCard pricing={pricing} />
+      <PosPricingSection copy={pos.pricing} trial={pos.trial.title} />
       <Faq title={t.faq.title} items={faqItems} schemaItems={schemaItems} />
       <ContactSection copy={contact} source="pos" />
       <SiteFooter text={t.footer} />
