@@ -103,6 +103,14 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   assert.match(section, /£\{group\.monthlyPrice\}/);
   assert.match(section, /shrink-0/);
   assert.match(section, /group\.items\.map/);
+  const addOnRow = section.match(
+    /group\.items\.map\(\(item\) => \(\s*(<li[\s\S]*?<\/li>)\s*\)\)/,
+  );
+  assert.ok(addOnRow, "each add-on group should render a list-item template");
+  assert.match(
+    addOnRow[1],
+    /<span className="flex min-w-0 items-start gap-3">[\s\S]*?<span>\{item\}<\/span>[\s\S]*?<\/span>\s*<span className="shrink-0 font-semibold text-text">\s*£\{group\.monthlyPrice\}\s*<span className="font-medium text-text-secondary">\{copy\.monthlyUnit\}<\/span>/,
+  );
   assert.match(section, /\{trial\}/);
   assert.match(section, /href="#contact"/);
 });
