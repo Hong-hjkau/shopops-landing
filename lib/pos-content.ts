@@ -29,7 +29,34 @@ export type PosSharedContent = {
     title: string;
     steps: readonly TrialStep[];
   };
-  pricing: { title: string; body: string };
+  pricing: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    monthlyUnit: string;
+    includedLabel: string;
+    perItemLabel: string;
+    core: {
+      name: string;
+      monthlyPrice: 19;
+      included: readonly [string, string, string];
+    };
+    addOnsTitle: string;
+    addOnsRequirement: string;
+    addOnGroups: readonly [
+      {
+        monthlyPrice: 9;
+        items: readonly [string, string, string, string, string, string, string, string];
+      },
+      {
+        monthlyPrice: 19;
+        items: readonly [string, string];
+      },
+    ];
+    cta: string;
+    vatNote: string;
+    feeNote: string;
+  };
   commission: { title: string; body: string; disclaimer: string };
 };
 
@@ -87,8 +114,29 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
     },
     pricing: {
-      title: "Monthly POS plan, with optional modules",
-      body: "We’ll confirm what is included in your quote before you start your trial.",
+      eyebrow: "Pricing",
+      title: "A clear monthly POS plan, with optional add-ons",
+      body: "Start with the core POS plan, then add only the extra tools your restaurant needs.",
+      monthlyUnit: "/month",
+      includedLabel: "Included",
+      perItemLabel: "Each add-on",
+      core: {
+        name: "Core POS",
+        monthlyPrice: 19,
+        included: ["Ordering POS", "Front-of-house and kitchen translation", "Discounts"],
+      },
+      addOnsTitle: "Optional add-ons",
+      addOnsRequirement: "All add-ons require the Core POS plan.",
+      addOnGroups: [
+        {
+          monthlyPrice: 9,
+          items: ["Rota and clock-in", "Reservations", "Customer reviews", "Food-safety records", "Allergen recognition", "Recipe costing", "Custom domain", "Advertising screen"],
+        },
+        { monthlyPrice: 19, items: ["Takeaway delivery", "Finance and inventory"] },
+      ],
+      cta: "Book a demo & free trial setup",
+      vatNote: "No VAT added. ShopOps is not currently VAT registered, so the price shown is the total monthly subscription price.",
+      feeNote: "Card-processing fees remain separate.",
     },
     commission: {
       title: "Direct orders without ShopOps commission",
@@ -137,8 +185,29 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
     },
     pricing: {
-      title: "POS 採用月費計劃，另有可選功能組",
-      body: "我們會在開始試用前，清楚確認報價所包含的功能。",
+      eyebrow: "收費",
+      title: "清晰 POS 月費，可按需要加購功能",
+      body: "先選用核心 POS 套餐，再按餐廳需要加入其他工具。",
+      monthlyUnit: "／月",
+      includedLabel: "已包括",
+      perItemLabel: "每項功能",
+      core: {
+        name: "核心 POS",
+        monthlyPrice: 19,
+        included: ["落單 POS", "店房翻譯", "優惠折扣"],
+      },
+      addOnsTitle: "加購功能",
+      addOnsRequirement: "所有加購功能均須配合核心 POS 套餐使用。",
+      addOnGroups: [
+        {
+          monthlyPrice: 9,
+          items: ["排班打卡", "訂位", "顧客評價", "食安記錄", "過敏原辨識", "食譜成本", "自訂網域", "廣告屏"],
+        },
+        { monthlyPrice: 19, items: ["外賣送貨", "財務在庫"] },
+      ],
+      cta: "預約示範及免費試用設定",
+      vatNote: "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。",
+      feeNote: "信用卡付款處理費另計。",
     },
     commission: {
       title: "直接訂單不收 ShopOps 佣金",
@@ -187,8 +256,29 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
     },
     pricing: {
-      title: "POS 采用月费计划，另有可选功能组",
-      body: "我们会在开始试用前，清楚确认报价所包含的功能。",
+      eyebrow: "收费",
+      title: "清晰 POS 月费，可按需要加购功能",
+      body: "先选用核心 POS 套餐，再按餐厅需要加入其他工具。",
+      monthlyUnit: "／月",
+      includedLabel: "已包括",
+      perItemLabel: "每项功能",
+      core: {
+        name: "核心 POS",
+        monthlyPrice: 19,
+        included: ["点餐 POS", "前厅与厨房翻译", "优惠折扣"],
+      },
+      addOnsTitle: "加购功能",
+      addOnsRequirement: "所有加购功能均须配合核心 POS 套餐使用。",
+      addOnGroups: [
+        {
+          monthlyPrice: 9,
+          items: ["排班打卡", "订位", "顾客评价", "食品安全记录", "过敏原识别", "食谱成本", "自定义域名", "广告屏"],
+        },
+        { monthlyPrice: 19, items: ["外卖配送", "财务与库存"] },
+      ],
+      cta: "预约演示及免费试用设置",
+      vatNote: "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。",
+      feeNote: "信用卡付款处理费另计。",
     },
     commission: {
       title: "直接订单不收 ShopOps 佣金",
