@@ -71,7 +71,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
   en: {
     ...OFFER_TERMS,
     hero: {
-      eyebrow: "Restaurant POS · English + 中文",
+      eyebrow: "Restaurant POS · English + Chinese",
       title: "One POS for orders, kitchen and checkout.",
       subtitle:
         "A bilingual restaurant POS for independent UK restaurants — QR ordering, staff ordering, live kitchen screens and offline backup in one system.",

@@ -20,6 +20,10 @@ test("all languages expose identical shared keys", () => {
   }
 });
 
+test("English POS eyebrow uses English-only wording", () => {
+  assert.equal(POS_CONTENT.en.hero.eyebrow, "Restaurant POS · English + Chinese");
+});
+
 test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
   for (const lang of languages) {
     const pricing = POS_CONTENT[lang].pricing;
