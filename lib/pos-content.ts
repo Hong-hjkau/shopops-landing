@@ -43,6 +43,7 @@ export type PosSharedContent = {
     };
     addOnsTitle: string;
     addOnsRequirement: string;
+    addOnsBillingNote: string;
     addOnGroups: readonly [
       {
         monthlyPrice: 9;
@@ -127,6 +128,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       },
       addOnsTitle: "Optional add-ons",
       addOnsRequirement: "All add-ons require the Core POS plan.",
+      addOnsBillingNote: "Choose any add-on individually. Each item is charged separately.",
       addOnGroups: [
         {
           monthlyPrice: 9,
@@ -198,6 +200,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       },
       addOnsTitle: "加購功能",
       addOnsRequirement: "所有加購功能均須配合核心 POS 套餐使用。",
+      addOnsBillingNote: "各項獨立收費，可任選一項或多項。",
       addOnGroups: [
         {
           monthlyPrice: 9,
@@ -269,6 +272,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       },
       addOnsTitle: "加购功能",
       addOnsRequirement: "所有加购功能均须配合核心 POS 套餐使用。",
+      addOnsBillingNote: "各项独立收费，可任选一项或多项。",
       addOnGroups: [
         {
           monthlyPrice: 9,

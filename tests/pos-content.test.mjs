@@ -71,6 +71,19 @@ test("POS public pricing exposes the approved core plan, add-ons, and VAT status
     "外卖配送", "财务与库存",
   ]);
   assert.equal(POS_CONTENT["zh-Hans"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。");
+
+  assert.equal(
+    POS_CONTENT.en.pricing.addOnsBillingNote,
+    "Choose any add-on individually. Each item is charged separately.",
+  );
+  assert.equal(
+    POS_CONTENT["zh-Hant"].pricing.addOnsBillingNote,
+    "各項獨立收費，可任選一項或多項。",
+  );
+  assert.equal(
+    POS_CONTENT["zh-Hans"].pricing.addOnsBillingNote,
+    "各项独立收费，可任选一项或多项。",
+  );
 });
 
 test("POS uses its dedicated pricing section without changing the shared Rota card", () => {
@@ -86,6 +99,10 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   assert.match(section, /id="pricing"/);
   assert.match(section, /copy\.addOnGroups\.map/);
   assert.match(section, /copy\.perItemLabel/);
+  assert.match(section, /copy\.addOnsBillingNote/);
+  assert.match(section, /£\{group\.monthlyPrice\}/);
+  assert.match(section, /shrink-0/);
+  assert.match(section, /group\.items\.map/);
   assert.match(section, /\{trial\}/);
   assert.match(section, /href="#contact"/);
 });
