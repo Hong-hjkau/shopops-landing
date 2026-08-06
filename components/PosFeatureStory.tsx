@@ -23,7 +23,7 @@ export default function PosFeatureStory({
       />
       <div className="p-6">
         <p className="text-sm font-semibold text-accent-strong">{caption}</p>
-        <h3 className="mt-3 text-xl font-bold text-text">{title}</h3>
+        <h2 className="mt-3 text-xl font-bold text-text">{title}</h2>
         <p className="mt-3 leading-7 text-text-secondary">{description}</p>
       </div>
     </article>

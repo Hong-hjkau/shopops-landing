@@ -250,6 +250,27 @@ test("POS features route renders localized content with shareable language and c
   }
 });
 
+test("POS feature story cards begin at level two after the page title", () => {
+  const story = readFileSync(
+    new URL("../components/PosFeatureStory.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(story, /<h2 className="mt-3 text-xl font-bold text-text">\{title\}<\/h2>/);
+});
+
+test("POS feature cards derive their standard add-on prices without group positions", () => {
+  const landing = readFileSync(
+    new URL("../components/PosFeaturesLanding.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.doesNotMatch(landing, /addOnGroups\[0\]/);
+  assert.doesNotMatch(landing, /addOnGroups\.slice\(0, 1\)/);
+  assert.match(landing, /item\.id !== "delivery"/);
+  assert.match(landing, /item\.id !== "finance_inventory"/);
+});
+
 test("POS homepage exposes two language-preserving links to the feature details", () => {
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
   const featureGrid = readFileSync(new URL("../components/PosFeatureGrid.tsx", import.meta.url), "utf8");

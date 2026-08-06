@@ -30,6 +30,10 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const featurePricing = getPosFeaturePricing(lang);
   const contactHref = contactHrefs[lang];
   const storyAltPrefix = lang === "en" ? "ShopOps POS: " : "ShopOps POS：";
+  const standardAddOns = pricing.addOnGroups
+    .flatMap((group) => group.items.map((item) => ({ ...item, monthlyPrice: group.monthlyPrice })))
+    .filter((item) => item.id !== "delivery" && item.id !== "finance_inventory");
+  const standardAddOnPrice = standardAddOns.find((item) => item.id === "scheduling")!.monthlyPrice;
 
   return (
     <main lang={lang} className="flex flex-col">
@@ -57,7 +61,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
             </div>
             <div className="rounded-2xl border border-hero-border bg-white/5 p-5">
               <p className="text-sm text-hero-text-secondary">{copy.hero.addOnPriceLabel}</p>
-              <p className="mt-2 text-3xl font-bold">+£{pricing.addOnGroups[0].monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+              <p className="mt-2 text-3xl font-bold">+£{standardAddOnPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
             </div>
           </div>
         </div>
@@ -102,19 +106,17 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.hero.addOnPriceLabel}</h2>
           <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsRequirement}</p>
           <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {pricing.addOnGroups.slice(0, 1).map((group) =>
-              group.items.map((item) => (
-                <PosAddOnCard
-                  key={item.id}
-                  id={item.id}
-                  label={item.label}
-                  outcome={copy.addOns[item.id].outcome}
-                  detail={copy.addOns[item.id].body}
-                  monthlyPrice={group.monthlyPrice}
-                  monthlyUnit={pricing.monthlyUnit}
-                />
-              )),
-            )}
+            {standardAddOns.map((item) => (
+              <PosAddOnCard
+                key={item.id}
+                id={item.id}
+                label={item.label}
+                outcome={copy.addOns[item.id].outcome}
+                detail={copy.addOns[item.id].body}
+                monthlyPrice={item.monthlyPrice}
+                monthlyUnit={pricing.monthlyUnit}
+              />
+            ))}
           </div>
         </div>
       </section>
