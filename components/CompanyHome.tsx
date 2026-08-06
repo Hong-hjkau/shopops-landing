@@ -38,6 +38,7 @@ const dict = {
         { icon: "menuControl", title: "餐牌及售罄管理", desc: "更新餐牌內容，並按需要暫停售罄菜式。" },
       ] as Feature[],
     },
+    featuresCta: "查看全部 POS 功能及價格",
     bilingual: {
       title: "同一張單，前台英文、廚房中文",
       body: "客人可用英文點餐，而廚房同事在同一張訂單上查看中文內容。每個人按自己慣用的語言工作。",
@@ -104,6 +105,7 @@ const dict = {
         { icon: "menuControl", title: "菜单及售罄管理", desc: "更新菜单内容，并按需要暂停售罄菜品。" },
       ] as Feature[],
     },
+    featuresCta: "查看全部 POS 功能及价格",
     bilingual: {
       title: "同一张单，前厅英文、厨房中文",
       body: "顾客可用英文点餐，而厨房同事在同一张订单上查看中文内容。每个人按自己惯用的语言工作。",
@@ -170,6 +172,7 @@ const dict = {
         { icon: "menuControl", title: "Menu and availability control", desc: "Update your menu and pause sold-out items when you need to." },
       ] as Feature[],
     },
+    featuresCta: "View all POS features and pricing",
     bilingual: {
       title: "One order, English on the floor and Chinese in the kitchen",
       body: "Customers can order in English while kitchen staff view the same order in Chinese. Each person works in the language they know best.",
@@ -255,6 +258,14 @@ export default function CompanyHome() {
             <p className="mt-4 leading-7 text-text-secondary">{t.features.subtitle}</p>
           </div>
           <CardGrid items={t.features.items} cols="2/3" />
+          <div className="mt-8 text-center">
+            <a
+              href={`/pos/features?lang=${lang}`}
+              className="inline-flex items-center justify-center rounded-xl bg-accent px-6 py-3 text-base font-bold text-on-accent transition hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            >
+              {t.featuresCta}
+            </a>
+          </div>
         </div>
       </section>
 

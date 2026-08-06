@@ -360,6 +360,20 @@ test("POS homepage exposes two language-preserving links to the feature details"
   assert.match(pricing, /<a href=\{detailsHref\}[^>]*>[\s\S]*?\{detailsLabel\}[\s\S]*?<\/a>/);
 });
 
+test("public homepage links core feature cards to the detailed POS pricing page", () => {
+  const companyHome = readFileSync(new URL("../components/CompanyHome.tsx", import.meta.url), "utf8");
+
+  assert.match(companyHome, /View all POS features and pricing/);
+  assert.match(companyHome, /查看全部 POS 功能及價格/);
+  assert.match(companyHome, /查看全部 POS 功能及价格/);
+  assert.match(companyHome, /href={`\/pos\/features\?lang=\${lang}`}/);
+
+  const cards = companyHome.indexOf("<CardGrid items={t.features.items}");
+  const entry = companyHome.indexOf('href={`/pos/features?lang=${lang}`}');
+  const nextSection = companyHome.indexOf('<section id="bilingual"');
+  assert.ok(cards !== -1 && cards < entry && entry < nextSection);
+});
+
 test("POS feature details page is included in the public sitemap", () => {
   const sitemap = readFileSync(new URL("../app/sitemap.ts", import.meta.url), "utf8");
 
