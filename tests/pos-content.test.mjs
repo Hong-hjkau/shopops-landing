@@ -88,13 +88,14 @@ test("public POS feature copy rejects affirmative online-payment and card-delive
       card: /\bcards?\b/i,
       negative: /does not accept online payments?/i,
       affirmativePublicClaims: [
-        /(?<!does not )\baccepts?\s+(?:(?:online|card)\s+)?payments?\b/i,
+        /(?<!does not )\baccepts?\s+(?:online|card)\s+payments?\b/i,
         /(?<!does not )\baccepts?\s+payments?\s+(?:online|by card)\b/i,
         /(?<!does not )\baccepts?\s+cards?\b/i,
         /\b(?:online|card)\s+payments?\s+(?:are|is)\s+(?:accepted|available)\b/i,
         /\bcards?\s+(?:are|is)\s+accepted\b/i,
       ],
       cashAndCardMutant: "We accept cash and card.",
+      permittedCheckoutCopy: "Staff can accept payment at checkout.",
       affirmativeMutants: [
         "We accept online payment.",
         "We accept online payments.",
@@ -155,6 +156,12 @@ test("public POS feature copy rejects affirmative online-payment and card-delive
     const rules = paymentRules[lang];
     const content = POS_FEATURES_CONTENT[lang];
     assertPublicPaymentBoundaries(content, rules);
+    if (rules.permittedCheckoutCopy) {
+      assert.doesNotThrow(() => assertPublicPaymentBoundaries({
+        ...content,
+        hero: { ...content.hero, body: `${content.hero.body} ${rules.permittedCheckoutCopy}` },
+      }, rules));
+    }
     assert.throws(() => assertPublicPaymentBoundaries({
       ...content,
       delivery: { ...content.delivery, cashOnly: rules.cashAndCardMutant },
