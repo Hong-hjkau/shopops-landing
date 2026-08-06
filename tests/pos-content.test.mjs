@@ -43,36 +43,57 @@ test("POS public pricing exposes the approved core plan, add-ons, and VAT status
     "Front-of-house and kitchen translation",
     "Discounts",
   ]);
-  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[0].items, [
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.id), [
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ]);
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.label), [
     "Rota and clock-in", "Reservations", "Customer reviews", "Food-safety records",
     "Allergen recognition", "Recipe costing", "Custom domain", "Advertising screen",
   ]);
-  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[1].items, [
-    "Takeaway delivery", "Finance and inventory",
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.id), [
+    "delivery", "finance_inventory",
+  ]);
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.label), [
+    "Online delivery orders", "Finance and inventory",
   ]);
   assert.equal(POS_CONTENT.en.pricing.vatNote, "No VAT added. ShopOps is not currently VAT registered, so the price shown is the total monthly subscription price.");
 
   assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.core.included, [
     "落單 POS", "店房翻譯", "優惠折扣",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[0].items, [
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[0].items.map((item) => item.id), [
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[0].items.map((item) => item.label), [
     "排班打卡", "訂位", "顧客評價", "食安記錄",
     "過敏原辨識", "食譜成本", "自訂網域", "廣告屏",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items, [
-    "外賣送貨", "財務在庫",
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items.map((item) => item.id), [
+    "delivery", "finance_inventory",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items.map((item) => item.label), [
+    "外賣送貨", "財務及庫存",
   ]);
   assert.equal(POS_CONTENT["zh-Hant"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。");
 
   assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.core.included, [
     "点餐 POS", "前厅与厨房翻译", "优惠折扣",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[0].items, [
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[0].items.map((item) => item.id), [
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[0].items.map((item) => item.label), [
     "排班打卡", "订位", "顾客评价", "食品安全记录",
     "过敏原识别", "食谱成本", "自定义域名", "广告屏",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items, [
-    "外卖配送", "财务与库存",
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items.map((item) => item.id), [
+    "delivery", "finance_inventory",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items.map((item) => item.label), [
+    "外卖配送", "财务及库存",
   ]);
   assert.equal(POS_CONTENT["zh-Hans"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。");
 
@@ -107,13 +128,14 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   assert.match(section, /£\{group\.monthlyPrice\}/);
   assert.match(section, /shrink-0/);
   assert.match(section, /group\.items\.map/);
+  assert.match(section, /key=\{item\.id\}/);
   const addOnRow = section.match(
     /group\.items\.map\(\(item\) => \(\s*(<li[\s\S]*?<\/li>)\s*\)\)/,
   );
   assert.ok(addOnRow, "each add-on group should render a list-item template");
   assert.match(
     addOnRow[1],
-    /<span className="flex min-w-0 items-start gap-3">[\s\S]*?<span>\{item\}<\/span>[\s\S]*?<\/span>\s*<span className="shrink-0 font-semibold text-text">\s*£\{group\.monthlyPrice\}\s*<span className="font-medium text-text-secondary">\{copy\.monthlyUnit\}<\/span>/,
+    /<span className="flex min-w-0 items-start gap-3">[\s\S]*?<span>\{item\.label\}<\/span>[\s\S]*?<\/span>\s*<span className="shrink-0 font-semibold text-text">\s*£\{group\.monthlyPrice\}\s*<span className="font-medium text-text-secondary">\{copy\.monthlyUnit\}<\/span>/,
   );
   assert.match(section, /\{trial\}/);
   assert.match(section, /href="#contact"/);

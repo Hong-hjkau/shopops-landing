@@ -2,6 +2,20 @@ import type { Lang } from "./i18n";
 
 type TrialStep = { title: string; detail: string };
 
+export type PosAddOnId =
+  | "scheduling"
+  | "reservations"
+  | "reviews"
+  | "food_safety"
+  | "allergens"
+  | "recipe_costing"
+  | "custom_domain"
+  | "signage"
+  | "delivery"
+  | "finance_inventory";
+
+export type PosAddOnItem = { id: PosAddOnId; label: string };
+
 export type PosSharedContent = {
   trialDays: 3;
   trialNeedsCard: false;
@@ -47,11 +61,14 @@ export type PosSharedContent = {
     addOnGroups: readonly [
       {
         monthlyPrice: 9;
-        items: readonly [string, string, string, string, string, string, string, string];
+        items: readonly [
+          PosAddOnItem, PosAddOnItem, PosAddOnItem, PosAddOnItem,
+          PosAddOnItem, PosAddOnItem, PosAddOnItem, PosAddOnItem,
+        ];
       },
       {
         monthlyPrice: 19;
-        items: readonly [string, string];
+        items: readonly [PosAddOnItem, PosAddOnItem];
       },
     ];
     cta: string;
@@ -132,9 +149,24 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnGroups: [
         {
           monthlyPrice: 9,
-          items: ["Rota and clock-in", "Reservations", "Customer reviews", "Food-safety records", "Allergen recognition", "Recipe costing", "Custom domain", "Advertising screen"],
+          items: [
+            { id: "scheduling", label: "Rota and clock-in" },
+            { id: "reservations", label: "Reservations" },
+            { id: "reviews", label: "Customer reviews" },
+            { id: "food_safety", label: "Food-safety records" },
+            { id: "allergens", label: "Allergen recognition" },
+            { id: "recipe_costing", label: "Recipe costing" },
+            { id: "custom_domain", label: "Custom domain" },
+            { id: "signage", label: "Advertising screen" },
+          ],
         },
-        { monthlyPrice: 19, items: ["Takeaway delivery", "Finance and inventory"] },
+        {
+          monthlyPrice: 19,
+          items: [
+            { id: "delivery", label: "Online delivery orders" },
+            { id: "finance_inventory", label: "Finance and inventory" },
+          ],
+        },
       ],
       cta: "Book a demo & free trial setup",
       vatNote: "No VAT added. ShopOps is not currently VAT registered, so the price shown is the total monthly subscription price.",
@@ -204,9 +236,24 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnGroups: [
         {
           monthlyPrice: 9,
-          items: ["排班打卡", "訂位", "顧客評價", "食安記錄", "過敏原辨識", "食譜成本", "自訂網域", "廣告屏"],
+          items: [
+            { id: "scheduling", label: "排班打卡" },
+            { id: "reservations", label: "訂位" },
+            { id: "reviews", label: "顧客評價" },
+            { id: "food_safety", label: "食安記錄" },
+            { id: "allergens", label: "過敏原辨識" },
+            { id: "recipe_costing", label: "食譜成本" },
+            { id: "custom_domain", label: "自訂網域" },
+            { id: "signage", label: "廣告屏" },
+          ],
         },
-        { monthlyPrice: 19, items: ["外賣送貨", "財務在庫"] },
+        {
+          monthlyPrice: 19,
+          items: [
+            { id: "delivery", label: "外賣送貨" },
+            { id: "finance_inventory", label: "財務及庫存" },
+          ],
+        },
       ],
       cta: "預約示範及免費試用設定",
       vatNote: "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。",
@@ -276,9 +323,24 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnGroups: [
         {
           monthlyPrice: 9,
-          items: ["排班打卡", "订位", "顾客评价", "食品安全记录", "过敏原识别", "食谱成本", "自定义域名", "广告屏"],
+          items: [
+            { id: "scheduling", label: "排班打卡" },
+            { id: "reservations", label: "订位" },
+            { id: "reviews", label: "顾客评价" },
+            { id: "food_safety", label: "食品安全记录" },
+            { id: "allergens", label: "过敏原识别" },
+            { id: "recipe_costing", label: "食谱成本" },
+            { id: "custom_domain", label: "自定义域名" },
+            { id: "signage", label: "广告屏" },
+          ],
         },
-        { monthlyPrice: 19, items: ["外卖配送", "财务与库存"] },
+        {
+          monthlyPrice: 19,
+          items: [
+            { id: "delivery", label: "外卖配送" },
+            { id: "finance_inventory", label: "财务及库存" },
+          ],
+        },
       ],
       cta: "预约演示及免费试用设置",
       vatNote: "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。",

@@ -79,10 +79,10 @@ export default function PosPricingSection({
                 </p>
                 <ul className="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-1">
                   {group.items.map((item) => (
-                    <li key={item} className="flex items-start justify-between gap-4 text-text">
+                    <li key={item.id} className="flex items-start justify-between gap-4 text-text">
                       <span className="flex min-w-0 items-start gap-3">
                         <span aria-hidden className="text-success">✓</span>
-                        <span>{item}</span>
+                        <span>{item.label}</span>
                       </span>
                       <span className="shrink-0 font-semibold text-text">
                         £{group.monthlyPrice}
