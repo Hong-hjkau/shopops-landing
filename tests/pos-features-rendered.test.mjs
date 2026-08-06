@@ -240,13 +240,13 @@ test("rendered outline and final CTA keep premium sections independent and prici
   assert.equal(outline.filter(({ level }) => level === 1).length, 1);
   assert.deepEqual(
     outline.filter(({ text }) => [
-      "Detailed +£19 add-ons",
+      "Advanced operations",
       "Online delivery orders",
       "Finance and inventory",
       "Good to know",
     ].includes(text)),
     [
-      { level: 2, text: "Detailed +£19 add-ons" },
+      { level: 2, text: "Advanced operations" },
       { level: 3, text: "Online delivery orders" },
       { level: 3, text: "Finance and inventory" },
       { level: 2, text: "Good to know" },

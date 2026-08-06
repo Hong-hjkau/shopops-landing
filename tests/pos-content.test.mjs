@@ -65,6 +65,39 @@ test("POS feature content maps every priced add-on by its stable ID", () => {
   }
 });
 
+test("POS feature screenshots expose complete localized semantics without asset paths", () => {
+  const expectedAdvancedTitles = {
+    en: "Advanced operations",
+    "zh-Hant": "進階營運功能",
+    "zh-Hans": "进阶营运功能",
+  };
+
+  for (const lang of languages) {
+    const content = POS_FEATURES_CONTENT[lang];
+    const descriptions = [
+      ...content.workflow.stories,
+      ...content.core.cards,
+      ...Object.values(content.addOns),
+    ];
+
+    assert.equal(descriptions.length, 18);
+    assert.equal(content.premiumTitle, expectedAdvancedTitles[lang]);
+    assert.equal(typeof content.imageDialogCloseLabel, "string");
+    assert.ok(content.imageDialogCloseLabel.trim());
+
+    for (const description of descriptions) {
+      assert.equal(typeof description.imageAlt, "string");
+      assert.ok(description.imageAlt.trim());
+      assert.equal(typeof description.imageActionLabel, "string");
+      assert.ok(description.imageActionLabel.trim());
+    }
+
+    const localizedContent = JSON.stringify(content);
+    assert.doesNotMatch(localizedContent, /(?:public\/)?pos-demo\//);
+    assert.doesNotMatch(localizedContent, /\.webp/i);
+  }
+});
+
 test("POS feature content keeps delivery, finance, and AI boundaries in every language", () => {
   const requiredBoundaries = {
     en: [
