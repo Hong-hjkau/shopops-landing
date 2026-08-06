@@ -212,6 +212,37 @@ test("POS feature pricing looks up delivery, finance, and recipe prices by their
   }
 });
 
+test("POS features route renders localized content with shareable language and contact links", () => {
+  const root = new URL("../", import.meta.url);
+  const pagePath = new URL("app/pos/features/page.tsx", root);
+  const landingPath = new URL("components/PosFeaturesLanding.tsx", root);
+  const storyPath = new URL("components/PosFeatureStory.tsx", root);
+  const addOnPath = new URL("components/PosAddOnCard.tsx", root);
+  const premiumPath = new URL("components/PosPremiumFeature.tsx", root);
+
+  for (const path of [pagePath, landingPath, storyPath, addOnPath, premiumPath]) {
+    assert.ok(existsSync(path), `${path.pathname} should exist`);
+  }
+
+  const page = readFileSync(pagePath, "utf8");
+  const landing = readFileSync(landingPath, "utf8");
+  const header = readFileSync(new URL("components/SiteHeader.tsx", root), "utf8");
+
+  assert.match(page, /generateMetadata/);
+  assert.match(page, /parseQueryLang/);
+  assert.match(page, /key=\{requestedLang\}/);
+  assert.match(landing, /<main[^>]*lang=\{lang\}/);
+  assert.match(header, /languageHrefs/);
+  assert.match(landing, /POS_FEATURES_CONTENT\[lang\]/);
+  assert.match(landing, /item\.id/);
+  assert.match(landing, /group\.monthlyPrice/);
+
+  for (const language of languages) {
+    assert.match(landing, new RegExp(`/pos/features\\?lang=${language}`));
+    assert.match(landing, new RegExp(`/pos\\?lang=${language}#contact`));
+  }
+});
+
 test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
   for (const lang of languages) {
     const pricing = POS_CONTENT[lang].pricing;
