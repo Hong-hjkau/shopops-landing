@@ -247,10 +247,27 @@ test("POS homepage exposes two language-preserving links to the feature details"
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
   const featureGrid = readFileSync(new URL("../components/PosFeatureGrid.tsx", import.meta.url), "utf8");
   const pricing = readFileSync(new URL("../components/PosPricingSection.tsx", import.meta.url), "utf8");
+  const blockStart = {
+    en: "  en: {",
+    "zh-Hant": '  "zh-Hant": {',
+    "zh-Hans": '  "zh-Hans": {',
+  };
+  const languageBlock = (language, nextLanguage) => {
+    const start = page.indexOf(blockStart[language]);
+    const end = page.indexOf(nextLanguage ? blockStart[nextLanguage] : "\n} as const;", start);
+    assert.notEqual(start, -1, `${language} copy block should exist`);
+    assert.notEqual(end, -1, `${language} copy block should end before the next block`);
+    return page.slice(start, end);
+  };
+  const languageBlocks = {
+    en: languageBlock("en", "zh-Hant"),
+    "zh-Hant": languageBlock("zh-Hant", "zh-Hans"),
+    "zh-Hans": languageBlock("zh-Hans"),
+  };
 
-  assert.match(page, /en: \{[\s\S]*?viewFeatures: "View all POS features"/);
-  assert.match(page, /"zh-Hant": \{[\s\S]*?viewFeatures: "查看所有 POS 功能"/);
-  assert.match(page, /"zh-Hans": \{[\s\S]*?viewFeatures: "查看所有 POS 功能"/);
+  assert.equal((languageBlocks.en.match(/viewFeatures: "View all POS features"/g) ?? []).length, 1);
+  assert.equal((languageBlocks["zh-Hant"].match(/viewFeatures: "查看所有 POS 功能"/g) ?? []).length, 1);
+  assert.equal((languageBlocks["zh-Hans"].match(/viewFeatures: "查看所有 POS 功能"/g) ?? []).length, 1);
   assert.equal(
     (page.match(/detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\}/g) ?? []).length,
     2,
