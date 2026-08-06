@@ -34,7 +34,7 @@ export default function SiteHeader({
           <Image src="/logo-icon.png" alt="" width={512} height={496} className="h-8 w-auto" />
           <span className="text-lg font-bold tracking-tight text-hero-text">ShopOps</span>
         </Link>
-        <nav className="hidden lg:flex items-center gap-6 text-sm text-hero-text-secondary">
+        <nav className="hidden lg:flex items-center gap-6 text-sm text-hero-text-secondary lg:gap-3 lg:text-xs xl:gap-6 xl:text-sm">
           {navLinks.map((l) => (
             <a
               key={l.href}

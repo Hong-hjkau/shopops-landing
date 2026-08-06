@@ -435,6 +435,60 @@ test("public homepage links core feature cards to the detailed POS pricing page"
   );
 });
 
+test("homepage exposes three language-preserving POS feature and pricing entry points", () => {
+  const companyHome = readFileSync(new URL("../components/CompanyHome.tsx", import.meta.url), "utf8");
+  const hero = readFileSync(new URL("../components/PosHero.tsx", import.meta.url), "utf8");
+
+  for (const label of ["Features & pricing", "功能及價格", "功能及价格"]) {
+    assert.ok(companyHome.includes(label), `homepage should include the exact nav label: ${label}`);
+  }
+  for (const label of [
+    "View all POS features and pricing",
+    "查看全部 POS 功能及價格",
+    "查看全部 POS 功能及价格",
+  ]) {
+    assert.ok(companyHome.includes(label), `homepage should include the exact CTA label: ${label}`);
+  }
+
+  assert.match(companyHome, /\{ href: "#core-features", label: t\.nav\.features \}/);
+  assert.match(
+    companyHome,
+    /\{ href: `\/pos\/features\?lang=\$\{lang\}`, label: t\.nav\.featuresPricing \}/,
+  );
+  assert.match(
+    companyHome,
+    /<PosHero\s+copy=\{pos\.hero\}\s+featureCta=\{\{\s*href: `\/pos\/features\?lang=\$\{lang\}`,\s*label: t\.featuresCta,\s*\}\}\s*\/>/,
+  );
+
+  const coreFeaturesStart = companyHome.indexOf('<section id="core-features"');
+  const coreFeaturesEnd = companyHome.indexOf("</section>", coreFeaturesStart);
+  const coreFeatures = companyHome.slice(coreFeaturesStart, coreFeaturesEnd);
+  assert.match(coreFeatures, /href={`\/pos\/features\?lang=\${lang}`}/);
+
+  assert.match(hero, /featureCta\?: \{ href: string; label: string \}/);
+  assert.match(hero, /href=\{featureCta\.href\}/);
+  assert.match(hero, /\{featureCta\.label\}/);
+});
+
+test("homepage Hero keeps the demo CTA primary while feature pricing stacks on mobile", () => {
+  const hero = readFileSync(new URL("../components/PosHero.tsx", import.meta.url), "utf8");
+
+  assert.match(hero, /href="#contact"[\s\S]*?\{copy\.cta\}/);
+  assert.match(hero, /flex-col[\s\S]*?sm:flex-row/);
+  assert.match(hero, /w-full[\s\S]*?sm:w-auto/);
+  assert.match(hero, /border[^\n"]*border-hero/);
+});
+
+test("shared POS Hero preserves its original single-CTA layout when no feature CTA is supplied", () => {
+  const hero = readFileSync(new URL("../components/PosHero.tsx", import.meta.url), "utf8");
+
+  assert.match(hero, /featureCta \? \([\s\S]*?\) : \(\s*<a\s+href="#contact"/);
+  assert.match(
+    hero,
+    /className="glow-accent mt-8 inline-flex rounded-xl bg-accent px-5 py-3 font-bold text-on-accent/,
+  );
+});
+
 test("POS feature details page is included in the public sitemap", () => {
   const sitemap = readFileSync(new URL("../app/sitemap.ts", import.meta.url), "utf8");
 

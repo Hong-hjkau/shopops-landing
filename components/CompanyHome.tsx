@@ -21,6 +21,7 @@ const dict = {
     nav: {
       pos: "POS",
       features: "功能",
+      featuresPricing: "功能及價格",
       demo: "示範",
       rota: "Rota",
       customSoftware: "度身軟件",
@@ -88,6 +89,7 @@ const dict = {
     nav: {
       pos: "POS",
       features: "功能",
+      featuresPricing: "功能及价格",
       demo: "演示",
       rota: "Rota",
       customSoftware: "定制软件",
@@ -155,6 +157,7 @@ const dict = {
     nav: {
       pos: "POS",
       features: "Features",
+      featuresPricing: "Features & pricing",
       demo: "Demo",
       rota: "Rota",
       customSoftware: "Custom Software",
@@ -239,6 +242,7 @@ export default function CompanyHome() {
         navLinks={[
           { href: "#top", label: t.nav.pos },
           { href: "#core-features", label: t.nav.features },
+          { href: `/pos/features?lang=${lang}`, label: t.nav.featuresPricing },
           { href: "#contact", label: t.nav.demo },
           { href: "/rota", label: t.nav.rota },
           { href: "#secondary-offerings", label: t.nav.customSoftware },
@@ -247,7 +251,13 @@ export default function CompanyHome() {
         cta={{ href: "#contact", label: pos.hero.cta }}
       />
 
-      <PosHero copy={pos.hero} />
+      <PosHero
+        copy={pos.hero}
+        featureCta={{
+          href: `/pos/features?lang=${lang}`,
+          label: t.featuresCta,
+        }}
+      />
       <PosWorkflow copy={pos.workflow} lang={lang} />
       <PosBenefits copy={pos.benefits} />
 

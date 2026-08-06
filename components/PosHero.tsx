@@ -3,8 +3,10 @@ import type { PosSharedContent } from "@/lib/pos-content";
 
 export default function PosHero({
   copy,
+  featureCta,
 }: {
   copy: PosSharedContent["hero"];
+  featureCta?: { href: string; label: string };
 }) {
   return (
     <section id="top" className="relative overflow-hidden bg-black">
@@ -34,12 +36,29 @@ export default function PosHero({
             {copy.title}
           </h1>
           <p className="mt-5 text-lg leading-8 text-hero-text-secondary">{copy.subtitle}</p>
-          <a
-            href="#contact"
-            className="glow-accent mt-8 inline-flex rounded-xl bg-accent px-5 py-3 font-bold text-on-accent transition hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg"
-          >
-            {copy.cta}
-          </a>
+          {featureCta ? (
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a
+                href="#contact"
+                className="glow-accent inline-flex w-full items-center justify-center rounded-xl bg-accent px-5 py-3 text-center font-bold text-on-accent transition hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg sm:w-auto"
+              >
+                {copy.cta}
+              </a>
+              <a
+                href={featureCta.href}
+                className="inline-flex w-full items-center justify-center rounded-xl border border-hero-border bg-black/35 px-5 py-3 text-center font-bold text-hero-text transition hover:border-hero-text-secondary hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg sm:w-auto"
+              >
+                {featureCta.label}
+              </a>
+            </div>
+          ) : (
+            <a
+              href="#contact"
+              className="glow-accent mt-8 inline-flex rounded-xl bg-accent px-5 py-3 font-bold text-on-accent transition hover:bg-accent-hover focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg"
+            >
+              {copy.cta}
+            </a>
+          )}
           <a
             href={copy.situationHref}
             className="mt-4 block w-fit text-sm font-semibold text-hero-text-secondary underline decoration-hero-text-secondary/50 underline-offset-4 transition hover:text-hero-text"
