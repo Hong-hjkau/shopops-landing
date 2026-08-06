@@ -2,6 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { POS_CONTENT } from "../lib/pos-content.ts";
+import * as posFeaturesModule from "../lib/pos-features-content.ts";
+const {
+  POS_FEATURES_CONTENT,
+  getPosFeaturePricing,
+  getPosFeatureAddOn,
+  getStandardPosFeatureAddOnPrice,
+  getStandardPosFeatureAddOns,
+} = posFeaturesModule;
 
 const languages = ["en", "zh-Hant", "zh-Hans"];
 const forbidden = [
@@ -13,6 +21,13 @@ const forbidden = [
   /start free trial/i,
 ];
 
+test("verify script generates Next route types before local TypeScript checking", () => {
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+
+  assert.match(pkg.scripts.verify, /next typegen && tsc --noEmit/);
+  assert.doesNotMatch(pkg.scripts.verify, /npx tsc/);
+});
+
 test("all languages expose identical shared keys", () => {
   const expected = Object.keys(POS_CONTENT.en).sort();
   for (const lang of languages) {
@@ -22,6 +37,340 @@ test("all languages expose identical shared keys", () => {
 
 test("English POS eyebrow uses English-only wording", () => {
   assert.equal(POS_CONTENT.en.hero.eyebrow, "Restaurant POS · English + Chinese");
+});
+
+test("POS feature content maps every priced add-on by its stable ID", () => {
+  const nineIds = POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.id);
+  const nineteenIds = POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.id);
+
+  for (const lang of languages) {
+    const content = POS_FEATURES_CONTENT[lang];
+    assert.deepEqual(Object.keys(content.addOns).sort(), [...nineIds, ...nineteenIds].sort());
+    assert.equal(Array.isArray(content.workflow), false);
+    assert.equal(content.workflow.stories.length, 4);
+    assert.match(content.delivery.cashOnly, /cash|現金|现金/i);
+    assert.match(content.finance.hmrcBoundary, /HMRC/);
+    for (const description of Object.values(content.addOns)) {
+      assert.equal("title" in description, false, "add-on labels must come only from POS_CONTENT");
+    }
+    assert.equal("reassurance" in content.hero, false);
+    assert.equal("reassurance" in content.midCta, false);
+    assert.equal("reassurance" in content.finalCta, false);
+  }
+});
+
+test("POS feature content keeps delivery, finance, and AI boundaries in every language", () => {
+  const requiredBoundaries = {
+    en: [
+      /does not (?:accept|take) online payment/i,
+      /does not submit directly to HMRC/i,
+      /Nothing is received into stock until a person confirms it/i,
+    ],
+    "zh-Hant": [
+      /不接受網上付款/,
+      /不會直接向 HMRC 提交/,
+      /員工確認後才會入庫/,
+    ],
+    "zh-Hans": [
+      /不接受在线付款/,
+      /不会直接向 HMRC 提交/,
+      /员工确认后才会入库/,
+    ],
+  };
+  const unsupportedAffirmativeClaims = {
+    en: [
+      /submits VAT Returns to HMRC/i,
+      /staff-only collection/i,
+      /automatically confirms/i,
+    ],
+    "zh-Hant": [
+      /ShopOps 會直接向 HMRC 提交/,
+      /AI 會自動確認/,
+      /只可由員工取貨/,
+    ],
+    "zh-Hans": [
+      /ShopOps 会直接向 HMRC 提交/,
+      /AI 会自动确认/,
+      /仅限员工取货/,
+    ],
+  };
+
+  for (const lang of languages) {
+    const text = JSON.stringify(POS_FEATURES_CONTENT[lang]);
+    for (const boundary of requiredBoundaries[lang]) assert.match(text, boundary);
+    for (const claim of unsupportedAffirmativeClaims[lang]) assert.doesNotMatch(text, claim);
+  }
+});
+
+test("public POS feature copy rejects affirmative online-payment and card-delivery mutants", () => {
+  const paymentRules = {
+    en: {
+      cash: /cash/i,
+      card: /\bcards?\b/i,
+      negative: /does not (?:accept|take) online payments?/i,
+      affirmativePublicClaims: [
+        /(?<!does not )\baccepts?\s+(?:online|card)\s+payments?\b/i,
+        /(?<!does not )\baccepts?\s+payments?\s+(?:online|by card)\b/i,
+        /(?<!does not )\baccepts?\s+cards?\b/i,
+        /\b(?:online|card)\s+payments?\s+(?:are|is)\s+(?:accepted|available)\b/i,
+        /\bcards?\s+(?:are|is)\s+accepted\b/i,
+      ],
+      cashAndCardMutant: "We accept cash and card.",
+      permittedCheckoutCopy: "Staff can accept payment at checkout.",
+      affirmativeMutants: [
+        "We accept online payment.",
+        "We accept online payments.",
+        "ShopOps accepts online payment.",
+        "ShopOps accepts online payments.",
+        "We accept payment online.",
+        "Online payments are accepted.",
+        "We accept card payments for delivery.",
+        "Card payment is accepted for delivery.",
+      ],
+    },
+    "zh-Hant": {
+      cash: /現金/,
+      card: /信用卡/,
+      negative: /不接受網上付款/,
+      affirmativePublicClaims: [
+        /(?<!不)接受(?:網上|信用卡)付款/,
+        /(?:網上|信用卡)付款(?:可以|可|已)?(?:接受|使用|支援)/,
+      ],
+      cashAndCardMutant: "接受現金及信用卡付款。",
+      affirmativeMutants: [
+        "我們接受網上付款。",
+        "本系統接受網上付款。",
+        "我們接受信用卡付款送貨。",
+        "信用卡付款可使用作送貨。",
+      ],
+    },
+    "zh-Hans": {
+      cash: /现金/,
+      card: /信用卡/,
+      negative: /不接受在线付款/,
+      affirmativePublicClaims: [
+        /(?<!不)接受(?:在线|信用卡)付款/,
+        /(?:在线|信用卡)付款(?:可以|可|已)?(?:接受|使用|支持)/,
+      ],
+      cashAndCardMutant: "接受现金及信用卡付款。",
+      affirmativeMutants: [
+        "我们接受在线付款。",
+        "本系统接受在线付款。",
+        "我们接受信用卡付款配送。",
+        "信用卡付款可使用作配送。",
+      ],
+    },
+  };
+
+  const assertPublicPaymentBoundaries = (content, rules) => {
+    const { delivery } = content;
+    assert.match(delivery.cashOnly, rules.cash);
+    assert.doesNotMatch(delivery.cashOnly, rules.card);
+    assert.match(delivery.onlinePaymentBoundary, rules.negative);
+    const publicCopy = JSON.stringify(content);
+    for (const affirmative of rules.affirmativePublicClaims) {
+      assert.doesNotMatch(publicCopy, affirmative);
+    }
+  };
+
+  for (const lang of languages) {
+    const rules = paymentRules[lang];
+    const content = POS_FEATURES_CONTENT[lang];
+    assertPublicPaymentBoundaries(content, rules);
+    if (rules.permittedCheckoutCopy) {
+      assert.doesNotThrow(() => assertPublicPaymentBoundaries({
+        ...content,
+        hero: { ...content.hero, body: `${content.hero.body} ${rules.permittedCheckoutCopy}` },
+      }, rules));
+    }
+    assert.throws(() => assertPublicPaymentBoundaries({
+      ...content,
+      delivery: { ...content.delivery, cashOnly: rules.cashAndCardMutant },
+    }, rules));
+    for (const affirmativeMutant of rules.affirmativeMutants) {
+      assert.throws(() => assertPublicPaymentBoundaries({
+        ...content,
+        hero: { ...content.hero, body: `${content.hero.body} ${affirmativeMutant}` },
+      }, rules));
+    }
+  }
+});
+
+test("POS feature pricing derives approved bundle examples from canonical pricing IDs", () => {
+  for (const lang of languages) {
+    const prices = getPosFeaturePricing(lang);
+    assert.equal(prices.corePlusDelivery, 38);
+    assert.equal(prices.corePlusFinance, 38);
+    assert.equal(prices.corePlusFinanceAndRecipe, 47);
+  }
+});
+
+test("POS feature add-on helper returns canonical labels by stable ID", () => {
+  assert.equal(typeof getPosFeatureAddOn, "function");
+  assert.deepEqual(getPosFeatureAddOn("en", "delivery"), {
+    id: "delivery", label: "Online delivery orders", monthlyPrice: 19,
+  });
+  assert.deepEqual(getPosFeatureAddOn("zh-Hant", "delivery"), {
+    id: "delivery", label: "網上送貨訂單", monthlyPrice: 19,
+  });
+  assert.deepEqual(getPosFeatureAddOn("zh-Hans", "delivery"), {
+    id: "delivery", label: "网上送货订单", monthlyPrice: 19,
+  });
+});
+
+test("POS feature pricing looks up delivery, finance, and recipe prices by their own stable IDs", () => {
+  const pricing = POS_CONTENT.en.pricing;
+  const originalGroups = pricing.addOnGroups;
+  const [ninePoundGroup, nineteenPoundGroup] = originalGroups;
+  const delivery = nineteenPoundGroup.items.find((item) => item.id === "delivery");
+  const finance = nineteenPoundGroup.items.find((item) => item.id === "finance_inventory");
+  assert.ok(delivery);
+  assert.ok(finance);
+
+  try {
+    pricing.addOnGroups = [
+      { monthlyPrice: 29, items: [finance] },
+      { monthlyPrice: 13, items: ninePoundGroup.items },
+      { monthlyPrice: 23, items: [delivery] },
+    ];
+
+    const prices = getPosFeaturePricing("en");
+    assert.equal(prices.delivery, 23);
+    assert.equal(prices.finance, 29);
+    assert.equal(prices.recipe, 13);
+    assert.equal(prices.corePlusDelivery, 42);
+    assert.equal(prices.corePlusFinance, 48);
+    assert.equal(prices.corePlusFinanceAndRecipe, 61);
+  } finally {
+    pricing.addOnGroups = originalGroups;
+  }
+});
+
+test("POS features route renders localized content with shareable language and contact links", () => {
+  const root = new URL("../", import.meta.url);
+  const pagePath = new URL("app/pos/features/page.tsx", root);
+  const landingPath = new URL("components/PosFeaturesLanding.tsx", root);
+  const storyPath = new URL("components/PosFeatureStory.tsx", root);
+  const addOnPath = new URL("components/PosAddOnCard.tsx", root);
+  const premiumPath = new URL("components/PosPremiumFeature.tsx", root);
+
+  for (const path of [pagePath, landingPath, storyPath, addOnPath, premiumPath]) {
+    assert.ok(existsSync(path), `${path.pathname} should exist`);
+  }
+
+  const page = readFileSync(pagePath, "utf8");
+  const landing = readFileSync(landingPath, "utf8");
+  const header = readFileSync(new URL("components/SiteHeader.tsx", root), "utf8");
+
+  assert.match(page, /generateMetadata/);
+  assert.match(page, /parseQueryLang/);
+  assert.match(page, /key=\{requestedLang\}/);
+  assert.match(landing, /<main[^>]*lang=\{lang\}/);
+  assert.match(header, /languageHrefs/);
+  assert.match(landing, /POS_FEATURES_CONTENT\[lang\]/);
+  assert.match(landing, /item\.id/);
+  assert.match(landing, /getStandardPosFeatureAddOnPrice/);
+  assert.match(landing, /getStandardPosFeatureAddOns/);
+  assert.match(landing, /const trialReassurance = POS_CONTENT\[lang\]\.hero\.reassurance/);
+
+  for (const language of languages) {
+    assert.match(landing, new RegExp(`/pos/features\\?lang=${language}`));
+    assert.match(landing, new RegExp(`/pos\\?lang=${language}#contact`));
+  }
+});
+
+test("POS feature story cards sit below their workflow section heading", () => {
+  const story = readFileSync(
+    new URL("../components/PosFeatureStory.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(story, /<h3 className="mt-3 text-xl font-bold text-text">\{title\}<\/h3>/);
+});
+
+test("POS feature standard add-ons keep their own prices when pricing groups are reordered", () => {
+  const pricing = POS_CONTENT.en.pricing;
+  const originalGroups = pricing.addOnGroups;
+  const standardItems = originalGroups[0].items;
+  const premiumItems = originalGroups[1].items;
+
+  try {
+    pricing.addOnGroups = [
+      { monthlyPrice: 29, items: [premiumItems[1]] },
+      { monthlyPrice: 13, items: [standardItems[0], standardItems[1]] },
+      { monthlyPrice: 17, items: standardItems.slice(2) },
+      { monthlyPrice: 23, items: [premiumItems[0]] },
+    ];
+
+    assert.equal(getStandardPosFeatureAddOnPrice("en"), 13);
+    assert.deepEqual(
+      getStandardPosFeatureAddOns("en").map((item) => [item.id, item.monthlyPrice]),
+      [
+        ["scheduling", 13], ["reservations", 13],
+        ["reviews", 17], ["food_safety", 17], ["allergens", 17],
+        ["recipe_costing", 17], ["custom_domain", 17], ["signage", 17],
+      ],
+    );
+  } finally {
+    pricing.addOnGroups = originalGroups;
+  }
+});
+
+test("POS homepage exposes two language-preserving links to the feature details", () => {
+  const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  const featureGrid = readFileSync(new URL("../components/PosFeatureGrid.tsx", import.meta.url), "utf8");
+  const pricing = readFileSync(new URL("../components/PosPricingSection.tsx", import.meta.url), "utf8");
+  const blockStart = {
+    en: "  en: {",
+    "zh-Hant": '  "zh-Hant": {',
+    "zh-Hans": '  "zh-Hans": {',
+  };
+  const languageBlock = (language, nextLanguage) => {
+    const start = page.indexOf(blockStart[language]);
+    const end = page.indexOf(nextLanguage ? blockStart[nextLanguage] : "\n} as const;", start);
+    assert.notEqual(start, -1, `${language} copy block should exist`);
+    assert.notEqual(end, -1, `${language} copy block should end before the next block`);
+    return page.slice(start, end);
+  };
+  const languageBlocks = {
+    en: languageBlock("en", "zh-Hant"),
+    "zh-Hant": languageBlock("zh-Hant", "zh-Hans"),
+    "zh-Hans": languageBlock("zh-Hans"),
+  };
+
+  assert.equal((languageBlocks.en.match(/viewFeatures: "View all POS features"/g) ?? []).length, 1);
+  assert.equal((languageBlocks["zh-Hant"].match(/viewFeatures: "查看所有 POS 功能"/g) ?? []).length, 1);
+  assert.equal((languageBlocks["zh-Hans"].match(/viewFeatures: "查看所有 POS 功能"/g) ?? []).length, 1);
+  assert.equal(
+    (page.match(/detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\}/g) ?? []).length,
+    2,
+  );
+  assert.equal((page.match(/detailsLabel=\{t\.viewFeatures\}/g) ?? []).length, 2);
+  assert.match(featureGrid, /detailsHref: string/);
+  assert.match(featureGrid, /detailsLabel: string/);
+  assert.match(featureGrid, /<a href=\{detailsHref\}[^>]*>[\s\S]*?\{detailsLabel\}[\s\S]*?<\/a>/);
+  assert.match(pricing, /detailsHref: string/);
+  assert.match(pricing, /detailsLabel: string/);
+  assert.match(pricing, /<a href=\{detailsHref\}[^>]*>[\s\S]*?\{detailsLabel\}[\s\S]*?<\/a>/);
+});
+
+test("POS feature details page is included in the public sitemap", () => {
+  const sitemap = readFileSync(new URL("../app/sitemap.ts", import.meta.url), "utf8");
+
+  assert.match(sitemap, /url: `\$\{SITE_URL\}\/pos\/features`/);
+});
+
+test("POS card-payment wording keeps the restaurant terminal fee boundary in every language", () => {
+  const expected = {
+    en: "ShopOps can record card payments. Take payment on your own card terminal; your terminal provider's fees remain separate.",
+    "zh-Hant": "ShopOps 可記錄信用卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。",
+    "zh-Hans": "ShopOps 可记录银行卡付款；实际收款使用餐厅自己的刷卡机，刷卡机供应商费用另计。",
+  };
+
+  for (const lang of languages) {
+    assert.equal(POS_CONTENT[lang].pricing.feeNote, expected[lang]);
+    assert.equal(POS_CONTENT[lang].commission.disclaimer, expected[lang]);
+  }
 });
 
 test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
@@ -43,36 +392,57 @@ test("POS public pricing exposes the approved core plan, add-ons, and VAT status
     "Front-of-house and kitchen translation",
     "Discounts",
   ]);
-  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[0].items, [
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.id), [
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ]);
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.label), [
     "Rota and clock-in", "Reservations", "Customer reviews", "Food-safety records",
     "Allergen recognition", "Recipe costing", "Custom domain", "Advertising screen",
   ]);
-  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[1].items, [
-    "Takeaway delivery", "Finance and inventory",
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.id), [
+    "delivery", "finance_inventory",
+  ]);
+  assert.deepEqual(POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.label), [
+    "Online delivery orders", "Finance and inventory",
   ]);
   assert.equal(POS_CONTENT.en.pricing.vatNote, "No VAT added. ShopOps is not currently VAT registered, so the price shown is the total monthly subscription price.");
 
   assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.core.included, [
     "落單 POS", "店房翻譯", "優惠折扣",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[0].items, [
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[0].items.map((item) => item.id), [
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[0].items.map((item) => item.label), [
     "排班打卡", "訂位", "顧客評價", "食安記錄",
     "過敏原辨識", "食譜成本", "自訂網域", "廣告屏",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items, [
-    "外賣送貨", "財務在庫",
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items.map((item) => item.id), [
+    "delivery", "finance_inventory",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items.map((item) => item.label), [
+    "網上送貨訂單", "財務及庫存",
   ]);
   assert.equal(POS_CONTENT["zh-Hant"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。");
 
   assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.core.included, [
     "点餐 POS", "前厅与厨房翻译", "优惠折扣",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[0].items, [
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[0].items.map((item) => item.id), [
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[0].items.map((item) => item.label), [
     "排班打卡", "订位", "顾客评价", "食品安全记录",
     "过敏原识别", "食谱成本", "自定义域名", "广告屏",
   ]);
-  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items, [
-    "外卖配送", "财务与库存",
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items.map((item) => item.id), [
+    "delivery", "finance_inventory",
+  ]);
+  assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items.map((item) => item.label), [
+    "网上送货订单", "财务及库存",
   ]);
   assert.equal(POS_CONTENT["zh-Hans"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。");
 
@@ -96,7 +466,7 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   const section = readFileSync(new URL("../components/PosPricingSection.tsx", import.meta.url), "utf8");
 
   assert.match(pos, /import PosPricingSection from "@\/components\/PosPricingSection"/);
-  assert.match(pos, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} \/>/);
+  assert.match(pos, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\} detailsLabel=\{t\.viewFeatures\} \/>/);
   assert.doesNotMatch(pos, /<PricingCard/);
   assert.match(rota, /import PricingCard from "@\/components\/PricingCard"/);
   assert.match(rota, /<PricingCard pricing=\{t\.pricing\} \/>/);
@@ -107,13 +477,14 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   assert.match(section, /£\{group\.monthlyPrice\}/);
   assert.match(section, /shrink-0/);
   assert.match(section, /group\.items\.map/);
+  assert.match(section, /key=\{item\.id\}/);
   const addOnRow = section.match(
     /group\.items\.map\(\(item\) => \(\s*(<li[\s\S]*?<\/li>)\s*\)\)/,
   );
   assert.ok(addOnRow, "each add-on group should render a list-item template");
   assert.match(
     addOnRow[1],
-    /<span className="flex min-w-0 items-start gap-3">[\s\S]*?<span>\{item\}<\/span>[\s\S]*?<\/span>\s*<span className="shrink-0 font-semibold text-text">\s*£\{group\.monthlyPrice\}\s*<span className="font-medium text-text-secondary">\{copy\.monthlyUnit\}<\/span>/,
+    /<span className="flex min-w-0 items-start gap-3">[\s\S]*?<span>\{item\.label\}<\/span>[\s\S]*?<\/span>\s*<span className="shrink-0 font-semibold text-text">\s*£\{group\.monthlyPrice\}\s*<span className="font-medium text-text-secondary">\{copy\.monthlyUnit\}<\/span>/,
   );
   assert.match(section, /\{trial\}/);
   assert.match(section, /href="#contact"/);
@@ -164,7 +535,7 @@ test("shared copy contains no prohibited claim", () => {
 
 test("POS FAQ uses the shared pricing and direct-order commission facts", () => {
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
-  assert.match(page, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} \/>/);
+  assert.match(page, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\} detailsLabel=\{t\.viewFeatures\} \/>/);
   assert.match(page, /pos\.commission\.body/);
   assert.doesNotMatch(page, /ShopOps is one flat monthly fee with zero commission/);
 });

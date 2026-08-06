@@ -16,9 +16,11 @@ const LANGS: { key: Lang; label: string }[] = [
 export default function SiteHeader({
   navLinks,
   cta,
+  languageHrefs,
 }: {
   navLinks: NavLink[];
   cta: { href: string; label: string };
+  languageHrefs?: Record<Lang, string>;
 }) {
   const { lang, setLang } = useLang();
 
@@ -46,18 +48,33 @@ export default function SiteHeader({
         <div className="flex items-center gap-2">
           <div className="flex items-center rounded-full bg-white/10 p-0.5 text-xs font-medium ring-1 ring-white/10">
             {LANGS.map((l) => (
-              <button
-                key={l.key}
-                onClick={() => setLang(l.key)}
-                className={`rounded-full px-3 py-1 transition focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg ${
-                  lang === l.key
-                    ? "bg-hero-text text-hero-bg"
-                    : "text-hero-text-secondary hover:text-hero-text"
-                }`}
-                aria-pressed={lang === l.key}
-              >
-                {l.label}
-              </button>
+              languageHrefs ? (
+                <Link
+                  key={l.key}
+                  href={languageHrefs[l.key]}
+                  className={`rounded-full px-3 py-1 transition focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg ${
+                    lang === l.key
+                      ? "bg-hero-text text-hero-bg"
+                      : "text-hero-text-secondary hover:text-hero-text"
+                  }`}
+                  aria-current={lang === l.key ? "page" : undefined}
+                >
+                  {l.label}
+                </Link>
+              ) : (
+                <button
+                  key={l.key}
+                  onClick={() => setLang(l.key)}
+                  className={`rounded-full px-3 py-1 transition focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg ${
+                    lang === l.key
+                      ? "bg-hero-text text-hero-bg"
+                      : "text-hero-text-secondary hover:text-hero-text"
+                  }`}
+                  aria-pressed={lang === l.key}
+                >
+                  {l.label}
+                </button>
+              )
             ))}
           </div>
           <a

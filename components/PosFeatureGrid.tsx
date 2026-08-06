@@ -40,7 +40,17 @@ const dict = {
   },
 } as const;
 
-export default function PosFeatureGrid({ lang, id = "core-features" }: { lang: Lang; id?: string }) {
+export default function PosFeatureGrid({
+  lang,
+  id = "core-features",
+  detailsHref,
+  detailsLabel,
+}: {
+  lang: Lang;
+  id?: string;
+  detailsHref: string;
+  detailsLabel: string;
+}) {
   const t = dict[lang];
 
   return (
@@ -51,6 +61,11 @@ export default function PosFeatureGrid({ lang, id = "core-features" }: { lang: L
           <p className="mx-auto mt-4 max-w-2xl text-base text-text-secondary sm:text-lg">{t.subtitle}</p>
         </div>
         <div className="mt-10"><CardGrid items={t.items} cols="2/3" size="sm" /></div>
+        <div className="mt-8 text-center">
+          <a href={detailsHref} className="text-sm font-semibold text-accent-strong underline underline-offset-4">
+            {detailsLabel}
+          </a>
+        </div>
       </div>
     </section>
   );

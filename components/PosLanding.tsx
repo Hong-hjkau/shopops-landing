@@ -28,6 +28,7 @@ const dict = {
       ],
     },
     scenarios: { title: "For the ways your restaurant takes orders", body: "Use ShopOps for dine-in, takeaway, delivery and pre-orders, including multi-site setups, with the configuration discussed around your restaurant's own workflow." },
+    viewFeatures: "View all POS features",
     bilingual: { title: "English and Chinese, where each team needs it", body: "A customer can order in English while floor and kitchen staff view the same order in Chinese, with each person using the language that suits them." },
     optional: { title: "Optional modules can be discussed around your restaurant", body: "The monthly POS plan focuses on ordering, kitchen and checkout. We will confirm what is included in your quote before you begin a trial." },
     faq: {
@@ -57,6 +58,7 @@ const dict = {
       ],
     },
     scenarios: { title: "配合餐廳不同的落單方式", body: "ShopOps 可處理堂食、外賣、送貨及預訂，亦支援多分店設定；設定前會先了解你的餐廳流程。" },
+    viewFeatures: "查看所有 POS 功能",
     bilingual: { title: "英文與中文，配合不同崗位", body: "客人可以用英文落單，而樓面及廚房員工以中文查看同一張訂單，讓每個人使用合適的語言。" },
     optional: { title: "可按餐廳需要討論其他功能組", body: "月費 POS 計劃聚焦落單、廚房及結帳。開始試用前，我們會清楚確認報價所包含的功能。" },
     faq: {
@@ -86,6 +88,7 @@ const dict = {
       ],
     },
     scenarios: { title: "配合餐厅不同的下单方式", body: "ShopOps 可处理堂食、外卖、配送及预订，也支持多门店设置；设置前会先了解你的餐厅流程。" },
+    viewFeatures: "查看所有 POS 功能",
     bilingual: { title: "英文与中文，配合不同岗位", body: "顾客可以用英文下单，而前厅及厨房员工以中文查看同一张订单，让每个人使用合适的语言。" },
     optional: { title: "可按餐厅需要讨论其他功能组", body: "月费 POS 计划聚焦点餐、厨房及结账。开始试用前，我们会清楚确认报价所包含的功能。" },
     faq: {
@@ -159,7 +162,7 @@ export default function PosLanding() {
           <p className="mt-5 leading-8 text-text-secondary">{t.scenarios.body}</p>
         </div>
       </section>
-      <PosFeatureGrid lang={lang} id="core-features" />
+      <PosFeatureGrid lang={lang} id="core-features" detailsHref={`/pos/features?lang=${lang}`} detailsLabel={t.viewFeatures} />
       <section id="bilingual" className="bg-surface px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{t.bilingual.title}</h2>
@@ -175,7 +178,7 @@ export default function PosLanding() {
       </section>
       <SavingsCalculator lang={lang} />
       <TrialJourney copy={pos.trial} />
-      <PosPricingSection copy={pos.pricing} trial={pos.trial.title} />
+      <PosPricingSection copy={pos.pricing} trial={pos.trial.title} detailsHref={`/pos/features?lang=${lang}`} detailsLabel={t.viewFeatures} />
       <Faq title={t.faq.title} items={faqItems} schemaItems={schemaItems} />
       <ContactSection copy={contact} source="pos" />
       <SiteFooter text={t.footer} />
