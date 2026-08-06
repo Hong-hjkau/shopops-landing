@@ -58,19 +58,16 @@ test("POS feature content keeps delivery, finance, and AI boundaries in every la
   };
   const unsupportedAffirmativeClaims = {
     en: [
-      /accepts online payments/i,
       /submits VAT Returns to HMRC/i,
       /staff-only collection/i,
       /automatically confirms/i,
     ],
     "zh-Hant": [
-      /ShopOps 接受網上付款/,
       /ShopOps 會直接向 HMRC 提交/,
       /AI 會自動確認/,
       /只可由員工取貨/,
     ],
     "zh-Hans": [
-      /ShopOps 接受在线付款/,
       /ShopOps 会直接向 HMRC 提交/,
       /AI 会自动确认/,
       /仅限员工取货/,
@@ -81,6 +78,73 @@ test("POS feature content keeps delivery, finance, and AI boundaries in every la
     const text = JSON.stringify(POS_FEATURES_CONTENT[lang]);
     for (const boundary of requiredBoundaries[lang]) assert.match(text, boundary);
     for (const claim of unsupportedAffirmativeClaims[lang]) assert.doesNotMatch(text, claim);
+  }
+});
+
+test("delivery payment boundaries reject affirmative online-payment and cash-and-card mutants", () => {
+  const paymentRules = {
+    en: {
+      cash: /cash/i,
+      card: /\bcards?\b/i,
+      negative: /does not accept online payments?/i,
+      affirmative: [
+        /(?<!does not )\baccepts?\s+online payments?\b/i,
+        /(?<!does not )\baccepts?\s+payments?\s+online\b/i,
+        /\bonline payments?\s+(?:are|is)\s+accepted\b/i,
+      ],
+      cashAndCardMutant: "We accept cash and card.",
+      onlinePaymentMutants: [
+        "We accept online payment.",
+        "We accept online payments.",
+        "ShopOps accepts online payment.",
+        "ShopOps accepts online payments.",
+        "We accept payment online.",
+        "Online payments are accepted.",
+      ],
+    },
+    "zh-Hant": {
+      cash: /現金/,
+      card: /信用卡/,
+      negative: /不接受網上付款/,
+      affirmative: /(?<!不)接受網上付款/,
+      cashAndCardMutant: "接受現金及信用卡付款。",
+      onlinePaymentMutants: ["我們接受網上付款。", "本系統接受網上付款。"],
+    },
+    "zh-Hans": {
+      cash: /现金/,
+      card: /信用卡/,
+      negative: /不接受在线付款/,
+      affirmative: /(?<!不)接受在线付款/,
+      cashAndCardMutant: "接受现金及信用卡付款。",
+      onlinePaymentMutants: ["我们接受在线付款。", "本系统接受在线付款。"],
+    },
+  };
+
+  const assertDeliveryPaymentBoundaries = (delivery, rules) => {
+    assert.match(delivery.cashOnly, rules.cash);
+    assert.doesNotMatch(delivery.cashOnly, rules.card);
+    assert.match(delivery.onlinePaymentBoundary, rules.negative);
+    for (const field of [delivery.cashOnly, delivery.onlinePaymentBoundary]) {
+      for (const affirmative of Array.isArray(rules.affirmative) ? rules.affirmative : [rules.affirmative]) {
+        assert.doesNotMatch(field, affirmative);
+      }
+    }
+  };
+
+  for (const lang of languages) {
+    const rules = paymentRules[lang];
+    const delivery = POS_FEATURES_CONTENT[lang].delivery;
+    assertDeliveryPaymentBoundaries(delivery, rules);
+    assert.throws(() => assertDeliveryPaymentBoundaries({
+      ...delivery,
+      cashOnly: rules.cashAndCardMutant,
+    }, rules));
+    for (const onlinePaymentMutant of rules.onlinePaymentMutants) {
+      assert.throws(() => assertDeliveryPaymentBoundaries({
+        ...delivery,
+        onlinePaymentBoundary: onlinePaymentMutant,
+      }, rules));
+    }
   }
 });
 
