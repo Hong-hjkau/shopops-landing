@@ -19,7 +19,7 @@ export async function generateMetadata({ searchParams }: PosFeaturesPageProps): 
     alternates: { canonical: "/pos/features" },
     openGraph: {
       title: copy.title,
-      description: copy.description,
+      description: copy.share,
       url: `${SITE_URL}/pos/features?lang=${lang}`,
       type: "website",
       siteName: "ShopOps",
@@ -27,7 +27,7 @@ export async function generateMetadata({ searchParams }: PosFeaturesPageProps): 
     twitter: {
       card: "summary_large_image",
       title: copy.title,
-      description: copy.description,
+      description: copy.share,
     },
   };
 }

@@ -2,12 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { POS_CONTENT } from "../lib/pos-content.ts";
-import {
+import * as posFeaturesModule from "../lib/pos-features-content.ts";
+const {
   POS_FEATURES_CONTENT,
   getPosFeaturePricing,
+  getPosFeatureAddOn,
   getStandardPosFeatureAddOnPrice,
   getStandardPosFeatureAddOns,
-} from "../lib/pos-features-content.ts";
+} = posFeaturesModule;
 
 const languages = ["en", "zh-Hant", "zh-Hans"];
 const forbidden = [
@@ -44,28 +46,35 @@ test("POS feature content maps every priced add-on by its stable ID", () => {
   for (const lang of languages) {
     const content = POS_FEATURES_CONTENT[lang];
     assert.deepEqual(Object.keys(content.addOns).sort(), [...nineIds, ...nineteenIds].sort());
-    assert.equal(content.workflow.length, 4);
+    assert.equal(Array.isArray(content.workflow), false);
+    assert.equal(content.workflow.stories.length, 4);
     assert.match(content.delivery.cashOnly, /cash|現金|现金/i);
     assert.match(content.finance.hmrcBoundary, /HMRC/);
+    for (const description of Object.values(content.addOns)) {
+      assert.equal("title" in description, false, "add-on labels must come only from POS_CONTENT");
+    }
+    assert.equal("reassurance" in content.hero, false);
+    assert.equal("reassurance" in content.midCta, false);
+    assert.equal("reassurance" in content.finalCta, false);
   }
 });
 
 test("POS feature content keeps delivery, finance, and AI boundaries in every language", () => {
   const requiredBoundaries = {
     en: [
-      /does not accept online payment/i,
+      /does not (?:accept|take) online payment/i,
       /does not submit directly to HMRC/i,
-      /does not automatically confirm/i,
+      /Nothing is received into stock until a person confirms it/i,
     ],
     "zh-Hant": [
       /不接受網上付款/,
       /不會直接向 HMRC 提交/,
-      /不會自動確認/,
+      /員工確認後才會入庫/,
     ],
     "zh-Hans": [
       /不接受在线付款/,
       /不会直接向 HMRC 提交/,
-      /不会自动确认/,
+      /员工确认后才会入库/,
     ],
   };
   const unsupportedAffirmativeClaims = {
@@ -98,7 +107,7 @@ test("public POS feature copy rejects affirmative online-payment and card-delive
     en: {
       cash: /cash/i,
       card: /\bcards?\b/i,
-      negative: /does not accept online payments?/i,
+      negative: /does not (?:accept|take) online payments?/i,
       affirmativePublicClaims: [
         /(?<!does not )\baccepts?\s+(?:online|card)\s+payments?\b/i,
         /(?<!does not )\baccepts?\s+payments?\s+(?:online|by card)\b/i,
@@ -196,6 +205,19 @@ test("POS feature pricing derives approved bundle examples from canonical pricin
   }
 });
 
+test("POS feature add-on helper returns canonical labels by stable ID", () => {
+  assert.equal(typeof getPosFeatureAddOn, "function");
+  assert.deepEqual(getPosFeatureAddOn("en", "delivery"), {
+    id: "delivery", label: "Online delivery orders", monthlyPrice: 19,
+  });
+  assert.deepEqual(getPosFeatureAddOn("zh-Hant", "delivery"), {
+    id: "delivery", label: "網上送貨訂單", monthlyPrice: 19,
+  });
+  assert.deepEqual(getPosFeatureAddOn("zh-Hans", "delivery"), {
+    id: "delivery", label: "网上送货订单", monthlyPrice: 19,
+  });
+});
+
 test("POS feature pricing looks up delivery, finance, and recipe prices by their own stable IDs", () => {
   const pricing = POS_CONTENT.en.pricing;
   const originalGroups = pricing.addOnGroups;
@@ -249,6 +271,7 @@ test("POS features route renders localized content with shareable language and c
   assert.match(landing, /item\.id/);
   assert.match(landing, /getStandardPosFeatureAddOnPrice/);
   assert.match(landing, /getStandardPosFeatureAddOns/);
+  assert.match(landing, /const trialReassurance = POS_CONTENT\[lang\]\.hero\.reassurance/);
 
   for (const language of languages) {
     assert.match(landing, new RegExp(`/pos/features\\?lang=${language}`));
@@ -256,13 +279,13 @@ test("POS features route renders localized content with shareable language and c
   }
 });
 
-test("POS feature story cards begin at level two after the page title", () => {
+test("POS feature story cards sit below their workflow section heading", () => {
   const story = readFileSync(
     new URL("../components/PosFeatureStory.tsx", import.meta.url),
     "utf8",
   );
 
-  assert.match(story, /<h2 className="mt-3 text-xl font-bold text-text">\{title\}<\/h2>/);
+  assert.match(story, /<h3 className="mt-3 text-xl font-bold text-text">\{title\}<\/h3>/);
 });
 
 test("POS feature standard add-ons keep their own prices when pricing groups are reordered", () => {
@@ -400,7 +423,7 @@ test("POS public pricing exposes the approved core plan, add-ons, and VAT status
     "delivery", "finance_inventory",
   ]);
   assert.deepEqual(POS_CONTENT["zh-Hant"].pricing.addOnGroups[1].items.map((item) => item.label), [
-    "外賣送貨", "財務及庫存",
+    "網上送貨訂單", "財務及庫存",
   ]);
   assert.equal(POS_CONTENT["zh-Hant"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。");
 
@@ -419,7 +442,7 @@ test("POS public pricing exposes the approved core plan, add-ons, and VAT status
     "delivery", "finance_inventory",
   ]);
   assert.deepEqual(POS_CONTENT["zh-Hans"].pricing.addOnGroups[1].items.map((item) => item.label), [
-    "外卖配送", "财务及库存",
+    "网上送货订单", "财务及库存",
   ]);
   assert.equal(POS_CONTENT["zh-Hans"].pricing.vatNote, "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。");
 

@@ -7,7 +7,7 @@ export default function PosPremiumFeature({
   monthlyUnit,
   benefits,
   boundary,
-  bundleExample,
+  bundleExamples,
 }: {
   id: string;
   eyebrow: string;
@@ -17,7 +17,7 @@ export default function PosPremiumFeature({
   monthlyUnit: string;
   benefits: readonly string[];
   boundary: string;
-  bundleExample: string;
+  bundleExamples: readonly string[];
 }) {
   return (
     <article id={id} className="rounded-2xl border border-accent/30 bg-surface p-6 sm:p-8">
@@ -41,7 +41,9 @@ export default function PosPremiumFeature({
       <p className="mt-5 rounded-xl border border-border bg-bg p-4 text-sm leading-6 text-text-secondary">
         {boundary}
       </p>
-      <p className="mt-5 font-semibold text-text">{bundleExample}</p>
+      <ul className="mt-5 grid gap-2 font-semibold text-text">
+        {bundleExamples.map((example) => <li key={example}>{example}</li>)}
+      </ul>
     </article>
   );
 }

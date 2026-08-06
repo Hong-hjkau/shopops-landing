@@ -250,7 +250,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         {
           monthlyPrice: 19,
           items: [
-            { id: "delivery", label: "外賣送貨" },
+            { id: "delivery", label: "網上送貨訂單" },
             { id: "finance_inventory", label: "財務及庫存" },
           ],
         },
@@ -337,7 +337,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         {
           monthlyPrice: 19,
           items: [
-            { id: "delivery", label: "外卖配送" },
+            { id: "delivery", label: "网上送货订单" },
             { id: "finance_inventory", label: "财务及库存" },
           ],
         },

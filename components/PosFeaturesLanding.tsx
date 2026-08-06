@@ -8,6 +8,7 @@ import PosPremiumFeature from "@/components/PosPremiumFeature";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import {
   POS_FEATURES_CONTENT,
+  getPosFeatureAddOn,
   getPosFeaturePricing,
   getStandardPosFeatureAddOnPrice,
   getStandardPosFeatureAddOns,
@@ -37,17 +38,21 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const storyAltPrefix = lang === "en" ? "ShopOps POS: " : "ShopOps POS：";
   const standardAddOns = getStandardPosFeatureAddOns(lang);
   const standardAddOnPrice = getStandardPosFeatureAddOnPrice(lang);
+  const deliveryAddOn = getPosFeatureAddOn(lang, "delivery");
+  const financeAddOn = getPosFeatureAddOn(lang, "finance_inventory");
+  const recipeAddOn = getPosFeatureAddOn(lang, "recipe_costing");
+  const trialReassurance = POS_CONTENT[lang].hero.reassurance;
 
   return (
     <main lang={lang} className="flex flex-col">
       <SiteHeader
         navLinks={[
           { href: "#workflow", label: copy.hero.corePriceLabel },
-          { href: "#add-ons", label: copy.hero.addOnPriceLabel },
+          { href: "#add-ons", label: copy.hero.standardAddOnPriceLabel },
           { href: "#delivery", label: copy.delivery.eyebrow },
           { href: "#finance", label: copy.finance.eyebrow },
         ] satisfies NavLink[]}
-        cta={{ href: contactHref, label: copy.finalCta.cta }}
+        cta={{ href: contactHref, label: pricing.cta }}
         languageHrefs={languageHrefs}
       />
 
@@ -57,28 +62,39 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">{copy.hero.title}</h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-hero-text-secondary">{copy.hero.result}</p>
           <p className="mx-auto mt-4 max-w-2xl leading-7 text-hero-text-secondary">{copy.hero.body}</p>
-          <div className="mx-auto mt-9 grid max-w-xl gap-3 sm:grid-cols-2">
+          <div className="mx-auto mt-9 grid max-w-3xl gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-hero-border bg-white/5 p-5">
               <p className="text-sm text-hero-text-secondary">{copy.hero.corePriceLabel}</p>
               <p className="mt-2 text-3xl font-bold">£{pricing.core.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
             </div>
             <div className="rounded-2xl border border-hero-border bg-white/5 p-5">
-              <p className="text-sm text-hero-text-secondary">{copy.hero.addOnPriceLabel}</p>
+              <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
               <p className="mt-2 text-3xl font-bold">+£{standardAddOnPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
             </div>
+            <div className="rounded-2xl border border-hero-border bg-white/5 p-5">
+              <p className="text-sm text-hero-text-secondary">{copy.hero.premiumAddOnPriceLabel}</p>
+              <p className="mt-2 text-3xl font-bold">+£{deliveryAddOn.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+            </div>
           </div>
+          <a href={contactHref} className="mt-8 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
+            {pricing.cta}
+          </a>
+          <p className="mt-4 text-sm text-hero-text-secondary">{trialReassurance}</p>
         </div>
       </section>
 
       <section id="workflow" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
+          <div className="mb-10 max-w-3xl">
+            <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.workflow.title}</h2>
+          </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {copy.workflow.map((story, index) => (
+            {copy.workflow.stories.map((story, index) => (
               <PosFeatureStory
                 key={story.title}
                 image={workflowImages[index]}
                 alt={`${storyAltPrefix}${story.title}`}
-                caption={`${index + 1}`}
+                caption={`${index + 1} · ${copy.workflow.caption}`}
                 title={story.title}
                 description={story.body}
               />
@@ -106,8 +122,9 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
 
       <section id="add-ons" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.hero.addOnPriceLabel}</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.hero.standardAddOnPriceLabel}</h2>
           <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsRequirement}</p>
+          <p className="mt-2 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsBillingNote}</p>
           <div className="mt-10 grid gap-5 md:grid-cols-2">
             {standardAddOns.map((item) => (
               <PosAddOnCard
@@ -131,40 +148,47 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <a href={contactHref} className="mt-7 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
             {copy.midCta.cta}
           </a>
-          <p className="mt-4 text-sm text-text-secondary">{copy.midCta.reassurance}</p>
+          <p className="mt-4 text-sm text-text-secondary">{trialReassurance}</p>
         </div>
       </section>
 
       <section className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
-          <PosPremiumFeature
-            id="delivery"
-            eyebrow={copy.delivery.eyebrow}
-            title={copy.delivery.title}
-            body={copy.delivery.body}
-            monthlyPrice={featurePricing.delivery}
-            monthlyUnit={pricing.monthlyUnit}
-            benefits={[copy.delivery.cashOnly, copy.delivery.staffApproval]}
-            boundary={`${copy.delivery.cardBoundary} ${copy.delivery.onlinePaymentBoundary}`}
-            bundleExample={`${copy.hero.corePriceLabel} + ${copy.addOns.delivery.title}: £${featurePricing.corePlusDelivery}${pricing.monthlyUnit}`}
-          />
-          <PosPremiumFeature
-            id="finance"
-            eyebrow={copy.finance.eyebrow}
-            title={copy.finance.title}
-            body={copy.finance.body}
-            monthlyPrice={featurePricing.finance}
-            monthlyUnit={pricing.monthlyUnit}
-            benefits={[copy.finance.vatPaidOnPurchases, copy.finance.profitAndLoss, copy.finance.excelExport]}
-            boundary={copy.finance.hmrcBoundary}
-            bundleExample={`${copy.hero.corePriceLabel} + ${copy.addOns.finance_inventory.title} + ${copy.recipe.title}: £${featurePricing.corePlusFinanceAndRecipe}${pricing.monthlyUnit}`}
-          />
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.premiumTitle}</h2>
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            <PosPremiumFeature
+              id="delivery"
+              eyebrow={copy.delivery.eyebrow}
+              title={deliveryAddOn.label}
+              body={copy.delivery.body}
+              monthlyPrice={deliveryAddOn.monthlyPrice}
+              monthlyUnit={pricing.monthlyUnit}
+              benefits={copy.delivery.benefits}
+              boundary={`${copy.delivery.cashOnly} ${copy.delivery.onlinePaymentBoundary}`}
+              bundleExamples={[`${copy.hero.corePriceLabel} + ${deliveryAddOn.label}: £${featurePricing.corePlusDelivery}${pricing.monthlyUnit}`]}
+            />
+            <PosPremiumFeature
+              id="finance"
+              eyebrow={copy.finance.eyebrow}
+              title={financeAddOn.label}
+              body={copy.finance.body}
+              monthlyPrice={financeAddOn.monthlyPrice}
+              monthlyUnit={pricing.monthlyUnit}
+              benefits={copy.finance.benefits}
+              boundary={`${copy.finance.recipeBoundary} ${copy.finance.hmrcBoundary}`}
+              bundleExamples={[
+                `${copy.hero.corePriceLabel} + ${financeAddOn.label}: £${featurePricing.corePlusFinance}${pricing.monthlyUnit}`,
+                `${copy.hero.corePriceLabel} + ${financeAddOn.label} + ${recipeAddOn.label}: £${featurePricing.corePlusFinanceAndRecipe}${pricing.monthlyUnit}`,
+              ]}
+            />
+          </div>
         </div>
       </section>
 
       <section id="good-to-know" className="border-y border-border bg-surface px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-4xl">
-          <ul className="grid gap-4 sm:grid-cols-2">
+          <h2 className="text-3xl font-bold tracking-tight text-text">{copy.goodToKnowTitle}</h2>
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
             {copy.goodToKnow.map((item) => <li key={item} className="rounded-xl bg-bg p-5 text-text">{item}</li>)}
           </ul>
         </div>
@@ -174,10 +198,14 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{copy.finalCta.title}</h2>
           <p className="mt-4 leading-7 text-hero-text-secondary">{copy.finalCta.body}</p>
+          <ul className="mx-auto mt-5 grid max-w-2xl gap-2 text-sm font-semibold text-hero-text-secondary">
+            <li>{copy.hero.corePriceLabel} + {deliveryAddOn.label}: £{featurePricing.corePlusDelivery}{pricing.monthlyUnit}</li>
+            <li>{copy.hero.corePriceLabel} + {financeAddOn.label} + {recipeAddOn.label}: £{featurePricing.corePlusFinanceAndRecipe}{pricing.monthlyUnit}</li>
+          </ul>
           <a href={contactHref} className="mt-7 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
-            {copy.finalCta.cta}
+            {pricing.cta}
           </a>
-          <p className="mt-4 text-sm text-hero-text-secondary">{copy.finalCta.reassurance}</p>
+          <p className="mt-4 text-sm text-hero-text-secondary">{trialReassurance}</p>
         </div>
       </section>
     </main>
