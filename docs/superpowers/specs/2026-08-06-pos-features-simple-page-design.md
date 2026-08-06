@@ -13,24 +13,27 @@
 - 採用 C 方案：新增 `/pos/features`，不把所有詳細文字塞入 `/pos`。
 - `/pos` 的核心功能區及收費區加入描述清楚的「查看完整功能」入口。
 - 三語沿用現有 `?lang=en|zh-Hant|zh-Hans` 模式。
-- £19 的「外賣送貨」及「財務在庫」使用較大的詳細區塊。
+- `+£19` 的「網上送貨訂單」及「財務及庫存」使用較大的詳細區塊。
+- 公開名稱固定為「網上送貨訂單／Online delivery orders」及「財務及庫存／Finance and inventory」。
 - 首版只重用現有 4 張已登記 POS demo 圖，不為每個 add-on 製造未核實圖片。
 - 不加入網上付款、完整卡機整合或其他未經證實的能力。
+- 公開文案採短句及白話：技術詞第一次出現時附日常解釋，不直接向客戶使用 `fallback`、`draft`、`input VAT`、`XLSX`、`domain`、`slide` 等內部字眼。
 
 ## 頁面架構
 
 ### 1. Hero
 
 - H1：ShopOps POS 功能（按語言翻譯），不使用「完整」字眼，避免暗示此簡單頁列齊 44 個 source-level 功能錨點。
-- 短文說明核心 POS 與加購功能的關係。
-- 提示所有 add-on 都需要 Core POS，並且逐項收費。
+- 短文說明落單、廚房、樓面及結帳在同一流程，以及核心 POS 與加購功能的關係。
+- Hero 下方加入價格／產品邊界列：Core POS `£19／月`；每項加購為 `+£9／月` 或 `+£19／月`；全部 add-on 都需要 Core POS 並逐項收費。價錢由 `POS_CONTENT` 計算及顯示。
 - CTA 返回 `/pos?lang=<lang>#contact` 預約示範。
+- CTA 下重用現有試用 reassurance：免費試用 3 天、毋須信用卡、協助輸入餐牌；資料沿用現有 canonical offer content。
 
 ### 2. 核心 POS 流程
 
 重用現有 4 張圖片：
 
-1. `order-entry.webp`：員工輸入堂食或外賣自取訂單。
+1. `order-entry.webp`：員工輸入堂食或外賣自取訂單；同一核心流程亦補充堂食客人可掃枱上 QR 點餐，餐廳可設定先由員工確認。
 2. `kitchen-order.webp`：廚房接收並更新準備狀態。
 3. `floor-progress.webp`：樓面查看出餐進度。
 4. `checkout-report.webp`：現金／卡記錄、折扣及結帳。
@@ -44,21 +47,24 @@
 - Offline 後備。
 - 餐牌、套餐及選項管理。
 - 後廚手動即時售罄；暫停後從餐牌隱藏，落單時再檢查菜式是否可供應。
+- 以並排短句拆清產品邊界：核心 POS 讓店員在 POS 輸入外賣自取訂單；加入 `+£19`「網上送貨訂單／Online delivery orders」後，客人可從餐廳網頁自行提交送貨訂單。不得使用「只限／只能」語意。
 
 ### 3. £9 加購功能
 
-以 8 張短卡呈現，每張包含名稱、`£9／月`、一至兩句用途及「逐項收費」語意：
+以 8 張短卡呈現，每張包含名稱、`+£9／月`、一個結果先行句及最多一個白話能力句。桌面兩欄、手機單欄；內容全部直接可見，不使用 accordion：
 
-- 排班打卡：排更、availability、換更及 Telegram 定位打卡。
-- 訂位：網上訂位、walk-in、編枱、時間線及提醒。
-- 顧客評價：完成訂單／訂位後邀請、評分留言及店方通知。
-- 食安記錄：每日 checklist、溫度、異常處理及簽核。
-- 過敏原辨識：成分相片掃描建議、人手確認及每單重新確認。
-- 食譜成本：食譜、份量、步驟及每份成本；明示用量單位需與食材成本單位一致。
-- 自訂網域：Vercel／DNS 設定完成後使用餐廳自己的 domain。
-- 廣告屏：圖片、影片、菜式或連結 slide 的公開數碼告示牌。
+- 排班打卡：少花時間追員工更表；安排更次、收集員工可上班時間、換更及 Telegram 定位打卡。
+- 訂位：減少電話來回確認；讓客人網上訂位，店員處理 walk-in、編枱、時間線及提醒。
+- 顧客評價：更快發現客人意見並跟進；完成訂單／訂位後發出邀請，集中評分、留言及店方通知。
+- 食安記錄：把紙本食安工作集中管理；記錄每日檢查、溫度、異常處理及簽核。
+- 過敏原辨識：更快整理成分的過敏原資料；相片掃描只提出建議，再由員工確認，每張訂單重新確認客人需要。
+- 食譜成本：更清楚每道菜的預計成本；管理食譜、份量、步驟及每份成本，使用量單位需與食材成本單位一致。
+- 自訂網域：讓網上餐牌使用餐廳自己的網址；完成網址設定後即可使用，技術設定由示範／啟用流程交代。
+- 廣告屏：用現有屏幕展示餐牌及宣傳內容；輪播圖片、影片、菜式或連結內容。
 
-### 4. £19 外賣送貨
+8 張 £9 卡後加入中段 CTA：「不確定需要哪些功能？預約 15 分鐘示範」，連到同語言 `/pos?lang=<lang>#contact`。
+
+### 4. `+£19` 網上送貨訂單
 
 使用大型 feature panel，內容包括：
 
@@ -66,25 +72,38 @@
 - 管理 postcode 區域、時段、最低消費及運費規則。
 - 訂單取貨碼及司機專用版面。
 - 司機流程：取貨 → 確認取貨 → 送達／取消 → 回店現金對帳。
-- 按每單及每公里設定司機薪酬；有 Google Routes 時使用行車距離，否則以直線距離 fallback。
+- 按每單及每公里設定司機薪酬；能取得行車距離時使用行車距離，否則改用直線距離估算。
 - 醒目限制：目前只支援現金交易，沒有網上付款。
+- Panel badge 顯示 `+£19／月`，並列實際組合例子：Core POS £19 + 網上送貨訂單 £19 = £38／月。
 
-### 5. £19 財務在庫
+### 5. `+£19` 財務及庫存
 
 使用大型 feature panel，內容包括：
 
 - 採購、供應商、收貨及入庫。
-- AI 掃描 Invoice 相片／PDF，建立待人手確認的 draft。
-- 提取及核對 input VAT；不可靠時保留待確認狀態。
+- AI 掃描 Invoice 相片／PDF，建立待員工檢查的草稿，不會自動確認入庫。
+- 提取及核對採購時支付的 VAT；資料不可靠時保留待確認狀態。
 - Invoice 每行可選擇入庫或排除；排除原因包括私人用途。
 - 自訂採購／庫存單位換算，例如 `1 pack = 500 g`。
-- 盤點、存貨估值、耗用對帳、開支、人工、P&L 及 XLSX 匯出。
-- 與「食譜成本」模組配合時可計算食品成本；明示現有食譜用量跨單位限制。
+- 盤點、存貨估值、實際耗用及成本、開支、人工、損益（Profit and loss）及 Excel 匯出。
+- 清楚分界：財務及庫存本身按採購、盤點及耗用計算實際成本／損益；每道菜／每份的估算成本需要另加 `+£9` 食譜成本功能，並完成食譜設定。食譜用量單位須與食材成本單位一致。
+- VAT 邊界：可記錄銷售及採購 VAT 並匯出資料；不會直接向 HMRC 提交 VAT Return。餐廳仍需使用可向 HMRC 報稅的會計軟件，或交由會計師處理。
+- Panel badge 顯示 `+£19／月`，並列實際組合例子：Core POS £19 + 財務及庫存 £19 = £38／月；若再加食譜成本，合計為 £47／月。所有數字由 `POS_CONTENT` 計算。
 
-### 6. 收尾 CTA
+### 6. 需要知道（Good to know）
+
+集中顯示以下產品邊界，每點只用一行：
+
+- 店員可在 POS 輸入外賣自取訂單。
+- 送貨訂單目前只收現金，沒有網上付款。
+- 堂食／店內結帳可記錄卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。
+- AI Invoice 先建立待員工檢查的草稿；VAT 資料不會直接提交 HMRC。
+
+### 7. 收尾 CTA
 
 - 重申 Core POS 與逐項 add-on 收費關係。
 - CTA 返回同語言的 `/pos?lang=<lang>#contact`。
+- 重用試用 reassurance，並展示一個按所讀 section 對應的實際價錢組合例子。
 - 不在功能頁重複整張 pricing table，避免兩個價錢來源漂移；價錢資料仍由 `POS_CONTENT` 單一來源提供。
 
 ## 外賣自取邊界
@@ -130,14 +149,18 @@ HONG 的產品定義是「外賣自取只由店員輸入」。現有 POS code �
 1. 三語都有相同 stable ID set，以及同樣的 8 個 £9、2 個 £19 add-ons。
 2. `8 入 = 8 出`、`2 入 = 2 出`，並逐 ID 驗證三語名稱、描述及 price group 對應，頁面不漏項、不串項。
 3. 價錢只從 `POS_CONTENT` 讀取；頁面不另寫 `9`／`19` 的產品價錢常量。
-4. £19 外賣送貨明示現金交易及沒有網上付款。
-5. 財務在庫明示 AI 結果需人手確認、私人用途排除、VAT、單位換算及食譜限制。
-6. 不出現「外賣自取只能店員輸入」的未落實聲稱。
-7. 4 張圖片、caption、alt、heading、CTA 及 navigation 全部有三語內容。
-8. Keyboard、screen reader heading hierarchy、server-rendered `lang`、mobile 單欄及 WCAG 對比度通過。
-9. `/pos/features` 三語 title／description／Open Graph／Twitter metadata、canonical、sitemap及 `/pos` internal links 正確。
-10. 三個語言切換 href、首頁入口及所有返回 `/pos?lang=<lang>#contact` 的 CTA 都保留有效 `lang` query。
-11. Fresh generated-types 狀態下執行 `npm run verify`，全部 tests、lint、TypeScript、contrast 及 build 通過；`git status` 不產生 tracked generated diff。
+4. 所有 add-on badge 使用 `+£9／月` 或 `+£19／月`；頁面至少驗證 Core + Delivery = £38、Core + Finance = £38、Core + Finance + Recipe Costing = £47，而且數值只由 canonical pricing content 計算。
+5. 網上送貨訂單明示現金交易及沒有網上付款；核心自取與網上送貨名稱及並排邊界三語一致。
+6. 財務及庫存明示 AI 結果需人手確認、私人用途排除、VAT、單位換算、實際成本與每道菜估算成本的分界。
+7. VAT 邊界明示不直接提交 HMRC；卡付款邊界明示使用餐廳自己的卡機及費用另計。
+8. 核心流程包含堂食 QR 點餐及可選員工確認，不會被誤列為 add-on。
+9. 不出現「外賣自取只能店員輸入」的未落實聲稱。
+10. 公開三語文案沒有未解釋的 `fallback`、`draft`、`input VAT`、`XLSX`、`domain` 或 `slide` 技術詞。
+11. 4 張圖片、caption、alt、heading、CTA 及 navigation 全部有三語內容。
+12. Keyboard、screen reader heading hierarchy、server-rendered `lang`、mobile 單欄及 WCAG 對比度通過。
+13. `/pos/features` 三語 title／description／Open Graph／Twitter metadata、canonical、sitemap及 `/pos` internal links 正確。
+14. 三個語言切換 href、首頁入口及所有返回 `/pos?lang=<lang>#contact` 的 CTA 都保留有效 `lang` query。
+15. Fresh generated-types 狀態下執行 `npm run verify`，全部 tests、lint、TypeScript、contrast 及 build 通過；`git status` 不產生 tracked generated diff。
 
 ## 不在今次範圍
 
