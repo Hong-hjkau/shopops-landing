@@ -6,7 +6,12 @@ import PosAddOnCard from "@/components/PosAddOnCard";
 import PosFeatureStory from "@/components/PosFeatureStory";
 import PosPremiumFeature from "@/components/PosPremiumFeature";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
-import { POS_FEATURES_CONTENT, getPosFeaturePricing } from "@/lib/pos-features-content";
+import {
+  POS_FEATURES_CONTENT,
+  getPosFeaturePricing,
+  getStandardPosFeatureAddOnPrice,
+  getStandardPosFeatureAddOns,
+} from "@/lib/pos-features-content";
 import { POS_CONTENT } from "@/lib/pos-content";
 import type { Lang } from "@/lib/i18n";
 
@@ -30,10 +35,8 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const featurePricing = getPosFeaturePricing(lang);
   const contactHref = contactHrefs[lang];
   const storyAltPrefix = lang === "en" ? "ShopOps POS: " : "ShopOps POS：";
-  const standardAddOns = pricing.addOnGroups
-    .flatMap((group) => group.items.map((item) => ({ ...item, monthlyPrice: group.monthlyPrice })))
-    .filter((item) => item.id !== "delivery" && item.id !== "finance_inventory");
-  const standardAddOnPrice = standardAddOns.find((item) => item.id === "scheduling")!.monthlyPrice;
+  const standardAddOns = getStandardPosFeatureAddOns(lang);
+  const standardAddOnPrice = getStandardPosFeatureAddOnPrice(lang);
 
   return (
     <main lang={lang} className="flex flex-col">

@@ -1,5 +1,5 @@
 import type { Lang } from "./i18n";
-import { POS_CONTENT, type PosAddOnId } from "./pos-content.ts";
+import { POS_CONTENT, type PosAddOnId, type PosAddOnItem } from "./pos-content.ts";
 
 type FeatureCard = {
   title: string;
@@ -281,6 +281,18 @@ function getAddOnPrice(lang: Lang, id: PosAddOnId) {
     if (group.items.some((item) => item.id === id)) return group.monthlyPrice;
   }
   throw new Error(`Missing POS add-on pricing ID: ${id}`);
+}
+
+export function getStandardPosFeatureAddOns(lang: Lang): Array<PosAddOnItem & { monthlyPrice: number }> {
+  return POS_CONTENT[lang].pricing.addOnGroups.flatMap((group) =>
+    group.items
+      .filter((item) => item.id !== "delivery" && item.id !== "finance_inventory")
+      .map((item) => ({ ...item, monthlyPrice: group.monthlyPrice })),
+  );
+}
+
+export function getStandardPosFeatureAddOnPrice(lang: Lang) {
+  return getAddOnPrice(lang, "scheduling");
 }
 
 export function getPosFeaturePricing(lang: Lang) {

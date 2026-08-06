@@ -2,7 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { POS_CONTENT } from "../lib/pos-content.ts";
-import { POS_FEATURES_CONTENT, getPosFeaturePricing } from "../lib/pos-features-content.ts";
+import {
+  POS_FEATURES_CONTENT,
+  getPosFeaturePricing,
+  getStandardPosFeatureAddOnPrice,
+  getStandardPosFeatureAddOns,
+} from "../lib/pos-features-content.ts";
 
 const languages = ["en", "zh-Hant", "zh-Hans"];
 const forbidden = [
@@ -242,7 +247,8 @@ test("POS features route renders localized content with shareable language and c
   assert.match(header, /languageHrefs/);
   assert.match(landing, /POS_FEATURES_CONTENT\[lang\]/);
   assert.match(landing, /item\.id/);
-  assert.match(landing, /group\.monthlyPrice/);
+  assert.match(landing, /getStandardPosFeatureAddOnPrice/);
+  assert.match(landing, /getStandardPosFeatureAddOns/);
 
   for (const language of languages) {
     assert.match(landing, new RegExp(`/pos/features\\?lang=${language}`));
@@ -259,16 +265,32 @@ test("POS feature story cards begin at level two after the page title", () => {
   assert.match(story, /<h2 className="mt-3 text-xl font-bold text-text">\{title\}<\/h2>/);
 });
 
-test("POS feature cards derive their standard add-on prices without group positions", () => {
-  const landing = readFileSync(
-    new URL("../components/PosFeaturesLanding.tsx", import.meta.url),
-    "utf8",
-  );
+test("POS feature standard add-ons keep their own prices when pricing groups are reordered", () => {
+  const pricing = POS_CONTENT.en.pricing;
+  const originalGroups = pricing.addOnGroups;
+  const standardItems = originalGroups[0].items;
+  const premiumItems = originalGroups[1].items;
 
-  assert.doesNotMatch(landing, /addOnGroups\[0\]/);
-  assert.doesNotMatch(landing, /addOnGroups\.slice\(0, 1\)/);
-  assert.match(landing, /item\.id !== "delivery"/);
-  assert.match(landing, /item\.id !== "finance_inventory"/);
+  try {
+    pricing.addOnGroups = [
+      { monthlyPrice: 29, items: [premiumItems[1]] },
+      { monthlyPrice: 13, items: [standardItems[0], standardItems[1]] },
+      { monthlyPrice: 17, items: standardItems.slice(2) },
+      { monthlyPrice: 23, items: [premiumItems[0]] },
+    ];
+
+    assert.equal(getStandardPosFeatureAddOnPrice("en"), 13);
+    assert.deepEqual(
+      getStandardPosFeatureAddOns("en").map((item) => [item.id, item.monthlyPrice]),
+      [
+        ["scheduling", 13], ["reservations", 13],
+        ["reviews", 17], ["food_safety", 17], ["allergens", 17],
+        ["recipe_costing", 17], ["custom_domain", 17], ["signage", 17],
+      ],
+    );
+  } finally {
+    pricing.addOnGroups = originalGroups;
+  }
 });
 
 test("POS homepage exposes two language-preserving links to the feature details", () => {
