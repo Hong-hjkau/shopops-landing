@@ -14,6 +14,13 @@ const forbidden = [
   /start free trial/i,
 ];
 
+test("verify script generates Next route types before local TypeScript checking", () => {
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+
+  assert.match(pkg.scripts.verify, /next typegen && tsc --noEmit/);
+  assert.doesNotMatch(pkg.scripts.verify, /npx tsc/);
+});
+
 test("all languages expose identical shared keys", () => {
   const expected = Object.keys(POS_CONTENT.en).sort();
   for (const lang of languages) {
