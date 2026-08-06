@@ -39,6 +39,12 @@ test("English POS eyebrow uses English-only wording", () => {
   assert.equal(POS_CONTENT.en.hero.eyebrow, "Restaurant POS · English + Chinese");
 });
 
+test("POS feature demo CTA does not promise a fixed 15-minute duration", () => {
+  assert.equal(POS_FEATURES_CONTENT.en.midCta.cta, "Book a demo");
+  assert.equal(POS_FEATURES_CONTENT["zh-Hant"].midCta.cta, "預約示範");
+  assert.equal(POS_FEATURES_CONTENT["zh-Hans"].midCta.cta, "预约演示");
+});
+
 test("POS feature content maps every priced add-on by its stable ID", () => {
   const nineIds = POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.id);
   const nineteenIds = POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.id);
