@@ -248,15 +248,20 @@ test("POS homepage exposes two language-preserving links to the feature details"
   const featureGrid = readFileSync(new URL("../components/PosFeatureGrid.tsx", import.meta.url), "utf8");
   const pricing = readFileSync(new URL("../components/PosPricingSection.tsx", import.meta.url), "utf8");
 
-  assert.match(page, /viewFeatures: "View all POS features"/);
-  assert.match(page, /viewFeatures: "查看所有 POS 功能"/);
-  assert.match(page, /viewFeatures: "查看所有 POS 功能"/);
-  assert.match(page, /detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\}/);
-  assert.match(page, /detailsLabel=\{t\.viewFeatures\}/);
+  assert.match(page, /en: \{[\s\S]*?viewFeatures: "View all POS features"/);
+  assert.match(page, /"zh-Hant": \{[\s\S]*?viewFeatures: "查看所有 POS 功能"/);
+  assert.match(page, /"zh-Hans": \{[\s\S]*?viewFeatures: "查看所有 POS 功能"/);
+  assert.equal(
+    (page.match(/detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\}/g) ?? []).length,
+    2,
+  );
+  assert.equal((page.match(/detailsLabel=\{t\.viewFeatures\}/g) ?? []).length, 2);
   assert.match(featureGrid, /detailsHref: string/);
   assert.match(featureGrid, /detailsLabel: string/);
+  assert.match(featureGrid, /<a href=\{detailsHref\}[^>]*>[\s\S]*?\{detailsLabel\}[\s\S]*?<\/a>/);
   assert.match(pricing, /detailsHref: string/);
   assert.match(pricing, /detailsLabel: string/);
+  assert.match(pricing, /<a href=\{detailsHref\}[^>]*>[\s\S]*?\{detailsLabel\}[\s\S]*?<\/a>/);
 });
 
 test("POS feature details page is included in the public sitemap", () => {
