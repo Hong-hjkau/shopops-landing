@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { POS_CONTENT } from "../lib/pos-content.ts";
+import { POS_FEATURES_CONTENT, getPosFeaturePricing } from "../lib/pos-features-content.ts";
 
 const languages = ["en", "zh-Hant", "zh-Hans"];
 const forbidden = [
@@ -22,6 +23,102 @@ test("all languages expose identical shared keys", () => {
 
 test("English POS eyebrow uses English-only wording", () => {
   assert.equal(POS_CONTENT.en.hero.eyebrow, "Restaurant POS · English + Chinese");
+});
+
+test("POS feature content maps every priced add-on by its stable ID", () => {
+  const nineIds = POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.id);
+  const nineteenIds = POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.id);
+
+  for (const lang of languages) {
+    const content = POS_FEATURES_CONTENT[lang];
+    assert.deepEqual(Object.keys(content.addOns).sort(), [...nineIds, ...nineteenIds].sort());
+    assert.equal(content.workflow.length, 4);
+    assert.match(content.delivery.cashOnly, /cash|現金|现金/i);
+    assert.match(content.finance.hmrcBoundary, /HMRC/);
+  }
+});
+
+test("POS feature content keeps delivery, finance, and AI boundaries in every language", () => {
+  const requiredBoundaries = {
+    en: [
+      /does not accept online payment/i,
+      /does not submit directly to HMRC/i,
+      /does not automatically confirm/i,
+    ],
+    "zh-Hant": [
+      /不接受網上付款/,
+      /不會直接向 HMRC 提交/,
+      /不會自動確認/,
+    ],
+    "zh-Hans": [
+      /不接受在线付款/,
+      /不会直接向 HMRC 提交/,
+      /不会自动确认/,
+    ],
+  };
+  const unsupportedAffirmativeClaims = {
+    en: [
+      /accepts online payments/i,
+      /submits VAT Returns to HMRC/i,
+      /staff-only collection/i,
+      /automatically confirms/i,
+    ],
+    "zh-Hant": [
+      /ShopOps 接受網上付款/,
+      /ShopOps 會直接向 HMRC 提交/,
+      /AI 會自動確認/,
+      /只可由員工取貨/,
+    ],
+    "zh-Hans": [
+      /ShopOps 接受在线付款/,
+      /ShopOps 会直接向 HMRC 提交/,
+      /AI 会自动确认/,
+      /仅限员工取货/,
+    ],
+  };
+
+  for (const lang of languages) {
+    const text = JSON.stringify(POS_FEATURES_CONTENT[lang]);
+    for (const boundary of requiredBoundaries[lang]) assert.match(text, boundary);
+    for (const claim of unsupportedAffirmativeClaims[lang]) assert.doesNotMatch(text, claim);
+  }
+});
+
+test("POS feature pricing derives approved bundle examples from canonical pricing IDs", () => {
+  for (const lang of languages) {
+    const prices = getPosFeaturePricing(lang);
+    assert.equal(prices.corePlusDelivery, 38);
+    assert.equal(prices.corePlusFinance, 38);
+    assert.equal(prices.corePlusFinanceAndRecipe, 47);
+  }
+});
+
+test("POS feature pricing looks up delivery, finance, and recipe prices by their own stable IDs", () => {
+  const pricing = POS_CONTENT.en.pricing;
+  const originalGroups = pricing.addOnGroups;
+  const [ninePoundGroup, nineteenPoundGroup] = originalGroups;
+  const delivery = nineteenPoundGroup.items.find((item) => item.id === "delivery");
+  const finance = nineteenPoundGroup.items.find((item) => item.id === "finance_inventory");
+  assert.ok(delivery);
+  assert.ok(finance);
+
+  try {
+    pricing.addOnGroups = [
+      { monthlyPrice: 29, items: [finance] },
+      { monthlyPrice: 13, items: ninePoundGroup.items },
+      { monthlyPrice: 23, items: [delivery] },
+    ];
+
+    const prices = getPosFeaturePricing("en");
+    assert.equal(prices.delivery, 23);
+    assert.equal(prices.finance, 29);
+    assert.equal(prices.recipe, 13);
+    assert.equal(prices.corePlusDelivery, 42);
+    assert.equal(prices.corePlusFinance, 48);
+    assert.equal(prices.corePlusFinanceAndRecipe, 61);
+  } finally {
+    pricing.addOnGroups = originalGroups;
+  }
 });
 
 test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
