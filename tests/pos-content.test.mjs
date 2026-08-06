@@ -368,10 +368,17 @@ test("public homepage links core feature cards to the detailed POS pricing page"
   assert.match(companyHome, /查看全部 POS 功能及价格/);
   assert.match(companyHome, /href={`\/pos\/features\?lang=\${lang}`}/);
 
-  const cards = companyHome.indexOf("<CardGrid items={t.features.items}");
-  const entry = companyHome.indexOf('href={`/pos/features?lang=${lang}`}');
-  const nextSection = companyHome.indexOf('<section id="bilingual"');
-  assert.ok(cards !== -1 && cards < entry && entry < nextSection);
+  const coreFeaturesStart = companyHome.indexOf('<section id="core-features"');
+  const coreFeaturesEnd = companyHome.indexOf("</section>", coreFeaturesStart);
+  const coreFeatures = companyHome.slice(coreFeaturesStart, coreFeaturesEnd);
+  const cards = coreFeatures.indexOf("<CardGrid items={t.features.items}");
+  const entry = coreFeatures.indexOf('href={`/pos/features?lang=${lang}`}');
+  assert.ok(coreFeaturesStart !== -1 && coreFeaturesEnd !== -1);
+  assert.ok(cards !== -1 && cards < entry);
+  assert.match(
+    coreFeatures,
+    /<a\s+href={`\/pos\/features\?lang=\${lang}`}[^>]*>\s*\{t\.featuresCta\}\s*<\/a>/,
+  );
 });
 
 test("POS feature details page is included in the public sitemap", () => {
