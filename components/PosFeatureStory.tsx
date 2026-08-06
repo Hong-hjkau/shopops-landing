@@ -28,7 +28,7 @@ export default function PosFeatureStory({
         alt={alt}
         actionLabel={imageActionLabel}
         closeLabel={imageDialogCloseLabel}
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+        sizes="(max-width: 768px) 100vw, 50vw"
       />
       <div className="p-6">
         <p className="text-sm font-semibold text-accent-strong">{caption}</p>

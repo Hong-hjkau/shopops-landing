@@ -1,7 +1,3 @@
-import orderEntry from "@/public/pos-demo/order-entry.webp";
-import kitchenOrder from "@/public/pos-demo/kitchen-order.webp";
-import floorProgress from "@/public/pos-demo/floor-progress.webp";
-import checkoutReport from "@/public/pos-demo/checkout-report.webp";
 import PosAddOnCard from "@/components/PosAddOnCard";
 import PosFeatureStory from "@/components/PosFeatureStory";
 import PosPremiumFeature from "@/components/PosPremiumFeature";
@@ -14,6 +10,7 @@ import {
   getStandardPosFeatureAddOns,
 } from "@/lib/pos-features-content";
 import { POS_CONTENT } from "@/lib/pos-content";
+import { POS_FEATURE_IMAGES } from "@/lib/pos-feature-images";
 import type { Lang } from "@/lib/i18n";
 
 const languageHrefs: Record<Lang, string> = {
@@ -28,7 +25,32 @@ const contactHrefs: Record<Lang, string> = {
   "zh-Hans": "/pos?lang=zh-Hans#contact",
 };
 
-const workflowImages = [orderEntry, kitchenOrder, floorProgress, checkoutReport] as const;
+const workflowImages = [
+  { id: "order-entry", image: POS_FEATURE_IMAGES["order-entry"] },
+  { id: "kitchen-order", image: POS_FEATURE_IMAGES["kitchen-order"] },
+  { id: "floor-progress", image: POS_FEATURE_IMAGES["floor-progress"] },
+  { id: "checkout-report", image: POS_FEATURE_IMAGES["checkout-report"] },
+] as const;
+
+const coreImages = [
+  { id: "bilingual", image: POS_FEATURE_IMAGES["bilingual"] },
+  { id: "offline_backup", image: POS_FEATURE_IMAGES["offline_backup"] },
+  { id: "menu_management", image: POS_FEATURE_IMAGES["menu_management"] },
+  { id: "sold_out", image: POS_FEATURE_IMAGES["sold_out"] },
+] as const;
+
+const standardAddOnImages = {
+  scheduling: POS_FEATURE_IMAGES["scheduling"],
+  reservations: POS_FEATURE_IMAGES["reservations"],
+  reviews: POS_FEATURE_IMAGES["reviews"],
+  food_safety: POS_FEATURE_IMAGES["food_safety"],
+  allergens: POS_FEATURE_IMAGES["allergens"],
+  recipe_costing: POS_FEATURE_IMAGES["recipe_costing"],
+  custom_domain: POS_FEATURE_IMAGES["custom_domain"],
+  signage: POS_FEATURE_IMAGES["signage"],
+  delivery: POS_FEATURE_IMAGES["delivery"],
+  finance_inventory: POS_FEATURE_IMAGES["finance_inventory"],
+} as const;
 
 export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const copy = POS_FEATURES_CONTENT[lang];
@@ -48,31 +70,33 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
         navLinks={[
           { href: "#workflow", label: copy.hero.corePriceLabel },
           { href: "#add-ons", label: copy.hero.standardAddOnPriceLabel },
-          { href: "#delivery", label: copy.delivery.eyebrow },
-          { href: "#finance", label: copy.finance.eyebrow },
+          { href: "#advanced-operations", label: copy.premiumTitle },
+          { href: "#good-to-know", label: copy.goodToKnowTitle },
         ] satisfies NavLink[]}
         cta={{ href: contactHref, label: pricing.cta }}
         languageHrefs={languageHrefs}
       />
 
-      <section className="bg-hero-bg px-4 py-16 text-hero-text sm:px-6 sm:py-24">
+      <section id="hero" className="bg-hero-bg px-4 py-16 text-hero-text sm:px-6 sm:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-accent">{copy.hero.eyebrow}</p>
           <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">{copy.hero.title}</h1>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-hero-text-secondary">{copy.hero.result}</p>
           <p className="mx-auto mt-4 max-w-2xl leading-7 text-hero-text-secondary">{copy.hero.body}</p>
-          <div className="mx-auto mt-9 grid max-w-3xl gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-hero-border bg-white/5 p-5">
+          <div className="mx-auto mt-9 grid max-w-3xl gap-3">
+            <div data-pos-price-tier="core" className="col-span-full rounded-2xl border border-hero-border bg-white/5 p-5">
               <p className="text-sm text-hero-text-secondary">{copy.hero.corePriceLabel}</p>
               <p className="mt-2 text-3xl font-bold">£{pricing.core.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
             </div>
-            <div className="rounded-2xl border border-hero-border bg-white/5 p-5">
-              <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
-              <p className="mt-2 text-3xl font-bold">+£{standardAddOnPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
-            </div>
-            <div className="rounded-2xl border border-hero-border bg-white/5 p-5">
-              <p className="text-sm text-hero-text-secondary">{copy.hero.premiumAddOnPriceLabel}</p>
-              <p className="mt-2 text-3xl font-bold">+£{deliveryAddOn.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+            <div data-pos-price-add-ons className="grid gap-3 sm:grid-cols-2">
+              <div data-pos-price-tier="standard-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
+                <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
+                <p className="mt-2 text-3xl font-bold">+£{standardAddOnPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+              </div>
+              <div data-pos-price-tier="advanced-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
+                <p className="text-sm text-hero-text-secondary">{copy.hero.premiumAddOnPriceLabel}</p>
+                <p className="mt-2 text-3xl font-bold">+£{deliveryAddOn.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+              </div>
             </div>
           </div>
           <a href={contactHref} className="mt-8 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
@@ -87,13 +111,13 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <div className="mb-10 max-w-3xl">
             <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.workflow.title}</h2>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div data-pos-feature-grid className="grid gap-6 md:grid-cols-2">
             {copy.workflow.stories.map((story, index) => (
               <PosFeatureStory
                 key={story.title}
-                image={workflowImages[index]}
+                image={workflowImages[index].image}
                 alt={story.imageAlt}
-                imageId={["order-entry", "kitchen-order", "floor-progress", "checkout-report"][index]}
+                imageId={workflowImages[index].id}
                 imageActionLabel={story.imageActionLabel}
                 imageDialogCloseLabel={copy.imageDialogCloseLabel}
                 caption={`${index + 1} · ${copy.workflow.caption}`}
@@ -111,53 +135,28 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
             <p className="text-sm font-semibold uppercase tracking-wide text-accent-strong">{copy.core.eyebrow}</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.core.title}</h2>
           </div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {copy.core.cards.map((card) => (
-              <article key={card.title} className="rounded-2xl border border-border bg-bg p-6">
-                <h3 className="text-xl font-bold text-text">{card.title}</h3>
-                <p className="mt-3 leading-7 text-text-secondary">{card.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="add-ons" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.hero.standardAddOnPriceLabel}</h2>
-          <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsRequirement}</p>
-          <p className="mt-2 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsBillingNote}</p>
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {standardAddOns.map((item) => (
-              <PosAddOnCard
-                key={item.id}
-                id={item.id}
-                label={item.label}
-                outcome={copy.addOns[item.id].outcome}
-                detail={copy.addOns[item.id].body}
-                monthlyPrice={item.monthlyPrice}
-                monthlyUnit={pricing.monthlyUnit}
+          <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
+            {copy.core.cards.map((card, index) => (
+              <PosFeatureStory
+                key={card.title}
+                image={coreImages[index].image}
+                alt={card.imageAlt}
+                imageId={coreImages[index].id}
+                imageActionLabel={card.imageActionLabel}
+                imageDialogCloseLabel={copy.imageDialogCloseLabel}
+                caption={copy.workflow.caption}
+                title={card.title}
+                description={card.body}
               />
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-y border-border bg-surface px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-text">{copy.midCta.title}</h2>
-          <p className="mt-4 leading-7 text-text-secondary">{copy.midCta.body}</p>
-          <a href={contactHref} className="mt-7 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
-            {copy.midCta.cta}
-          </a>
-          <p className="mt-4 text-sm text-text-secondary">{trialReassurance}</p>
-        </div>
-      </section>
-
-      <section className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
+      <section id="advanced-operations" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.premiumTitle}</h2>
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
             <PosPremiumFeature
               id="delivery"
               eyebrow={copy.delivery.eyebrow}
@@ -168,6 +167,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               benefits={copy.delivery.benefits}
               boundary={`${copy.delivery.cashOnly} ${copy.delivery.onlinePaymentBoundary}`}
               bundleExamples={[`${copy.hero.corePriceLabel} + ${deliveryAddOn.label}: £${featurePricing.corePlusDelivery}${pricing.monthlyUnit}`]}
+              image={{ id: "delivery", image: POS_FEATURE_IMAGES["delivery"], alt: copy.addOns.delivery.imageAlt, actionLabel: copy.addOns.delivery.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, sizes: "(max-width: 768px) 100vw, 50vw" }}
             />
             <PosPremiumFeature
               id="finance"
@@ -182,8 +182,42 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 `${copy.hero.corePriceLabel} + ${financeAddOn.label}: £${featurePricing.corePlusFinance}${pricing.monthlyUnit}`,
                 `${copy.hero.corePriceLabel} + ${financeAddOn.label} + ${recipeAddOn.label}: £${featurePricing.corePlusFinanceAndRecipe}${pricing.monthlyUnit}`,
               ]}
+              image={{ id: "finance_inventory", image: POS_FEATURE_IMAGES["finance_inventory"], alt: copy.addOns.finance_inventory.imageAlt, actionLabel: copy.addOns.finance_inventory.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, sizes: "(max-width: 768px) 100vw, 50vw" }}
             />
           </div>
+        </div>
+      </section>
+
+      <section id="add-ons" className="border-y border-border bg-surface px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.hero.standardAddOnPriceLabel}</h2>
+          <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsRequirement}</p>
+          <p className="mt-2 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsBillingNote}</p>
+          <div data-pos-feature-grid className="mt-10 grid gap-5 md:grid-cols-2">
+            {standardAddOns.map((item) => (
+              <PosAddOnCard
+                key={item.id}
+                id={item.id}
+                label={item.label}
+                outcome={copy.addOns[item.id].outcome}
+                detail={copy.addOns[item.id].body}
+                monthlyPrice={item.monthlyPrice}
+                monthlyUnit={pricing.monthlyUnit}
+                image={{ id: item.id, image: standardAddOnImages[item.id], alt: copy.addOns[item.id].imageAlt, actionLabel: copy.addOns[item.id].imageActionLabel, closeLabel: copy.imageDialogCloseLabel, sizes: "(max-width: 768px) 100vw, 50vw" }}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="feature-help" className="bg-bg px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-text">{copy.midCta.title}</h2>
+          <p className="mt-4 leading-7 text-text-secondary">{copy.midCta.body}</p>
+          <a href={contactHref} className="mt-7 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
+            {copy.midCta.cta}
+          </a>
+          <p className="mt-4 text-sm text-text-secondary">{trialReassurance}</p>
         </div>
       </section>
 
@@ -196,7 +230,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
         </div>
       </section>
 
-      <section className="bg-hero-bg px-4 py-16 text-center text-hero-text sm:px-6 sm:py-24">
+      <section id="final-cta" className="bg-hero-bg px-4 py-16 text-center text-hero-text sm:px-6 sm:py-24">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{copy.finalCta.title}</h2>
           <p className="mt-4 leading-7 text-hero-text-secondary">{copy.finalCta.body}</p>

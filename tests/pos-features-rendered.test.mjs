@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { fileURLToPath } from "node:url";
+import { POS_FEATURES_CONTENT } from "../lib/pos-features-content.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 let nextProcess;
@@ -61,6 +62,13 @@ function assertTextIncludes(text, phrase) {
     text.toLocaleLowerCase().includes(phrase.toLocaleLowerCase()),
     `expected rendered text to include: ${phrase}\n${text}`,
   );
+}
+
+function decodeAttribute(value) {
+  return value
+    .replace(/&amp;/g, "&")
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/&quot;/g, '"');
 }
 
 function sectionById(main, id) {
@@ -185,6 +193,96 @@ test("workflow screenshots render accessible lazy image-dialog triggers without 
   assert.equal((workflow.match(/data-pos-image-id=/g) ?? []).length, 4);
   assert.equal((workflow.match(/loading="lazy"/g) ?? []).length, 8);
   assert.doesNotMatch(workflow, /priority|fetchpriority="high"|rel="preload"/i);
+});
+
+test("all 18 feature screenshots render once in the approved section order", async () => {
+  const main = await render("en");
+  const expectedIds = [
+    "order-entry", "kitchen-order", "floor-progress", "checkout-report",
+    "bilingual", "offline_backup", "menu_management", "sold_out",
+    "delivery", "finance_inventory",
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ];
+  const renderedIds = [...main.matchAll(/data-pos-image-id="([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(renderedIds, expectedIds);
+  assert.equal(new Set(renderedIds).size, 18);
+
+  const sectionIds = [...main.matchAll(/<section[^>]*id="([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(sectionIds, [
+    "hero", "workflow", "core", "advanced-operations", "add-ons",
+    "feature-help", "good-to-know", "final-cta",
+  ]);
+});
+
+test("all three languages render the same 18 unique images with exact localized dialog labels", async () => {
+  const expectedIds = [
+    "order-entry", "kitchen-order", "floor-progress", "checkout-report",
+    "bilingual", "offline_backup", "menu_management", "sold_out",
+    "delivery", "finance_inventory",
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ];
+
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const main = await render(language);
+    const content = POS_FEATURES_CONTENT[language];
+    const descriptions = [
+      ...content.workflow.stories,
+      ...content.core.cards,
+      content.addOns.delivery,
+      content.addOns.finance_inventory,
+      ...expectedIds.slice(10).map((id) => content.addOns[id]),
+    ];
+    const renderedIds = [...main.matchAll(/data-pos-image-id="([^"]+)"/g)].map((match) => match[1]);
+    assert.deepEqual(renderedIds, expectedIds);
+    assert.equal(new Set(renderedIds).size, 18);
+
+    expectedIds.forEach((id, index) => {
+      const trigger = main.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[^>]*>`))?.[0];
+      const dialog = main.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?<\\/dialog>`))?.[0];
+      assert.ok(trigger, `${language} ${id} should render a trigger`);
+      assert.ok(dialog, `${language} ${id} should render a dialog`);
+      assert.equal(decodeAttribute(trigger.match(/aria-label="([^"]+)"/)?.[1] ?? ""), descriptions[index].imageActionLabel);
+      assert.equal(decodeAttribute(dialog.match(/aria-label="([^"]+)"/)?.[1] ?? ""), descriptions[index].imageAlt);
+      assert.equal(decodeAttribute(dialog.match(/<button[^>]*aria-label="([^"]+)"/)?.[1] ?? ""), content.imageDialogCloseLabel);
+    });
+  }
+});
+
+test("two-column story images request half-width desktop sources", async () => {
+  const main = await render("en");
+  for (const id of ["workflow", "core"]) {
+    const section = sectionById(main, id);
+    const thumbnailSizes = [...section.matchAll(/<button[^>]*data-pos-image-id[^>]*>[\s\S]*?<img[^>]*sizes="([^"]+)"/g)].map((match) => match[1]);
+    assert.equal(thumbnailSizes.length, 4);
+    assert.deepEqual(thumbnailSizes, Array(4).fill("(max-width: 768px) 100vw, 50vw"));
+  }
+});
+
+test("pricing hierarchy and screenshot grids keep Core first and use at most two columns", async () => {
+  const main = await render("en");
+  const hero = sectionById(main, "hero");
+  const corePrice = hero.indexOf('data-pos-price-tier="core"');
+  const standardPrice = hero.indexOf('data-pos-price-tier="standard-add-ons"');
+  const premiumPrice = hero.indexOf('data-pos-price-tier="advanced-add-ons"');
+  assert.ok(corePrice !== -1 && corePrice < standardPrice && standardPrice < premiumPrice);
+  assert.match(hero, /data-pos-price-tier="core"[^>]*class="[^"]*col-span-full/);
+  assert.match(hero, /data-pos-price-add-ons[^>]*class="[^"]*sm:grid-cols-2/);
+
+  for (const id of ["workflow", "core", "advanced-operations", "add-ons"]) {
+    const section = sectionById(main, id);
+    assert.match(section, /data-pos-feature-grid[^>]*class="[^"]*md:grid-cols-2/);
+    assert.doesNotMatch(section, /(?:sm|md|lg|xl):grid-cols-[34]/);
+  }
+});
+
+test("the feature-help CTA follows all eight standard add-ons", async () => {
+  const main = await render("en");
+  const addOns = sectionById(main, "add-ons");
+  const help = sectionById(main, "feature-help");
+  assert.equal((addOns.match(/<article\b/g) ?? []).length, 8);
+  assert.ok(main.indexOf(addOns) < main.indexOf(help));
 });
 
 test("rendered £9 cards include every approved capability and the allergen safety steps", async () => {

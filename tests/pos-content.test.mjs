@@ -318,6 +318,27 @@ test("POS features route renders localized content with shareable language and c
   }
 });
 
+test("POS feature page routes every screenshot through the stable image map", () => {
+  const landing = readFileSync(
+    new URL("../components/PosFeaturesLanding.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(landing, /import \{ POS_FEATURE_IMAGES/);
+  assert.doesNotMatch(landing, /@\/public\/pos-demo|\.\.\/public\/pos-demo/);
+
+  const ids = [
+    "order-entry", "kitchen-order", "floor-progress", "checkout-report",
+    "bilingual", "offline_backup", "menu_management", "sold_out",
+    "delivery", "finance_inventory",
+    "scheduling", "reservations", "reviews", "food_safety",
+    "allergens", "recipe_costing", "custom_domain", "signage",
+  ];
+  for (const id of ids) {
+    assert.match(landing, new RegExp(`POS_FEATURE_IMAGES\\[\\"${id}\\"\\]`));
+  }
+});
+
 test("POS feature story cards sit below their workflow section heading", () => {
   const story = readFileSync(
     new URL("../components/PosFeatureStory.tsx", import.meta.url),
