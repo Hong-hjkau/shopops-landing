@@ -170,12 +170,12 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
       cta: "Book a demo & free trial setup",
       vatNote: "No VAT added. ShopOps is not currently VAT registered, so the price shown is the total monthly subscription price.",
-      feeNote: "Card-processing fees remain separate.",
+      feeNote: "ShopOps can record card payments. Take payment on your own card terminal; your terminal provider's fees remain separate.",
     },
     commission: {
       title: "Direct orders without ShopOps commission",
       body: "No ShopOps commission applies to orders placed through your own ShopOps ordering channels.",
-      disclaimer: "Card-processing fees remain separate.",
+      disclaimer: "ShopOps can record card payments. Take payment on your own card terminal; your terminal provider's fees remain separate.",
     },
   },
   "zh-Hant": {
@@ -257,12 +257,12 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
       cta: "預約示範及免費試用設定",
       vatNote: "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。",
-      feeNote: "信用卡付款處理費另計。",
+      feeNote: "ShopOps 可記錄信用卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。",
     },
     commission: {
       title: "直接訂單不收 ShopOps 佣金",
       body: "透過你的 ShopOps 點餐渠道落單，ShopOps 不會收取佣金。",
-      disclaimer: "信用卡付款處理費另計。",
+      disclaimer: "ShopOps 可記錄信用卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。",
     },
   },
   "zh-Hans": {
@@ -344,12 +344,12 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
       cta: "预约演示及免费试用设置",
       vatNote: "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。",
-      feeNote: "信用卡付款处理费另计。",
+      feeNote: "ShopOps 可记录银行卡付款；实际收款使用餐厅自己的刷卡机，刷卡机供应商费用另计。",
     },
     commission: {
       title: "直接订单不收 ShopOps 佣金",
       body: "通过你的 ShopOps 点餐渠道下单，ShopOps 不会收取佣金。",
-      disclaimer: "信用卡付款处理费另计。",
+      disclaimer: "ShopOps 可记录银行卡付款；实际收款使用餐厅自己的刷卡机，刷卡机供应商费用另计。",
     },
   },
 };

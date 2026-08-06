@@ -5,9 +5,13 @@ type PosPricingCopy = PosSharedContent["pricing"];
 export default function PosPricingSection({
   copy,
   trial,
+  detailsHref,
+  detailsLabel,
 }: {
   copy: PosPricingCopy;
   trial: string;
+  detailsHref: string;
+  detailsLabel: string;
 }) {
   return (
     <section id="pricing" className="px-4 py-16 sm:px-6 sm:py-24">
@@ -94,6 +98,12 @@ export default function PosPricingSection({
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <a href={detailsHref} className="text-sm font-semibold text-accent-strong underline underline-offset-4">
+            {detailsLabel}
+          </a>
         </div>
 
         <div className="mt-8 text-center">

@@ -243,6 +243,41 @@ test("POS features route renders localized content with shareable language and c
   }
 });
 
+test("POS homepage exposes two language-preserving links to the feature details", () => {
+  const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  const featureGrid = readFileSync(new URL("../components/PosFeatureGrid.tsx", import.meta.url), "utf8");
+  const pricing = readFileSync(new URL("../components/PosPricingSection.tsx", import.meta.url), "utf8");
+
+  assert.match(page, /viewFeatures: "View all POS features"/);
+  assert.match(page, /viewFeatures: "查看所有 POS 功能"/);
+  assert.match(page, /viewFeatures: "查看所有 POS 功能"/);
+  assert.match(page, /detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\}/);
+  assert.match(page, /detailsLabel=\{t\.viewFeatures\}/);
+  assert.match(featureGrid, /detailsHref: string/);
+  assert.match(featureGrid, /detailsLabel: string/);
+  assert.match(pricing, /detailsHref: string/);
+  assert.match(pricing, /detailsLabel: string/);
+});
+
+test("POS feature details page is included in the public sitemap", () => {
+  const sitemap = readFileSync(new URL("../app/sitemap.ts", import.meta.url), "utf8");
+
+  assert.match(sitemap, /url: `\$\{SITE_URL\}\/pos\/features`/);
+});
+
+test("POS card-payment wording keeps the restaurant terminal fee boundary in every language", () => {
+  const expected = {
+    en: "ShopOps can record card payments. Take payment on your own card terminal; your terminal provider's fees remain separate.",
+    "zh-Hant": "ShopOps 可記錄信用卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。",
+    "zh-Hans": "ShopOps 可记录银行卡付款；实际收款使用餐厅自己的刷卡机，刷卡机供应商费用另计。",
+  };
+
+  for (const lang of languages) {
+    assert.equal(POS_CONTENT[lang].pricing.feeNote, expected[lang]);
+    assert.equal(POS_CONTENT[lang].commission.disclaimer, expected[lang]);
+  }
+});
+
 test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
   for (const lang of languages) {
     const pricing = POS_CONTENT[lang].pricing;
@@ -336,7 +371,7 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   const section = readFileSync(new URL("../components/PosPricingSection.tsx", import.meta.url), "utf8");
 
   assert.match(pos, /import PosPricingSection from "@\/components\/PosPricingSection"/);
-  assert.match(pos, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} \/>/);
+  assert.match(pos, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\} detailsLabel=\{t\.viewFeatures\} \/>/);
   assert.doesNotMatch(pos, /<PricingCard/);
   assert.match(rota, /import PricingCard from "@\/components\/PricingCard"/);
   assert.match(rota, /<PricingCard pricing=\{t\.pricing\} \/>/);
@@ -405,7 +440,7 @@ test("shared copy contains no prohibited claim", () => {
 
 test("POS FAQ uses the shared pricing and direct-order commission facts", () => {
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
-  assert.match(page, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} \/>/);
+  assert.match(page, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\} detailsLabel=\{t\.viewFeatures\} \/>/);
   assert.match(page, /pos\.commission\.body/);
   assert.doesNotMatch(page, /ShopOps is one flat monthly fee with zero commission/);
 });
