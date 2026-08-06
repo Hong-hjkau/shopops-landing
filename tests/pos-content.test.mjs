@@ -81,68 +81,88 @@ test("POS feature content keeps delivery, finance, and AI boundaries in every la
   }
 });
 
-test("delivery payment boundaries reject affirmative online-payment and cash-and-card mutants", () => {
+test("public POS feature copy rejects affirmative online-payment and card-delivery mutants", () => {
   const paymentRules = {
     en: {
       cash: /cash/i,
       card: /\bcards?\b/i,
       negative: /does not accept online payments?/i,
-      affirmative: [
-        /(?<!does not )\baccepts?\s+online payments?\b/i,
-        /(?<!does not )\baccepts?\s+payments?\s+online\b/i,
-        /\bonline payments?\s+(?:are|is)\s+accepted\b/i,
+      affirmativePublicClaims: [
+        /(?<!does not )\baccepts?\s+(?:(?:online|card)\s+)?payments?\b/i,
+        /(?<!does not )\baccepts?\s+payments?\s+(?:online|by card)\b/i,
+        /(?<!does not )\baccepts?\s+cards?\b/i,
+        /\b(?:online|card)\s+payments?\s+(?:are|is)\s+(?:accepted|available)\b/i,
+        /\bcards?\s+(?:are|is)\s+accepted\b/i,
       ],
       cashAndCardMutant: "We accept cash and card.",
-      onlinePaymentMutants: [
+      affirmativeMutants: [
         "We accept online payment.",
         "We accept online payments.",
         "ShopOps accepts online payment.",
         "ShopOps accepts online payments.",
         "We accept payment online.",
         "Online payments are accepted.",
+        "We accept card payments for delivery.",
+        "Card payment is accepted for delivery.",
       ],
     },
     "zh-Hant": {
       cash: /現金/,
       card: /信用卡/,
       negative: /不接受網上付款/,
-      affirmative: /(?<!不)接受網上付款/,
+      affirmativePublicClaims: [
+        /(?<!不)接受(?:網上|信用卡)付款/,
+        /(?:網上|信用卡)付款(?:可以|可|已)?(?:接受|使用|支援)/,
+      ],
       cashAndCardMutant: "接受現金及信用卡付款。",
-      onlinePaymentMutants: ["我們接受網上付款。", "本系統接受網上付款。"],
+      affirmativeMutants: [
+        "我們接受網上付款。",
+        "本系統接受網上付款。",
+        "我們接受信用卡付款送貨。",
+        "信用卡付款可使用作送貨。",
+      ],
     },
     "zh-Hans": {
       cash: /现金/,
       card: /信用卡/,
       negative: /不接受在线付款/,
-      affirmative: /(?<!不)接受在线付款/,
+      affirmativePublicClaims: [
+        /(?<!不)接受(?:在线|信用卡)付款/,
+        /(?:在线|信用卡)付款(?:可以|可|已)?(?:接受|使用|支持)/,
+      ],
       cashAndCardMutant: "接受现金及信用卡付款。",
-      onlinePaymentMutants: ["我们接受在线付款。", "本系统接受在线付款。"],
+      affirmativeMutants: [
+        "我们接受在线付款。",
+        "本系统接受在线付款。",
+        "我们接受信用卡付款配送。",
+        "信用卡付款可使用作配送。",
+      ],
     },
   };
 
-  const assertDeliveryPaymentBoundaries = (delivery, rules) => {
+  const assertPublicPaymentBoundaries = (content, rules) => {
+    const { delivery } = content;
     assert.match(delivery.cashOnly, rules.cash);
     assert.doesNotMatch(delivery.cashOnly, rules.card);
     assert.match(delivery.onlinePaymentBoundary, rules.negative);
-    for (const field of [delivery.cashOnly, delivery.onlinePaymentBoundary]) {
-      for (const affirmative of Array.isArray(rules.affirmative) ? rules.affirmative : [rules.affirmative]) {
-        assert.doesNotMatch(field, affirmative);
-      }
+    const publicCopy = JSON.stringify(content);
+    for (const affirmative of rules.affirmativePublicClaims) {
+      assert.doesNotMatch(publicCopy, affirmative);
     }
   };
 
   for (const lang of languages) {
     const rules = paymentRules[lang];
-    const delivery = POS_FEATURES_CONTENT[lang].delivery;
-    assertDeliveryPaymentBoundaries(delivery, rules);
-    assert.throws(() => assertDeliveryPaymentBoundaries({
-      ...delivery,
-      cashOnly: rules.cashAndCardMutant,
+    const content = POS_FEATURES_CONTENT[lang];
+    assertPublicPaymentBoundaries(content, rules);
+    assert.throws(() => assertPublicPaymentBoundaries({
+      ...content,
+      delivery: { ...content.delivery, cashOnly: rules.cashAndCardMutant },
     }, rules));
-    for (const onlinePaymentMutant of rules.onlinePaymentMutants) {
-      assert.throws(() => assertDeliveryPaymentBoundaries({
-        ...delivery,
-        onlinePaymentBoundary: onlinePaymentMutant,
+    for (const affirmativeMutant of rules.affirmativeMutants) {
+      assert.throws(() => assertPublicPaymentBoundaries({
+        ...content,
+        hero: { ...content.hero, body: `${content.hero.body} ${affirmativeMutant}` },
       }, rules));
     }
   }
