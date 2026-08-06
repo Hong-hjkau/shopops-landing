@@ -160,6 +160,33 @@ test("workflow renders each approved screenshot beside its matching stage and la
   });
 });
 
+test("workflow screenshots render accessible lazy image-dialog triggers without priority loading", async () => {
+  const main = await render("en");
+  const workflow = sectionById(main, "workflow");
+  const expected = [
+    ["order-entry", "Enlarge the order-entry demo screen", "Close enlarged image"],
+    ["kitchen-order", "Enlarge the kitchen-order demo screen", "Close enlarged image"],
+    ["floor-progress", "Enlarge the floor-progress demo screen", "Close enlarged image"],
+    ["checkout-report", "Enlarge the checkout and reporting demo screen", "Close enlarged image"],
+  ];
+
+  for (const [id, actionLabel, closeLabel] of expected) {
+    const trigger = workflow.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[^>]*>`))?.[0];
+    assert.ok(trigger, `${id} should render as a native button trigger`);
+    assert.match(trigger, new RegExp(`aria-label="${actionLabel}"`));
+
+    const dialog = workflow.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?<\\/dialog>`))?.[0];
+    assert.ok(dialog, `${id} should render a native dialog`);
+    assert.match(dialog, /aria-label="[^"]+"/);
+    assert.match(dialog, new RegExp(`<button[^>]*aria-label="${closeLabel}"`));
+    assert.match(dialog, /max-h-\[85vh\]/);
+  }
+
+  assert.equal((workflow.match(/data-pos-image-id=/g) ?? []).length, 4);
+  assert.equal((workflow.match(/loading="lazy"/g) ?? []).length, 8);
+  assert.doesNotMatch(workflow, /priority|fetchpriority="high"|rel="preload"/i);
+});
+
 test("rendered £9 cards include every approved capability and the allergen safety steps", async () => {
   const main = await render("en");
   assert.equal(sectionById(main, "add-ons").match(/<article\b/g)?.length, 8);

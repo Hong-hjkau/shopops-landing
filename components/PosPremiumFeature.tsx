@@ -1,3 +1,5 @@
+import PosImageDialog, { type PosImageDialogProps } from "@/components/PosImageDialog";
+
 export default function PosPremiumFeature({
   id,
   eyebrow,
@@ -8,6 +10,7 @@ export default function PosPremiumFeature({
   benefits,
   boundary,
   bundleExamples,
+  image,
 }: {
   id: string;
   eyebrow: string;
@@ -18,9 +21,11 @@ export default function PosPremiumFeature({
   benefits: readonly string[];
   boundary: string;
   bundleExamples: readonly string[];
+  image?: PosImageDialogProps;
 }) {
   return (
     <article id={id} className="rounded-2xl border border-accent/30 bg-surface p-6 sm:p-8">
+      {image ? <div className="-mx-6 -mt-6 mb-6 overflow-hidden rounded-t-2xl sm:-mx-8 sm:-mt-8"><PosImageDialog {...image} /></div> : null}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-accent-strong">{eyebrow}</p>

@@ -1,3 +1,5 @@
+import PosImageDialog, { type PosImageDialogProps } from "@/components/PosImageDialog";
+
 export default function PosAddOnCard({
   id,
   label,
@@ -5,6 +7,7 @@ export default function PosAddOnCard({
   detail,
   monthlyPrice,
   monthlyUnit,
+  image,
 }: {
   id: string;
   label: string;
@@ -12,9 +15,11 @@ export default function PosAddOnCard({
   detail: string;
   monthlyPrice: number;
   monthlyUnit: string;
+  image?: PosImageDialogProps;
 }) {
   return (
     <article id={id} className="rounded-2xl border border-border bg-surface p-6">
+      {image ? <div className="-mx-6 -mt-6 mb-6 overflow-hidden rounded-t-2xl"><PosImageDialog {...image} /></div> : null}
       <div className="flex items-start justify-between gap-4">
         <h3 className="text-xl font-bold text-text">{label}</h3>
         <span className="shrink-0 rounded-full bg-accent px-3 py-1 text-sm font-bold text-on-accent">

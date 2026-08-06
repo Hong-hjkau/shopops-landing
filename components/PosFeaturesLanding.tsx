@@ -35,7 +35,6 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const pricing = POS_CONTENT[lang].pricing;
   const featurePricing = getPosFeaturePricing(lang);
   const contactHref = contactHrefs[lang];
-  const storyAltPrefix = lang === "en" ? "ShopOps POS: " : "ShopOps POS：";
   const standardAddOns = getStandardPosFeatureAddOns(lang);
   const standardAddOnPrice = getStandardPosFeatureAddOnPrice(lang);
   const deliveryAddOn = getPosFeatureAddOn(lang, "delivery");
@@ -93,7 +92,10 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               <PosFeatureStory
                 key={story.title}
                 image={workflowImages[index]}
-                alt={`${storyAltPrefix}${story.title}`}
+                alt={story.imageAlt}
+                imageId={["order-entry", "kitchen-order", "floor-progress", "checkout-report"][index]}
+                imageActionLabel={story.imageActionLabel}
+                imageDialogCloseLabel={copy.imageDialogCloseLabel}
                 caption={`${index + 1} · ${copy.workflow.caption}`}
                 title={story.title}
                 description={story.body}

@@ -1,25 +1,34 @@
-import Image, { type StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
+import PosImageDialog from "@/components/PosImageDialog";
 
 export default function PosFeatureStory({
   image,
   alt,
+  imageId,
+  imageActionLabel,
+  imageDialogCloseLabel,
   caption,
   title,
   description,
 }: {
   image: StaticImageData;
   alt: string;
+  imageId: string;
+  imageActionLabel: string;
+  imageDialogCloseLabel: string;
   caption: string;
   title: string;
   description: string;
 }) {
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-      <Image
-        src={image}
+      <PosImageDialog
+        id={imageId}
+        image={image}
         alt={alt}
+        actionLabel={imageActionLabel}
+        closeLabel={imageDialogCloseLabel}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        className="h-auto w-full border-b border-border"
       />
       <div className="p-6">
         <p className="text-sm font-semibold text-accent-strong">{caption}</p>
