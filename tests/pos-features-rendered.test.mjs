@@ -4,6 +4,7 @@ import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { fileURLToPath } from "node:url";
 import { POS_FEATURES_CONTENT } from "../lib/pos-features-content.ts";
+import { POS_CONTENT } from "../lib/pos-content.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 let nextProcess;
@@ -365,9 +366,9 @@ test("Good to know renders the four operational boundaries instead of pricing re
     "Staff can enter collection orders in the POS",
     "Delivery orders are cash-only",
     "does not take online payments",
-    "ShopOps records card payments only",
+    "ShopOps can record card payments",
     "your own card terminal",
-    "terminal provider fees are separate",
+    "your terminal provider's fees remain separate",
     "AI invoice and VAT details stay as a draft",
     "staff confirm them",
     "does not submit directly to HMRC",
@@ -419,7 +420,7 @@ test("Traditional and Simplified pages render their fixed canonical names and En
       },
       delivery: ["網上送貨訂單", "postcode", "送貨時段", "最低消費", "運費", "取貨碼", "司機", "現金對帳", "每單", "實際行車距離", "直線距離", "只收現金", "不接受網上付款"],
       finance: ["財務及庫存", "Invoice 相片或 PDF", "草稿讓員工檢查", "確認後才會入庫", "公司庫存", "私人用途", "VAT", "1 pack = 500 g", "盤點", "實際耗用", "損益", "+£9 食譜成本", "不會直接向 HMRC"],
-      good: ["外賣自取", "只收現金", "不接受網上付款", "只記錄信用卡付款", "自己的卡機", "供應商費用另計", "草稿", "員工確認", "不會直接向 HMRC"],
+      good: ["外賣自取", "只收現金", "不接受網上付款", "可記錄信用卡付款", "自己的卡機", "供應商費用另計", "草稿", "員工確認", "不會直接向 HMRC"],
     },
     "zh-Hans": {
       caption: "演示画面为英文，系统支持英文及中文。",
@@ -435,7 +436,7 @@ test("Traditional and Simplified pages render their fixed canonical names and En
       },
       delivery: ["网上送货订单", "postcode", "送货时段", "最低消费", "运费", "取货码", "司机", "现金对账", "每单", "实际行车距离", "直线距离", "只收现金", "不接受在线付款"],
       finance: ["财务及库存", "Invoice 照片或 PDF", "草稿让员工检查", "确认后才会入库", "公司库存", "私人用途", "VAT", "1 pack = 500 g", "盘点", "实际耗用", "损益", "+£9 食谱成本", "不会直接向 HMRC"],
-      good: ["外卖自取", "只收现金", "不接受在线付款", "只记录银行卡付款", "自己的刷卡机", "供应商费用另计", "草稿", "员工确认", "不会直接向 HMRC"],
+      good: ["外卖自取", "只收现金", "不接受在线付款", "可记录银行卡付款", "自己的刷卡机", "供应商费用另计", "草稿", "员工确认", "不会直接向 HMRC"],
     },
   };
 
@@ -464,5 +465,90 @@ test("Open Graph and Twitter use the approved localized share copy", async () =>
     const html = await fetchPage(language);
     assert.equal(metaContent(html, "og:description"), share);
     assert.equal(metaContent(html, "twitter:description"), share);
+  }
+});
+
+test("every language declares a real Open Graph image that the route actually serves", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const html = await fetchPage(language);
+
+    assert.equal(metaContent(html, "twitter:card"), "summary_large_image");
+    const ogImage = metaContent(html, "og:image");
+    assert.equal(metaContent(html, "twitter:image"), ogImage);
+    assert.match(ogImage, /\/pos\/features\/opengraph-image/);
+    assert.equal(metaContent(html, "og:image:type"), "image/png");
+    assert.equal(metaContent(html, "og:image:width"), "1200");
+    assert.equal(metaContent(html, "og:image:height"), "630");
+
+    // metadataBase resolves the tag to the production origin; fetch the same path locally.
+    const declared = new URL(ogImage);
+    const response = await fetch(`${baseUrl}${declared.pathname}${declared.search}`);
+    assert.equal(response.status, 200, `${language} opengraph-image should be served`);
+    assert.equal(response.headers.get("content-type"), "image/png");
+    // 唔靠 content-length（dev server streaming 唔一定送）；直接驗真身係 PNG。
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    assert.ok(bytes.byteLength > 1000, `${language} opengraph-image should not be empty`);
+    assert.deepEqual([...bytes.slice(0, 4)], [0x89, 0x50, 0x4e, 0x47]);
+  }
+});
+
+test("hero states the canonical VAT position next to the price tiers in every language", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const hero = sectionById(await render(language), "hero");
+    const text = visibleText(hero);
+
+    assertTextIncludes(text, POS_CONTENT[language].pricing.vatNote);
+    // VAT note 要夾喺「全部價錢格之後」同「CTA 之前」。逐個 tier marker 都要
+    // 比對，唔可以只靠 grid 開頭嘅 data-pos-price-add-ons —— 否則 VAT note
+    // 誤跌入 grid、排喺兩張加購價錢卡之前，次序一樣成立而測試照綠。
+    const markers = {
+      core: hero.indexOf('data-pos-price-tier="core"'),
+      advanced: hero.indexOf('data-pos-price-tier="advanced-add-ons"'),
+      standard: hero.indexOf('data-pos-price-tier="standard-add-ons"'),
+      vatNote: hero.indexOf("data-pos-vat-note"),
+      cta: hero.indexOf("data-pos-hero-cta"),
+    };
+    for (const [name, index] of Object.entries(markers)) {
+      assert.notEqual(index, -1, `${language} hero should render ${name}`);
+    }
+    for (const tier of ["core", "advanced", "standard"]) {
+      assert.ok(
+        markers[tier] < markers.vatNote,
+        `${language} VAT note should follow the ${tier} price tier`,
+      );
+    }
+    assert.ok(markers.vatNote < markers.cta, `${language} VAT note should precede the CTA`);
+    // The page must not invent a second VAT wording alongside the canonical one.
+    assert.doesNotMatch(
+      JSON.stringify(POS_FEATURES_CONTENT[language]),
+      /No VAT added|不另收 VAT/,
+    );
+  }
+});
+
+test("Good to know reuses the canonical card-payment note instead of a second wording", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const section = sectionById(await render(language), "good-to-know");
+    const items = [...section.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map((match) => visibleText(match[1]));
+    const copy = POS_FEATURES_CONTENT[language].goodToKnow;
+
+    // 逐格對位,唔淨係「文字曾經出現過」—— 否則漏一格、次序調轉都會假綠。
+    assert.deepEqual(items, [
+      copy.collection,
+      copy.delivery,
+      POS_CONTENT[language].pricing.feeNote,
+      copy.invoiceVat,
+    ]);
+  }
+
+  const rejected = {
+    en: /records card payments only/i,
+    "zh-Hant": /只記錄信用卡付款/,
+    "zh-Hans": /只记录银行卡付款/,
+  };
+  for (const [language, pattern] of Object.entries(rejected)) {
+    const text = visibleText(sectionById(await render(language), "good-to-know"));
+    assert.doesNotMatch(text, pattern, `${language} should not restate the card boundary`);
+    assert.doesNotMatch(JSON.stringify(POS_FEATURES_CONTENT[language]), pattern);
   }
 });

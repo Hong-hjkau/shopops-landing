@@ -99,7 +99,12 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               </div>
             </div>
           </div>
-          <a href={contactHref} className="mt-8 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
+          {/* VAT 立場貼住第一次出現嘅價錢講，唔留到頁尾；文字用 canonical 來源，
+              同 /pos 嘅 pricing section 一致，避免兩頁各寫一套。 */}
+          <p data-pos-vat-note className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-hero-text-secondary">
+            {pricing.vatNote}
+          </p>
+          <a data-pos-hero-cta href={contactHref} className="mt-8 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
             {pricing.cta}
           </a>
           <p className="mt-4 text-sm text-hero-text-secondary">{trialReassurance}</p>
@@ -225,7 +230,13 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
         <div className="mx-auto max-w-4xl">
           <h2 className="text-3xl font-bold tracking-tight text-text">{copy.goodToKnowTitle}</h2>
           <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-            {copy.goodToKnow.map((item) => <li key={item} className="rounded-xl bg-bg p-5 text-text">{item}</li>)}
+            {[
+              copy.goodToKnow.collection,
+              copy.goodToKnow.delivery,
+              // 卡付款邊界用 canonical 來源，同 /pos 嘅 pricing section 同一句。
+              pricing.feeNote,
+              copy.goodToKnow.invoiceVat,
+            ].map((item) => <li key={item} className="rounded-xl bg-bg p-5 text-text">{item}</li>)}
           </ul>
         </div>
       </section>

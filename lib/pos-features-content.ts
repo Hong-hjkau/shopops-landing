@@ -54,7 +54,14 @@ export type PosFeaturesContent = {
     hmrcBoundary: string;
   };
   goodToKnowTitle: string;
-  goodToKnow: readonly [string, string, string, string];
+  // 卡付款嗰條**刻意唔喺度**：佢係 canonical `POS_CONTENT[lang].pricing.feeNote`，
+  // 由 PosFeaturesLanding 插入。功能頁曾經自己寫過第二套（"records card payments
+  // only"），同 /pos 分岔並且英文讀落變成「唔記錄現金」。唔好加返落呢度。
+  goodToKnow: {
+    collection: string;
+    delivery: string;
+    invoiceVat: string;
+  };
   midCta: { title: string; body: string; cta: string };
   finalCta: { title: string; body: string };
   metadata: { title: string; description: string; share: string };
@@ -133,12 +140,11 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       hmrcBoundary: "ShopOps can record sales and purchase VAT and export the figures. It does not submit directly to HMRC or file VAT Returns; use compatible accounting software or an accountant.",
     },
     goodToKnowTitle: "Good to know",
-    goodToKnow: [
-      "Staff can enter collection orders in the POS.",
-      "Delivery orders are cash-only. ShopOps does not take online payments.",
-      "ShopOps records card payments only. Take payment on your own card terminal; terminal provider fees are separate.",
-      "AI invoice and VAT details stay as a draft until staff confirm them. ShopOps does not submit directly to HMRC.",
-    ],
+    goodToKnow: {
+      collection: "Staff can enter collection orders in the POS.",
+      delivery: "Delivery orders are cash-only. ShopOps does not take online payments.",
+      invoiceVat: "AI invoice and VAT details stay as a draft until staff confirm them. ShopOps does not submit directly to HMRC.",
+    },
     midCta: { title: "Not sure which tools you need?", body: "We can talk through your current service and show only the tools that fit it.", cta: "Book a demo" },
     finalCta: { title: "Build the combination your restaurant needs", body: "Start with Core POS, then add each tool individually." },
     metadata: { title: "Restaurant POS features | ShopOps", description: "See the ShopOps restaurant POS, optional tools and their practical boundaries.", share: "A bilingual restaurant POS for orders, kitchen and checkout." },
@@ -215,12 +221,11 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       hmrcBoundary: "ShopOps 可記錄銷售及採購 VAT 並匯出資料，但不會直接向 HMRC 提交 VAT Return；請使用相容會計軟件或交由會計師處理。",
     },
     goodToKnowTitle: "需要知道",
-    goodToKnow: [
-      "店員可在 POS 輸入外賣自取訂單。",
-      "送貨訂單只收現金，ShopOps 不接受網上付款。",
-      "ShopOps 只記錄信用卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。",
-      "AI Invoice 及 VAT 資料會先保留為草稿，經員工確認後才使用；ShopOps 不會直接向 HMRC 提交。",
-    ],
+    goodToKnow: {
+      collection: "店員可在 POS 輸入外賣自取訂單。",
+      delivery: "送貨訂單只收現金，ShopOps 不接受網上付款。",
+      invoiceVat: "AI Invoice 及 VAT 資料會先保留為草稿，經員工確認後才使用；ShopOps 不會直接向 HMRC 提交。",
+    },
     midCta: { title: "不確定需要哪些功能？", body: "我們可先了解你的日常流程，只示範合適的工具。", cta: "預約示範" },
     finalCta: { title: "組合餐廳真正需要的功能", body: "先用核心 POS，再逐項加入所需工具。" },
     metadata: { title: "餐廳 POS 功能 | ShopOps", description: "查看 ShopOps 餐廳 POS、加購工具和各項實際功能界線。", share: "中英雙語餐廳 POS，處理落單、廚房和結帳。" },
@@ -297,12 +302,11 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       hmrcBoundary: "ShopOps 可记录销售及采购 VAT 并导出资料，但不会直接向 HMRC 提交 VAT Return；请使用兼容会计软件或交由会计师处理。",
     },
     goodToKnowTitle: "需要知道",
-    goodToKnow: [
-      "店员可在 POS 输入外卖自取订单。",
-      "送货订单只收现金，ShopOps 不接受在线付款。",
-      "ShopOps 只记录银行卡付款；实际收款使用餐厅自己的刷卡机，刷卡机供应商费用另计。",
-      "AI Invoice 及 VAT 资料会先保留为草稿，经员工确认后才使用；ShopOps 不会直接向 HMRC 提交。",
-    ],
+    goodToKnow: {
+      collection: "店员可在 POS 输入外卖自取订单。",
+      delivery: "送货订单只收现金，ShopOps 不接受在线付款。",
+      invoiceVat: "AI Invoice 及 VAT 资料会先保留为草稿，经员工确认后才使用；ShopOps 不会直接向 HMRC 提交。",
+    },
     midCta: { title: "不确定需要哪些功能？", body: "我们可先了解你的日常流程，只演示合适的工具。", cta: "预约演示" },
     finalCta: { title: "组合餐厅真正需要的功能", body: "先用核心 POS，再逐项加入所需工具。" },
     metadata: { title: "餐厅 POS 功能 | ShopOps", description: "查看 ShopOps 餐厅 POS、加购工具和各项实际功能界线。", share: "中英双语餐厅 POS，处理点餐、厨房和结账。" },
