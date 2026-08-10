@@ -8,6 +8,17 @@ import sharp from "sharp";
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const imageModulePath = new URL("../lib/pos-feature-images.ts", import.meta.url);
 const registerPath = new URL("../docs/pos-demo-screenshot-register.md", import.meta.url);
+const orderEntryBaselinePath = fileURLToPath(new URL("./fixtures/pos-demo-order-entry-baseline.webp", import.meta.url));
+const orderEntryPath = `${projectRoot}public/pos-demo/order-entry.webp`;
+const orderEntryFoodTiles = [
+  { name: "happy-meal", left: 142, top: 129, width: 200, height: 200 },
+  { name: "egg-fried-rice", left: 354, top: 129, width: 200, height: 200 },
+  { name: "seafood-spaghetti", left: 566, top: 129, width: 200, height: 200 },
+  { name: "fried-chicken-wings", left: 778, top: 129, width: 200, height: 200 },
+  { name: "beef-satay-skewers", left: 142, top: 424, width: 200, height: 201 },
+  { name: "caesar-salad", left: 354, top: 424, width: 200, height: 201 },
+];
+const orderEntryTileRadius = 10;
 
 const expectedAssets = [
   ["order-entry", "public/pos-demo/order-entry.webp"],
@@ -130,5 +141,57 @@ test("screenshot register reconciles one row per mapped asset with current bytes
     assert.equal(row.bytes, file.byteLength, `${row.id}: byte count drift`);
     assert.equal(row.hash, createHash("sha256").update(file).digest("hex"), `${row.id}: hash drift`);
     assert.equal(row.approval, "PASS");
+  }
+});
+
+test("order-entry replaces only its six rounded menu tiles with distinct food photographs", async () => {
+  assert.equal(existsSync(orderEntryBaselinePath), true, "the pre-composite order-entry baseline must be retained for pixel comparison");
+
+  const [baseline, replacement] = await Promise.all([
+    sharp(orderEntryBaselinePath).ensureAlpha().raw().toBuffer({ resolveWithObject: true }),
+    sharp(orderEntryPath).ensureAlpha().raw().toBuffer({ resolveWithObject: true }),
+  ]);
+  assert.deepEqual([replacement.info.width, replacement.info.height], [1280, 900]);
+  assert.deepEqual([baseline.info.width, baseline.info.height], [1280, 900]);
+
+  const tileHashes = [];
+  for (const tile of orderEntryFoodTiles) {
+    const { data } = await sharp(orderEntryPath)
+      .extract(tile)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const { data: baselineTile } = await sharp(orderEntryBaselinePath)
+      .extract(tile)
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    assert.notDeepEqual(data, baselineTile, `${tile.name}: menu tile must replace its baseline content`);
+    assert.ok(new Set(data).size > 16, `${tile.name}: menu tile must not be blank`);
+    tileHashes.push(createHash("sha256").update(data).digest("hex"));
+  }
+  assert.equal(new Set(tileHashes).size, orderEntryFoodTiles.length, "all six menu tiles must be distinct food photographs");
+
+  const roundedMasks = await Promise.all(orderEntryFoodTiles.map(({ width, height }) => sharp(Buffer.from(
+    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg"><rect width="${width}" height="${height}" rx="${orderEntryTileRadius}" ry="${orderEntryTileRadius}" fill="white"/></svg>`,
+  )).raw().toBuffer({ resolveWithObject: true })));
+  const allowedPixelOffsets = new Set();
+  for (const [index, tile] of orderEntryFoodTiles.entries()) {
+    const { data: mask, info } = roundedMasks[index];
+    for (let y = 0; y < tile.height; y += 1) {
+      for (let x = 0; x < tile.width; x += 1) {
+        if (mask[(y * tile.width + x) * info.channels + (info.channels - 1)] > 0) {
+          allowedPixelOffsets.add((tile.top + y) * replacement.info.width + tile.left + x);
+        }
+      }
+    }
+  }
+  for (let pixel = 0; pixel < replacement.info.width * replacement.info.height; pixel += 1) {
+    if (!allowedPixelOffsets.has(pixel)) {
+      const offset = pixel * replacement.info.channels;
+      assert.deepEqual(
+        replacement.data.subarray(offset, offset + replacement.info.channels),
+        baseline.data.subarray(offset, offset + baseline.info.channels),
+        `pixel ${pixel} outside the six rounded menu masks changed`,
+      );
+    }
   }
 });

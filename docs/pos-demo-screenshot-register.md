@@ -2,12 +2,13 @@
 
 - Scope: 18 English demo-interface WebP assets used by the POS feature page.
 - Existing workflow assets: manually re-opened at original size on 2026-08-06 (BST); English demo UI, no visible PII or commercial data, and readable at source size.
+- `order-entry.webp` now uses six original generated food photographs for Happy Meal, Egg Fried Rice, Seafood Spaghetti, Crispy Fried Chicken Wings, Beef Satay Skewers and Caesar Salad; the surrounding product UI remains unchanged.
 - New Core/add-on assets: copied unchanged from the isolated POS screenshot harness handoff. Its 2026-08-06 review opened all 14 files at original size and approved English UI, fictional data, PII/commercial-data safety and readability. `bilingual` intentionally shows fictional Chinese dish names in a labelled translation preview.
 - Hashes and byte counts below are recalculated from the Landing copies, not copied from prose.
 
 | Asset | Stable ID | Public path | Language | Dimensions | Bytes | SHA-256 | English / PII / commercial data / readability |
 |---|---|---|---|---:|---:|---|---|
-| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 40538 | `1720097b0dfcd16bcef8b92ada35ef2f598962a133d80ec023f5c9e12030de90` | PASS |
+| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 559198 | `7814c59dd64c6043a413ec5fad6eb71b4568e9008270cfff2c9ed6151e5d33ff` | PASS |
 | `kitchen-order.webp` | `kitchen-order` | `public/pos-demo/kitchen-order.webp` | EN | 1045 × 735 | 17934 | `63153dcdc7feb8adf68e72664e6ea9328984304474a8f918cc82f2b0195105a8` | PASS |
 | `floor-progress.webp` | `floor-progress` | `public/pos-demo/floor-progress.webp` | EN | 1045 × 735 | 16828 | `819cf6a32ce25d89604fcdde1f7cdef379bdeca285cabcb811ffa79123747966` | PASS |
 | `checkout-report.webp` | `checkout-report` | `public/pos-demo/checkout-report.webp` | EN | 1280 × 900 | 40918 | `6fb2dcb739f0d7ad5878d4b378b905dc57adb127eb2565a23776a9e22ba93297` | PASS |
