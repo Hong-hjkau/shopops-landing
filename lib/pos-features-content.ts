@@ -68,8 +68,8 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       result: "One place for your floor, kitchen and checkout — in English and Chinese.",
       body: "Start with the Core POS, then add only the tools that help your restaurant today. Every add-on needs Core POS and is charged separately.",
       corePriceLabel: "Core POS",
-      standardAddOnPriceLabel: "Individual add-ons",
-      premiumAddOnPriceLabel: "Delivery or finance add-on",
+      standardAddOnPriceLabel: "Choose-your-own operations tools",
+      premiumAddOnPriceLabel: "Advanced operations (Delivery or finance)",
     },
     workflow: {
       title: "From order to checkout",
@@ -150,8 +150,8 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       result: "樓面、廚房和結帳集中一處，中英文都看得明。",
       body: "先用核心 POS，再按餐廳現時需要加選工具。每項加購都需要核心 POS，並逐項收費。",
       corePriceLabel: "核心 POS",
-      standardAddOnPriceLabel: "逐項加購功能",
-      premiumAddOnPriceLabel: "送貨或財務加購",
+      standardAddOnPriceLabel: "自選營運功能",
+      premiumAddOnPriceLabel: "進階營運功能（送貨或財務）",
     },
     workflow: {
       title: "由落單到結帳",
@@ -232,8 +232,8 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       result: "前厅、厨房和结账集中一处，中英文都看得懂。",
       body: "先用核心 POS，再按餐厅目前需要加选工具。每项加购都需要核心 POS，并逐项收费。",
       corePriceLabel: "核心 POS",
-      standardAddOnPriceLabel: "逐项加购功能",
-      premiumAddOnPriceLabel: "送货或财务加购",
+      standardAddOnPriceLabel: "自选营运功能",
+      premiumAddOnPriceLabel: "进阶营运功能（配送或财务）",
     },
     workflow: {
       title: "从点餐到结账",

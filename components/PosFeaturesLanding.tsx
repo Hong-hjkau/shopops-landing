@@ -89,13 +89,13 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               <p className="mt-2 text-3xl font-bold">£{pricing.core.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
             </div>
             <div data-pos-price-add-ons className="grid gap-3 sm:grid-cols-2">
-              <div data-pos-price-tier="standard-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
-                <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
-                <p className="mt-2 text-3xl font-bold">+£{standardAddOnPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
-              </div>
               <div data-pos-price-tier="advanced-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
                 <p className="text-sm text-hero-text-secondary">{copy.hero.premiumAddOnPriceLabel}</p>
                 <p className="mt-2 text-3xl font-bold">+£{deliveryAddOn.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+              </div>
+              <div data-pos-price-tier="standard-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
+                <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
+                <p className="mt-2 text-3xl font-bold">+£{standardAddOnPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
               </div>
             </div>
           </div>
@@ -132,8 +132,8 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
       <section id="core" className="border-y border-border bg-surface px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-wide text-accent-strong">{copy.core.eyebrow}</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.core.title}</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.core.title}</h2>
+            <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{copy.core.eyebrow}</p>
           </div>
           <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
             {copy.core.cards.map((card, index) => (

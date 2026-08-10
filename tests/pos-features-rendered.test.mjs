@@ -141,8 +141,8 @@ test("hero renders both add-on price bands, the demo CTA, and canonical trial te
   const text = visibleText(hero);
 
   assert.match(text, /ShopOps POS features/);
-  assert.match(text, /Individual add-ons/);
-  assert.match(text, /Delivery or finance add-on/);
+  assert.match(text, /Choose-your-own operations tools/);
+  assert.match(text, /Advanced operations \(Delivery or finance\)/);
   assert.match(text, /\+£\s*9\s*\/month/);
   assert.match(text, /\+£\s*19\s*\/month/);
   assert.match(text, /Book a demo & free trial setup/);
@@ -260,13 +260,13 @@ test("two-column story images request half-width desktop sources", async () => {
   }
 });
 
-test("pricing hierarchy and screenshot grids keep Core first and use at most two columns", async () => {
+test("pricing hierarchy keeps Core first, advanced add-ons before selectable tools, and screenshot grids at two columns", async () => {
   const main = await render("en");
   const hero = sectionById(main, "hero");
   const corePrice = hero.indexOf('data-pos-price-tier="core"');
   const standardPrice = hero.indexOf('data-pos-price-tier="standard-add-ons"');
   const premiumPrice = hero.indexOf('data-pos-price-tier="advanced-add-ons"');
-  assert.ok(corePrice !== -1 && corePrice < standardPrice && standardPrice < premiumPrice);
+  assert.ok(corePrice !== -1 && corePrice < premiumPrice && premiumPrice < standardPrice);
   assert.match(hero, /data-pos-price-tier="core"[^>]*class="[^"]*col-span-full/);
   assert.match(hero, /data-pos-price-add-ons[^>]*class="[^"]*sm:grid-cols-2/);
 
@@ -274,6 +274,21 @@ test("pricing hierarchy and screenshot grids keep Core first and use at most two
     const section = sectionById(main, id);
     assert.match(section, /data-pos-feature-grid[^>]*class="[^"]*md:grid-cols-2/);
     assert.doesNotMatch(section, /(?:sm|md|lg|xl):grid-cols-[34]/);
+  }
+});
+
+test("Core title precedes its ordinary supporting copy in every language", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const core = sectionById(await render(language), "core");
+    const content = POS_FEATURES_CONTENT[language];
+    const title = core.match(new RegExp(`<h2[^>]*>${content.core.title}</h2>`));
+    const supportingCopy = core.match(new RegExp(`<p class="([^"]*)">${content.core.eyebrow}</p>`));
+
+    assert.ok(title, `${language} Core title should render`);
+    assert.ok(supportingCopy, `${language} Core inclusion copy should render as a paragraph`);
+    assert.ok(core.indexOf(title[0]) < core.indexOf(supportingCopy[0]), `${language} Core title should come before its supporting copy`);
+    assert.match(supportingCopy[1], /text-text-secondary/);
+    assert.doesNotMatch(supportingCopy[1], /(?:\buppercase\b|\btracking-(?:wide|tight)\b|font-semibold|text-accent)/);
   }
 });
 

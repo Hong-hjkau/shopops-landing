@@ -45,6 +45,28 @@ test("POS feature demo CTA does not promise a fixed 15-minute duration", () => {
   assert.equal(POS_FEATURES_CONTENT["zh-Hans"].midCta.cta, "预约演示");
 });
 
+test("POS feature add-on price labels distinguish selectable and advanced operations in every language", () => {
+  const expectedLabels = {
+    en: {
+      standard: "Choose-your-own operations tools",
+      premium: "Advanced operations (Delivery or finance)",
+    },
+    "zh-Hant": {
+      standard: "自選營運功能",
+      premium: "進階營運功能（送貨或財務）",
+    },
+    "zh-Hans": {
+      standard: "自选营运功能",
+      premium: "进阶营运功能（配送或财务）",
+    },
+  };
+
+  for (const [lang, labels] of Object.entries(expectedLabels)) {
+    assert.equal(POS_FEATURES_CONTENT[lang].hero.standardAddOnPriceLabel, labels.standard);
+    assert.equal(POS_FEATURES_CONTENT[lang].hero.premiumAddOnPriceLabel, labels.premium);
+  }
+});
+
 test("POS feature content maps every priced add-on by its stable ID", () => {
   const nineIds = POS_CONTENT.en.pricing.addOnGroups[0].items.map((item) => item.id);
   const nineteenIds = POS_CONTENT.en.pricing.addOnGroups[1].items.map((item) => item.id);
