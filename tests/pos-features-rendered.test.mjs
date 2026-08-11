@@ -138,6 +138,41 @@ function dialogById(main, id) {
   return dialog;
 }
 
+// 搵載住某張圖嘅 <article>（article 唔會巢狀）。
+function articleByImageId(main, id) {
+  const article = [...main.matchAll(/<article\b[\s\S]*?<\/article>/g)]
+    .map((match) => match[0])
+    .find((candidate) => candidate.includes(`data-pos-image-id="${id}"`));
+  assert.ok(article, `rendered page should contain the card holding ${id}`);
+  return article;
+}
+
+// 卡上肉眼睇得到嘅文字。要剝走 sr-only 描述 —— 佢載住 alt，唔剝嘅話
+// 「可見文案退化但 alt 仲提住」呢種 regression 會被隱藏文字救返，假綠。
+function visibleCardText(article) {
+  return visibleText(article.replace(/<span[^>]*class="[^"]*\bsr-only\b[^"]*"[^>]*>[\s\S]*?<\/span>/g, ""));
+}
+
+// 卡上肉眼睇得到嘅文案（story／core 卡係 title，自選加購卡係 outcome）。
+// ⚠️ delivery／finance_inventory 行 PosPremiumFeature，佢**唔** render
+// `addOns[id].outcome`。將來如果將呢兩個 id 加入 IMAGE_SEMANTIC_CONTRACT，
+// 呢度會攞到一句頁面根本冇出嘅字 —— 但 rendered 層嗰個 required assert 會即刻
+// 紅（真 output 搵唔到），所以係大聲失敗，唔會靜靜哋過。
+function visibleCopy(description) {
+  return [description.title ?? description.outcome, description.body].join(" ");
+}
+
+// Stable ID → 圖片語意契約，刻意擺喺 content object 外面：文案改到同張圖唔夾
+// 嗰陣，呢度會紅。只填有已知走樣風險嘅 id（逐張真圖睇過），唔使 18 個都填。
+const IMAGE_SEMANTIC_CONTRACT = {
+  // 張圖淨係一個「Collect payment」收款視窗（Card ref、現金／信用卡掣、右邊
+  // 未付款清單）。冇任何報表畫面 —— 檔名 checkout-report 係歷史命名，唔好信。
+  "checkout-report": {
+    required: { en: /payment/i, "zh-Hant": /收款|付款/, "zh-Hans": /收款|付款/ },
+    forbidden: { en: /report/i, "zh-Hant": /報表/, "zh-Hans": /报表/ },
+  },
+};
+
 // 圖片語意（alt / action label）跟 EXPECTED_IMAGE_IDS 同一次序。
 function imageDescriptions(content) {
   return [
@@ -210,7 +245,7 @@ test("workflow renders each approved screenshot beside its matching stage and st
     ["order-entry", "Staff enters the order"],
     ["kitchen-order", "Kitchen receives the order"],
     ["floor-progress", "Front of house sees progress"],
-    ["checkout-report", "Checkout and reporting"],
+    ["checkout-report", "Collect payment and close the bill"],
   ];
   expectedPairs.forEach(([asset, title], index) => {
     assert.match(stories[index], new RegExp(asset));
@@ -232,7 +267,7 @@ test("workflow screenshots render accessible lazy image-dialog triggers without 
     ["order-entry", "Enlarge the order-entry demo screen", "Close enlarged image"],
     ["kitchen-order", "Enlarge the kitchen-order demo screen", "Close enlarged image"],
     ["floor-progress", "Enlarge the floor-progress demo screen", "Close enlarged image"],
-    ["checkout-report", "Enlarge the checkout and reporting demo screen", "Close enlarged image"],
+    ["checkout-report", "Enlarge the collect-payment demo screen", "Close enlarged image"],
   ];
 
   for (const [id, actionLabel, closeLabel] of expected) {
@@ -371,6 +406,44 @@ test("image triggers name the action and describe the picture without swallowing
     });
 
     assert.equal(seenIds.size, 18);
+  }
+});
+
+test("screenshot copy claims only what the screenshot actually shows", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const main = await render(language);
+    const descriptions = imageDescriptions(POS_FEATURES_CONTENT[language]);
+
+    for (const [id, contract] of Object.entries(IMAGE_SEMANTIC_CONTRACT)) {
+      const index = EXPECTED_IMAGE_IDS.indexOf(id);
+      assert.notEqual(index, -1, `${id} should be a known stable image ID`);
+
+      // Required 只可以由**肉眼睇到**嘅文案滿足：靠 alt 或 action label 頂住
+      // 唔算數，否則可見標題／內文可以退化到同張圖無關而測試照綠。
+      const description = descriptions[index];
+      assert.match(visibleCopy(description), contract.required[language], `${language} ${id} visible copy should state what the screen shows`);
+
+      // Forbidden 就要覆蓋晒 alt 同 action label —— 錯誤聲稱唔可以收喺隱藏文字。
+      const everything = JSON.stringify(description);
+      assert.doesNotMatch(everything, contract.forbidden[language], `${language} ${id} copy claims something the screenshot does not show`);
+
+      // 真 output 都要守兩邊。
+      const rendered = visibleCardText(articleByImageId(main, id));
+      assert.match(rendered, contract.required[language], `${language} ${id} card should render what the screen shows`);
+      assert.doesNotMatch(visibleText(articleByImageId(main, id)), contract.forbidden[language], `${language} ${id} card renders a claim the screenshot does not show`);
+    }
+  }
+});
+
+test("feature copy never hardcodes a product price", async () => {
+  // Spec 驗收 #3：價錢只從 POS_CONTENT 讀，頁面唔另寫產品價錢常量。
+  // 之前 recipeBoundary 三語各自寫死咗 "+£9"，改價會靜靜哋講錯數。
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    assert.doesNotMatch(
+      JSON.stringify(POS_FEATURES_CONTENT[language]),
+      /£/,
+      `${language} feature copy should not carry its own price figure`,
+    );
   }
 });
 
@@ -532,7 +605,7 @@ test("Traditional and Simplified pages render their fixed canonical names and En
         signage: ["廣告屏", "圖片", "影片", "連結"],
       },
       delivery: ["網上送貨訂單", "postcode", "送貨時段", "最低消費", "運費", "取貨碼", "司機", "現金對帳", "每單", "實際行車距離", "直線距離", "只收現金", "不接受網上付款"],
-      finance: ["財務及庫存", "Invoice 相片或 PDF", "草稿讓員工檢查", "確認後才會入庫", "公司庫存", "私人用途", "VAT", "1 pack = 500 g", "盤點", "實際耗用", "損益", "+£9 食譜成本", "不會直接向 HMRC"],
+      finance: ["財務及庫存", "Invoice 相片或 PDF", "草稿讓員工檢查", "確認後才會入庫", "公司庫存", "私人用途", "VAT", "1 pack = 500 g", "盤點", "實際耗用", "損益", "食譜成本", "不會直接向 HMRC"],
       good: ["外賣自取", "只收現金", "不接受網上付款", "可記錄信用卡付款", "自己的卡機", "供應商費用另計", "草稿", "員工確認", "不會直接向 HMRC"],
     },
     "zh-Hans": {
@@ -548,7 +621,7 @@ test("Traditional and Simplified pages render their fixed canonical names and En
         signage: ["广告屏", "图片", "视频", "链接"],
       },
       delivery: ["网上送货订单", "postcode", "送货时段", "最低消费", "运费", "取货码", "司机", "现金对账", "每单", "实际行车距离", "直线距离", "只收现金", "不接受在线付款"],
-      finance: ["财务及库存", "Invoice 照片或 PDF", "草稿让员工检查", "确认后才会入库", "公司库存", "私人用途", "VAT", "1 pack = 500 g", "盘点", "实际耗用", "损益", "+£9 食谱成本", "不会直接向 HMRC"],
+      finance: ["财务及库存", "Invoice 照片或 PDF", "草稿让员工检查", "确认后才会入库", "公司库存", "私人用途", "VAT", "1 pack = 500 g", "盘点", "实际耗用", "损益", "食谱成本", "不会直接向 HMRC"],
       good: ["外卖自取", "只收现金", "不接受在线付款", "可记录银行卡付款", "自己的刷卡机", "供应商费用另计", "草稿", "员工确认", "不会直接向 HMRC"],
     },
   };

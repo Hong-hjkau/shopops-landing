@@ -394,6 +394,38 @@ test("POS feature standard add-ons keep their own prices when pricing groups are
   }
 });
 
+test("POS feature bundle totals follow the canonical recipe-costing price instead of a copied figure", () => {
+  // 之前三語 recipeBoundary 各自寫死 "+£9"：改咗 canonical 價，句子照舊講 £9。
+  // 呢條 test 由改價嗰邊落手 —— 衍生嘅總額要跟，文案唔可以有自己一份數字。
+  const group = POS_CONTENT.en.pricing.addOnGroups.find((candidate) =>
+    candidate.items.some((item) => item.id === "recipe_costing"),
+  );
+  assert.ok(group, "recipe costing should belong to a pricing group");
+  const originalPrice = group.monthlyPrice;
+  const core = POS_CONTENT.en.pricing.core.monthlyPrice;
+  const finance = getPosFeatureAddOn("en", "finance_inventory").monthlyPrice;
+
+  try {
+    group.monthlyPrice = originalPrice + 7;
+    assert.equal(getPosFeatureAddOn("en", "recipe_costing").monthlyPrice, originalPrice + 7);
+    assert.equal(
+      getPosFeaturePricing("en").corePlusFinanceAndRecipe,
+      core + finance + originalPrice + 7,
+    );
+
+    for (const language of languages) {
+      const copy = JSON.stringify(POS_FEATURES_CONTENT[language]);
+      assert.doesNotMatch(
+        copy,
+        new RegExp(`£\\s*${originalPrice}\\b`),
+        `${language} copy still carries the old recipe price after it changed`,
+      );
+    }
+  } finally {
+    group.monthlyPrice = originalPrice;
+  }
+});
+
 test("POS homepage exposes two language-preserving links to the feature details", () => {
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
   const featureGrid = readFileSync(new URL("../components/PosFeatureGrid.tsx", import.meta.url), "utf8");
