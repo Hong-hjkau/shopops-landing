@@ -129,8 +129,17 @@ test("all 18 POS image contract files exist and decode as the approved WebP dime
 
 test("screenshot register reconciles one row per mapped asset with current bytes and SHA-256", () => {
   const register = readFileSync(registerPath, "utf8");
-  const rows = [...register.matchAll(/^\| `[^`]+\.webp` \| `([^`]+)` \| `([^`]+)` \| EN \| (\d+ × \d+) \| (\d+) \| `(\w{64})` \| (PASS) \|$/gm)]
-    .map((match) => ({ id: match[1], path: match[2], dimensions: match[3], bytes: Number(match[4]), hash: match[5], approval: match[6] }));
+  const rows = [...register.matchAll(/^\| `[^`]+\.webp` \| `([^`]+)` \| `([^`]+)` \| EN \| (\d+ × \d+) \| (\d+) \| `(\w{64})` \| ([^|]+) \| ([^|]+) \| ([^|]+) \|$/gm)]
+    .map((match) => ({
+      id: match[1],
+      path: match[2],
+      dimensions: match[3],
+      bytes: Number(match[4]),
+      hash: match[5],
+      contentGate: match[6],
+      trademarkGate: match[7],
+      licenceGate: match[8],
+    }));
 
   assert.equal(rows.length, 18);
   assert.deepEqual(rows.map(({ id, path }) => [id, path]), expectedAssets);
@@ -140,7 +149,35 @@ test("screenshot register reconciles one row per mapped asset with current bytes
     assert.equal(row.dimensions, `${actualDimensions[0]} × ${actualDimensions[1]}`, `${row.id}: dimension drift`);
     assert.equal(row.bytes, file.byteLength, `${row.id}: byte count drift`);
     assert.equal(row.hash, createHash("sha256").update(file).digest("hex"), `${row.id}: hash drift`);
-    assert.equal(row.approval, "PASS");
+    assert.equal(row.contentGate, "PASS", `${row.id}: English / PII / commercial data / readability gate is not ticked`);
+  }
+});
+
+test("every registered asset carries a ticked third-party trademark and asset licence gate", () => {
+  const register = readFileSync(registerPath, "utf8");
+
+  assert.match(
+    register,
+    /\| SHA-256 \| English \/ PII \/ commercial data \/ readability \| No third-party logo or trademark \| Asset licence and ownership confirmed \|/,
+    "the last two register columns must stay named after the trademark and licence gates they record",
+  );
+
+  const rows = [...register.matchAll(/^\| `([^`]+\.webp)` \|(?:[^|]*\|){5} `\w{64}` \| ([^|]+) \| ([^|]+) \| ([^|]+) \|$/gm)]
+    .map((match) => ({ asset: match[1], trademarkGate: match[3], licenceGate: match[4] }));
+
+  assert.equal(rows.length, 18, "the trademark and licence gates must cover all 18 registered assets, not only order-entry");
+  assert.deepEqual(rows.map(({ asset }) => asset), expectedAssets.map(([, path]) => path.split("/").at(-1)));
+  for (const row of rows) {
+    assert.equal(row.trademarkGate, "PASS", `${row.asset}: no third-party logo or trademark gate is not ticked`);
+    assert.equal(row.licenceGate, "PASS", `${row.asset}: asset licence and ownership gate is not ticked`);
+  }
+
+  for (const [phrase, why] of [
+    [/manual approval gate/i, "call the two columns a manual approval gate"],
+    [/not automated detection/i, "say the gate is not automated detection"],
+    [/cannot recognise a trademark/i, "say this test cannot recognise a trademark itself"],
+  ]) {
+    assert.match(register, phrase, `the register must ${why}, so nobody reads a ticked row as a machine-verified one`);
   }
 });
 
