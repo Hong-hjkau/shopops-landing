@@ -1,5 +1,8 @@
 # /pos/features 覆核修復 — 交接（2026-08-11）
 
+> 📍 **新 session 開工睇呢度**：[2026-08-11-pos-features-batch4-6-handoff.md](./2026-08-11-pos-features-batch4-6-handoff.md)
+> 呢份係**完整歷史**（19 條 finding 對帳、已完成批次嘅實際做法同踩過嘅坑），仲要做嘅嘢喺上面嗰份。
+
 上一個 session 對 `/pos/features` 做完獨立唯讀覆核，出咗 19 條 finding，Claude + Codex 雙軌出方案，HONG 拍晒板，**第一批已 commit**。呢份係畀新 session 接手嘅完整手尾。
 
 ## 現況
