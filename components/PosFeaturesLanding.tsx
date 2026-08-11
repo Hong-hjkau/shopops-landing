@@ -1,5 +1,7 @@
+import type { StaticImageData } from "next/image";
 import PosAddOnCard from "@/components/PosAddOnCard";
 import PosFeatureStory from "@/components/PosFeatureStory";
+import type { PosImageDialogProps } from "@/components/PosImageDialog";
 import PosPremiumFeature from "@/components/PosPremiumFeature";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import {
@@ -8,8 +10,9 @@ import {
   getPosFeaturePricing,
   getStandardPosFeatureAddOnPrice,
   getStandardPosFeatureAddOns,
+  type PosFeaturesContent,
 } from "@/lib/pos-features-content";
-import { POS_CONTENT } from "@/lib/pos-content";
+import { POS_CONTENT, type PosAddOnId } from "@/lib/pos-content";
 import { POS_FEATURE_IMAGES } from "@/lib/pos-feature-images";
 import type { Lang } from "@/lib/i18n";
 
@@ -38,6 +41,24 @@ const coreImages = [
   { id: "menu_management", image: POS_FEATURE_IMAGES["menu_management"] },
   { id: "sold_out", image: POS_FEATURE_IMAGES["sold_out"] },
 ] as const;
+
+// 三處要砌同一組 dialog props（premium 兩塊 + 自選加購一個 loop）。逐處手寫
+// 六個 field 嘅話，加一個 prop 就要記住改三處 —— badgeLabel 就係咁樣險啲漏。
+function buildDemoImage(
+  copy: PosFeaturesContent,
+  id: PosAddOnId,
+  image: StaticImageData,
+): PosImageDialogProps {
+  return {
+    id,
+    image,
+    alt: copy.addOns[id].imageAlt,
+    actionLabel: copy.addOns[id].imageActionLabel,
+    closeLabel: copy.imageDialogCloseLabel,
+    badgeLabel: copy.demoImageBadge,
+    sizes: "(max-width: 768px) 100vw, 50vw",
+  };
+}
 
 const standardAddOnImages = {
   scheduling: POS_FEATURE_IMAGES["scheduling"],
@@ -183,7 +204,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               benefits={copy.delivery.benefits}
               boundary={`${copy.delivery.cashOnly} ${copy.delivery.onlinePaymentBoundary}`}
               bundleExamples={[`${copy.hero.corePriceLabel} + ${deliveryAddOn.label}: £${featurePricing.corePlusDelivery}${pricing.monthlyUnit}`]}
-              image={{ id: "delivery", image: POS_FEATURE_IMAGES["delivery"], alt: copy.addOns.delivery.imageAlt, actionLabel: copy.addOns.delivery.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, badgeLabel: copy.demoImageBadge, sizes: "(max-width: 768px) 100vw, 50vw" }}
+              image={buildDemoImage(copy, "delivery", POS_FEATURE_IMAGES["delivery"])}
             />
             <PosPremiumFeature
               id="finance"
@@ -198,7 +219,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 `${copy.hero.corePriceLabel} + ${financeAddOn.label}: £${featurePricing.corePlusFinance}${pricing.monthlyUnit}`,
                 `${copy.hero.corePriceLabel} + ${financeAddOn.label} + ${recipeAddOn.label}: £${featurePricing.corePlusFinanceAndRecipe}${pricing.monthlyUnit}`,
               ]}
-              image={{ id: "finance_inventory", image: POS_FEATURE_IMAGES["finance_inventory"], alt: copy.addOns.finance_inventory.imageAlt, actionLabel: copy.addOns.finance_inventory.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, badgeLabel: copy.demoImageBadge, sizes: "(max-width: 768px) 100vw, 50vw" }}
+              image={buildDemoImage(copy, "finance_inventory", POS_FEATURE_IMAGES["finance_inventory"])}
             />
           </div>
         </div>
@@ -220,7 +241,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 detail={copy.addOns[item.id].body}
                 monthlyPrice={item.monthlyPrice}
                 monthlyUnit={pricing.monthlyUnit}
-                image={{ id: item.id, image: standardAddOnImages[item.id], alt: copy.addOns[item.id].imageAlt, actionLabel: copy.addOns[item.id].imageActionLabel, closeLabel: copy.imageDialogCloseLabel, badgeLabel: copy.demoImageBadge, sizes: "(max-width: 768px) 100vw, 50vw" }}
+                image={buildDemoImage(copy, item.id, standardAddOnImages[item.id])}
               />
             ))}
           </div>

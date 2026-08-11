@@ -131,6 +131,13 @@ function triggerElementById(main, id) {
   return element;
 }
 
+// 完整 <dialog>…</dialog>。
+function dialogById(main, id) {
+  const dialog = main.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?</dialog>`))?.[0];
+  assert.ok(dialog, `rendered page should contain a dialog for ${id}`);
+  return dialog;
+}
+
 // 圖片語意（alt / action label）跟 EXPECTED_IMAGE_IDS 同一次序。
 function imageDescriptions(content) {
   return [
@@ -229,12 +236,10 @@ test("workflow screenshots render accessible lazy image-dialog triggers without 
   ];
 
   for (const [id, actionLabel, closeLabel] of expected) {
-    const trigger = workflow.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[^>]*>`))?.[0];
-    assert.ok(trigger, `${id} should render as a native button trigger`);
+    const trigger = triggerById(workflow, id);
     assert.match(trigger, new RegExp(`aria-label="${actionLabel}"`));
 
-    const dialog = workflow.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?<\\/dialog>`))?.[0];
-    assert.ok(dialog, `${id} should render a native dialog`);
+    const dialog = dialogById(workflow, id);
     assert.match(dialog, /aria-label="[^"]+"/);
     assert.match(dialog, new RegExp(`<button[^>]*aria-label="${closeLabel}"`));
     assert.match(dialog, /max-h-\[85vh\]/);
@@ -268,10 +273,8 @@ test("all three languages render the same 18 unique images with exact localized 
     assert.equal(new Set(renderedIds).size, 18);
 
     EXPECTED_IMAGE_IDS.forEach((id, index) => {
-      const trigger = main.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[^>]*>`))?.[0];
-      const dialog = main.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?<\\/dialog>`))?.[0];
-      assert.ok(trigger, `${language} ${id} should render a trigger`);
-      assert.ok(dialog, `${language} ${id} should render a dialog`);
+      const trigger = triggerById(main, id);
+      const dialog = dialogById(main, id);
       assert.equal(decodeAttribute(trigger.match(/aria-label="([^"]+)"/)?.[1] ?? ""), descriptions[index].imageActionLabel);
       assert.equal(decodeAttribute(dialog.match(/aria-label="([^"]+)"/)?.[1] ?? ""), descriptions[index].imageAlt);
       assert.equal(decodeAttribute(dialog.match(/<button[^>]*aria-label="([^"]+)"/)?.[1] ?? ""), content.imageDialogCloseLabel);
@@ -363,8 +366,7 @@ test("image triggers name the action and describe the picture without swallowing
       assert.match(thumbnail.match(/<img[^>]*>$/)?.[0] ?? "", /alt=""/);
 
       // 放大圖仍然要有描述性 alt。
-      const dialog = main.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?</dialog>`))?.[0];
-      assert.ok(dialog);
+      const dialog = dialogById(main, id);
       assert.equal(decodeAttribute(dialog.match(/<img[^>]*alt="([^"]*)"/)?.[1] ?? ""), descriptions[index].imageAlt);
     });
 
