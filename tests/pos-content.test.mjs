@@ -15,6 +15,69 @@ const {
 } = posFeaturesModule;
 
 const languages = ["en", "zh-Hant", "zh-Hans"];
+
+// 由一個 entry 檔行 repo 內部嘅 import graph，回傳 repo-relative path → source。
+// 只跟本地 import（`@/…` 同相對路徑），node_modules 唔理。
+//
+// 🔑 解析唔到嘅本地 specifier **一定要嘈**，唔可以靜靜跳過：靜靜跳過嘅話，一條
+// 摸緊資產嘅 helper 只要用個收唔到嘅 import 形式，就會跌出 closure 之外，而
+// 「掃過幾多個檔」呢類 floor 一樣過關 —— 個 contract 表面綠、實際冇守到。
+const SOURCE_EXTENSIONS = [".ts", ".tsx"];
+// 資產／樣式唔係 source，唔使再向下行。⚠️ 呢份清單同下面「唔准 import 資產」
+// 嗰條 assert **要用同一份**：walker 當佢係資產而 assert 又唔理，就正正係一個
+// 靜靜繞過 image map 嘅缺口。
+const NON_SOURCE_SPECIFIER = /\.(webp|png|jpe?g|svg|gif|ico|css|json)$/i;
+
+// 只捉 import／require 嘅 specifier，唔捉字串。`src="/logo-icon.png"` 係經 public/
+// 出街嘅正常寫法（closure 入面 SiteHeader 就係咁），唔應該當違規。
+function localAssetImports(source) {
+  return [...source.matchAll(/(?:\bfrom|\bimport|\brequire)\s*\(?\s*["']([^"']+)["']/g)]
+    .map((match) => match[1])
+    .filter((specifier) => (specifier.startsWith("@/") || specifier.startsWith("."))
+      && NON_SOURCE_SPECIFIER.test(specifier));
+}
+
+function collectLocalImportGraph(entry) {
+  const root = new URL("../", import.meta.url);
+
+  const normalise = (specifier, fromDir) => {
+    const base = specifier.startsWith("@/") ? specifier.slice(2) : `${fromDir}/${specifier}`;
+    return base.split("/").reduce((parts, part) => {
+      if (part === "..") parts.pop();
+      else if (part !== "." && part !== "") parts.push(part);
+      return parts;
+    }, []).join("/");
+  };
+
+  const resolve = (specifier, fromDir) => {
+    const path = normalise(specifier, fromDir);
+    // `./x.js` 喺 TS 入面指住 `./x.ts`；`./x` 亦可能係一個 folder 嘅 index。
+    const stems = [path, path.replace(/\.[cm]?js$/, ""), `${path}/index`];
+    const candidates = [path, ...stems.flatMap((stem) => SOURCE_EXTENSIONS.map((ext) => stem + ext))];
+    return candidates.find((candidate) => existsSync(new URL(candidate, root)));
+  };
+
+  const collected = new Map();
+  const queue = [entry];
+  while (queue.length > 0) {
+    const file = queue.shift();
+    if (collected.has(file)) continue;
+    const source = readFileSync(new URL(file, root), "utf8");
+    collected.set(file, source);
+    const fromDir = file.split("/").slice(0, -1).join("/");
+
+    // `from "x"` / `from 'x'` / `import("x")` / `require("x")` / 側效果 `import "x"`。
+    for (const match of source.matchAll(/(?:\bfrom|\bimport|\brequire)\s*\(?\s*["']([^"']+)["']/g)) {
+      const specifier = match[1];
+      if (!specifier.startsWith("@/") && !specifier.startsWith(".")) continue;
+      if (NON_SOURCE_SPECIFIER.test(specifier)) continue;
+      const resolved = resolve(specifier, fromDir);
+      assert.ok(resolved, `${file}: local import "${specifier}" did not resolve — the graph would silently miss it`);
+      if (!collected.has(resolved)) queue.push(resolved);
+    }
+  }
+  return collected;
+}
 const forbidden = [
   /systems already running/i,
   /used and refined daily/i,
@@ -316,7 +379,11 @@ test("POS feature pricing looks up delivery, finance, and recipe prices by their
   }
 });
 
-test("POS features route renders localized content with shareable language and contact links", () => {
+// 呢條以前叫「POS features route **renders** localized content…」，但 body 由頭到尾
+// 只係 existsSync + grep source，一次都冇 render 過。真正嘅 render 行為（route 出唔出到、
+// <main lang>、三語連結帶唔帶語言）搬咗去 tests/pos-features-rendered.test.mjs 對真
+// output 驗；留喺呢度嘅淨係 source contract：頁面用共享層，唔自己另起一套。
+test("POS features page source contract: language and pricing come from the shared layer", () => {
   const root = new URL("../", import.meta.url);
   const pagePath = new URL("app/pos/features/page.tsx", root);
   const landingPath = new URL("components/PosFeaturesLanding.tsx", root);
@@ -335,39 +402,63 @@ test("POS features route renders localized content with shareable language and c
   assert.match(page, /generateMetadata/);
   assert.match(page, /parseQueryLang/);
   assert.match(page, /key=\{requestedLang\}/);
-  assert.match(landing, /<main[^>]*lang=\{lang\}/);
   assert.match(header, /languageHrefs/);
   assert.match(landing, /POS_FEATURES_CONTENT\[lang\]/);
-  assert.match(landing, /item\.id/);
   assert.match(landing, /getPosFeatureAddOnPriceText/);
   assert.match(landing, /getStandardPosFeatureAddOns/);
   assert.match(landing, /getPremiumPosFeatureAddOns/);
   assert.match(landing, /const trialReassurance = POS_CONTENT\[lang\]\.hero\.reassurance/);
-
-  for (const language of languages) {
-    assert.match(landing, new RegExp(`/pos/features\\?lang=${language}`));
-    assert.match(landing, new RegExp(`/pos\\?lang=${language}#contact`));
-  }
 });
 
-test("POS feature page routes every screenshot through the stable image map", () => {
+test("POS feature page source contract: screenshots resolve only through the stable image map", () => {
   const landing = readFileSync(
     new URL("../components/PosFeaturesLanding.tsx", import.meta.url),
     "utf8",
   );
+  const imageModule = readFileSync(
+    new URL("../lib/pos-feature-images.ts", import.meta.url),
+    "utf8",
+  );
 
   assert.match(landing, /import \{ POS_FEATURE_IMAGES/);
-  assert.doesNotMatch(landing, /@\/public\/pos-demo|\.\.\/public\/pos-demo/);
 
-  const ids = [
-    "order-entry", "kitchen-order", "floor-progress", "checkout-report",
-    "bilingual", "offline_backup", "menu_management", "sold_out",
-    "delivery", "finance_inventory",
-    "scheduling", "reservations", "reviews", "food_safety",
-    "allergens", "recipe_costing", "custom_domain", "signage",
-  ];
-  for (const id of ids) {
-    assert.match(landing, new RegExp(`POS_FEATURE_IMAGES\\[\\"${id}\\"\\]`));
+  // 整條圖片路徑都要守，唔淨係 landing：dialog / 卡片 component 任何一個直接
+  // import 一個 .webp，18 個 id、alt、dialog label 全部照樣過，但每格都會出錯圖。
+  // 逐個檔列清單擋唔到「插多一個 helper module 幫手 import」呢種轉手，所以由
+  // landing 行 import graph 收 closure —— 新加嘅檔會自動入網。
+  const graph = collectLocalImportGraph("components/PosFeaturesLanding.tsx");
+  // 一個數字 floor 證明唔到「行對咗路」—— 直接點名圖片路徑上每個 component 都
+  // 要喺 closure 入面，closure 塌成得返幾個檔就會即刻紅。
+  for (const required of [
+    "components/PosImageDialog.tsx",
+    "components/PosFeatureStory.tsx",
+    "components/PosAddOnCard.tsx",
+    "components/PosPremiumFeature.tsx",
+    "lib/pos-feature-images.ts",
+  ]) {
+    assert.ok(graph.has(required), `${required} should be inside the feature page's import graph`);
+  }
+  for (const [file, source] of graph) {
+    // 淨係 image map 一個檔可以踩資產；其餘全部要經佢。
+    if (file === "lib/pos-feature-images.ts") continue;
+    assert.doesNotMatch(source, /public\/pos-demo/,
+      `${file}: must not reach past the image map into the asset folder`);
+    assert.deepEqual(localAssetImports(source), [],
+      `${file}: bundling an asset here bypasses the image map — go through POS_FEATURE_IMAGES`);
+  }
+
+  // 舊版契約係「source 要出現 18 次字面 POS_FEATURE_IMAGES["<id>"]」。咁樣寫逼住
+  // 要留住一張逐 id 對照表，入面兩條死 entry 永遠讀唔到都要保留。真正嘅契約係
+  // 「頁面寫死嘅每個 image id 都解析得到」—— 加購 id 由 buildDemoImage 直接查，
+  // 淨低 workflow / core 八個非加購 id 要對返 map。
+  const mapIds = [...imageModule.matchAll(/^\s*"([\w-]+)":\s*\w+,$/gm)].map((match) => match[1]);
+  assert.equal(mapIds.length, 18);
+
+  const hardcodedIds = [...landing.matchAll(/^const \w+ImageIds = \[([\s\S]*?)\] as const/gm)]
+    .flatMap((match) => [...match[1].matchAll(/"([\w-]+)"/g)].map((id) => id[1]));
+  assert.equal(hardcodedIds.length, 8, "workflow and core each pin four screenshot IDs");
+  for (const id of hardcodedIds) {
+    assert.ok(mapIds.includes(id), `${id}: named by the page but absent from POS_FEATURE_IMAGES`);
   }
 });
 

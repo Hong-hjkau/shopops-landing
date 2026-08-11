@@ -37,6 +37,7 @@ ShopOps 嘅 marketing site（Next.js 16 App Router + React 19 + TypeScript + Tai
 | Content / rendered | `tests/*.test.mjs`（`node --test`）| `npm run test:content` | 靜態 HTML。自己 spawn `next dev`，`fetch()` 返 HTML 用 regex 驗。**冇 DOM、冇 JS、冇互動。** |
 | 互動 | `e2e/*.spec.ts`（`@playwright/test`）| `npm run test:e2e` | 真 Chromium 食 production build（`next start`）。鍵盤、focus、native `<dialog>`、accessibility tree。 |
 
+- **Test 名出現 `render` 就必須真係 render。** 一條叫「… route renders …」但 body 只係 `existsSync()` / grep source 嘅 test，係喺度講大話：改壞 route 佢照綠。Source-level 嘅 test 唔係唔准寫 —— 架構契約（「唔准直接 import `../public/pos-demo`」嗰類）本來就應該喺 source 層驗 —— 但個名要老實叫 `… source contract …`，行為就搬去 `tests/pos-features-rendered.test.mjs` 對真 output 驗。
 - **`npm run test:e2e` 自己會先 `npm run build`**，唔使你手動 build（手動 build 多一次係浪費）。咁樣保證一定測緊最新 source —— `playwright.config.ts` 頂部個 `.next/BUILD_ID` guard **只**證明「build 過」，證明唔到「係最新」，所以唔好靠佢，要行 npm script。
 - **`showModal()` 冇得用 jsdom 驗**（[jsdom#3294](https://github.com/jsdom/jsdom/issues/3294) 由 2021 開到而家仲未實作）。所以呢個 repo **唔會**加 vitest + jsdom 去測 dialog —— 一定要真瀏覽器。
 - Playwright 唔設 retry：flaky 要即刻見到，唔好用重試冚住。

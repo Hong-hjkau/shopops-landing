@@ -1,4 +1,3 @@
-import type { StaticImageData } from "next/image";
 import PosAddOnCard from "@/components/PosAddOnCard";
 import PosFeatureStory from "@/components/PosFeatureStory";
 import type { PosImageDialogProps } from "@/components/PosImageDialog";
@@ -15,7 +14,7 @@ import {
   type PosFeaturesContent,
 } from "@/lib/pos-features-content";
 import { POS_CONTENT, type PosAddOnId } from "@/lib/pos-content";
-import { POS_FEATURE_IMAGES } from "@/lib/pos-feature-images";
+import { POS_FEATURE_IMAGES, type PosFeatureImageId } from "@/lib/pos-feature-images";
 import type { Lang } from "@/lib/i18n";
 
 const languageHrefs: Record<Lang, string> = {
@@ -30,30 +29,24 @@ const contactHrefs: Record<Lang, string> = {
   "zh-Hans": "/pos?lang=zh-Hans#contact",
 };
 
-const workflowImages = [
-  { id: "order-entry", image: POS_FEATURE_IMAGES["order-entry"] },
-  { id: "kitchen-order", image: POS_FEATURE_IMAGES["kitchen-order"] },
-  { id: "floor-progress", image: POS_FEATURE_IMAGES["floor-progress"] },
-  { id: "checkout-report", image: POS_FEATURE_IMAGES["checkout-report"] },
-] as const;
+// Workflow 同 core 嗰八張圖唔係加購，所以要自己列次序。`satisfies` 令打錯一個 id
+// 即刻 tsc 紅，唔使靠 test grep 對住 source 數 18 次字面 lookup。
+const workflowImageIds = [
+  "order-entry", "kitchen-order", "floor-progress", "checkout-report",
+] as const satisfies readonly PosFeatureImageId[];
 
-const coreImages = [
-  { id: "bilingual", image: POS_FEATURE_IMAGES["bilingual"] },
-  { id: "offline_backup", image: POS_FEATURE_IMAGES["offline_backup"] },
-  { id: "menu_management", image: POS_FEATURE_IMAGES["menu_management"] },
-  { id: "sold_out", image: POS_FEATURE_IMAGES["sold_out"] },
-] as const;
+const coreImageIds = [
+  "bilingual", "offline_backup", "menu_management", "sold_out",
+] as const satisfies readonly PosFeatureImageId[];
 
 // 三處要砌同一組 dialog props（premium 兩塊 + 自選加購一個 loop）。逐處手寫
 // 六個 field 嘅話，加一個 prop 就要記住改三處 —— badgeLabel 就係咁樣險啲漏。
-function buildDemoImage(
-  copy: PosFeaturesContent,
-  id: PosAddOnId,
-  image: StaticImageData,
-): PosImageDialogProps {
+// 張圖亦都喺呢度查：加購 id 本身就係 image id，之前另外維持一張對照表，結果
+// 入面 delivery / finance_inventory 兩條由頭到尾冇人讀過。
+function buildDemoImage(copy: PosFeaturesContent, id: PosAddOnId): PosImageDialogProps {
   return {
     id,
-    image,
+    image: POS_FEATURE_IMAGES[id],
     alt: copy.addOns[id].imageAlt,
     actionLabel: copy.addOns[id].imageActionLabel,
     closeLabel: copy.imageDialogCloseLabel,
@@ -61,19 +54,6 @@ function buildDemoImage(
     sizes: "(max-width: 768px) 100vw, 50vw",
   };
 }
-
-const standardAddOnImages = {
-  scheduling: POS_FEATURE_IMAGES["scheduling"],
-  reservations: POS_FEATURE_IMAGES["reservations"],
-  reviews: POS_FEATURE_IMAGES["reviews"],
-  food_safety: POS_FEATURE_IMAGES["food_safety"],
-  allergens: POS_FEATURE_IMAGES["allergens"],
-  recipe_costing: POS_FEATURE_IMAGES["recipe_costing"],
-  custom_domain: POS_FEATURE_IMAGES["custom_domain"],
-  signage: POS_FEATURE_IMAGES["signage"],
-  delivery: POS_FEATURE_IMAGES["delivery"],
-  finance_inventory: POS_FEATURE_IMAGES["finance_inventory"],
-} as const;
 
 export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const copy = POS_FEATURES_CONTENT[lang];
@@ -157,9 +137,9 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
             {copy.workflow.stories.map((story, index) => (
               <PosFeatureStory
                 key={story.title}
-                image={workflowImages[index].image}
+                image={POS_FEATURE_IMAGES[workflowImageIds[index]]}
                 alt={story.imageAlt}
-                imageId={workflowImages[index].id}
+                imageId={workflowImageIds[index]}
                 imageActionLabel={story.imageActionLabel}
                 imageDialogCloseLabel={copy.imageDialogCloseLabel}
                 imageBadgeLabel={copy.demoImageBadge}
@@ -183,9 +163,9 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
             {copy.core.cards.map((card, index) => (
               <PosFeatureStory
                 key={card.title}
-                image={coreImages[index].image}
+                image={POS_FEATURE_IMAGES[coreImageIds[index]]}
                 alt={card.imageAlt}
-                imageId={coreImages[index].id}
+                imageId={coreImageIds[index]}
                 imageActionLabel={card.imageActionLabel}
                 imageDialogCloseLabel={copy.imageDialogCloseLabel}
                 imageBadgeLabel={copy.demoImageBadge}
@@ -216,7 +196,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                   benefits={panel.benefits}
                   boundary={Object.values(panel.boundaries).join(" ")}
                   bundleExamples={getPosFeatureBundleExamples(lang, id)}
-                  image={buildDemoImage(copy, id, POS_FEATURE_IMAGES[id])}
+                  image={buildDemoImage(copy, id)}
                 />
               );
             })}
@@ -240,7 +220,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 detail={copy.addOns[item.id].body}
                 monthlyPrice={item.monthlyPrice}
                 monthlyUnit={pricing.monthlyUnit}
-                image={buildDemoImage(copy, item.id, standardAddOnImages[item.id])}
+                image={buildDemoImage(copy, item.id)}
               />
             ))}
           </div>

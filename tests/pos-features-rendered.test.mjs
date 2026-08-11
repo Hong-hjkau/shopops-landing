@@ -214,19 +214,59 @@ after(async () => {
   if (nextProcess.exitCode === null) nextProcess.kill("SIGKILL");
 });
 
-async function render(language) {
-  return visibleMain(await fetchPage(language));
+// 全檔共用同一個 next dev process；`path` 令入口頁（`/`、`/pos`）都可以對住真
+// output 驗，唔使各自再開一個 server。
+async function render(language, path = "/pos/features") {
+  return visibleMain(await fetchPage(language, path));
 }
 
-async function fetchPage(language) {
-  const response = await fetch(`${baseUrl}/pos/features?lang=${language}`);
-  assert.equal(response.status, 200);
+async function fetchPage(language, path = "/pos/features") {
+  const response = await fetch(`${baseUrl}${path}?lang=${language}`);
+  assert.equal(response.status, 200, `${path}?lang=${language} should render`);
   return response.text();
 }
 
 // 「核心 POS」以前指去 #workflow，真正嘅 #core 冇入口，而且次序同頁面唔一致。
 // 四個入口係上限：1024px 加到第五個，全部 label 會斷行兼同 logo 疊字。
 const EXPECTED_NAV_TARGETS = ["#core", "#advanced-operations", "#add-ons", "#good-to-know"];
+
+test("the feature page answers on its own route and keeps the requested language in its links", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const html = await fetchPage(language);
+    const main = visibleMain(html);
+
+    assert.match(main, new RegExp(`<main[^>]*lang="${language}"`),
+      `${language}: the rendered main element should declare the requested language`);
+
+    // 語言切換同聯絡 CTA 都要帶住語言走，唔可以撳完跌返做英文。
+    for (const target of ["en", "zh-Hant", "zh-Hans"]) {
+      assert.ok(main.includes(`href="/pos/features?lang=${target}"`),
+        `${language}: the language switcher should offer ${target} without leaving the page`);
+    }
+    assert.ok(main.includes(`href="/pos?lang=${language}#contact"`),
+      `${language}: the contact CTA should carry the reader's language back to /pos`);
+  }
+});
+
+test("both public entry points link into the feature page without dropping the language", async () => {
+  // `/pos` 食 ?lang=；首頁嘅語言喺 client provider 手上，SSR 一定係 en，所以
+  // 首頁只驗得到預設語言嗰條入口。
+  // ⚠️ 呢條**唔覆蓋**「讀者喺首頁撳咗中文之後，個入口連結有冇跟住變」——
+  // 嗰件事只發生喺 hydration 之後，要真瀏覽器先驗到，屬 e2e 條線（SiteHeader
+  // 語言切換至今未有互動測試）。唔好當呢條 test 已經守住首頁嘅語言保留。
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const pos = visibleMain(await fetchPage(language, "/pos"));
+    const entries = [...pos.matchAll(/href="\/pos\/features\?lang=([^"]+)"/g)].map((match) => match[1]);
+    assert.ok(entries.length >= 2,
+      `/pos?lang=${language} should keep both feature-page entry links, found ${entries.length}`);
+    assert.deepEqual([...new Set(entries)], [language],
+      `/pos?lang=${language} should not send readers back to another language`);
+  }
+
+  const home = visibleMain(await fetchPage("en", "/"));
+  assert.ok(home.includes('href="/pos/features?lang=en"'),
+    "the homepage should link into the feature page");
+});
 
 test("header nav points at the sections it names, in the order the page renders them", async () => {
   for (const language of ["en", "zh-Hant", "zh-Hans"]) {
@@ -314,6 +354,32 @@ test("the advanced-operations section renders one panel per premium add-on, each
   }
 });
 
+test("every screenshot section leads with its own heading, before the caption and the cards", async () => {
+  // 冇呢條嘅話，將 section 個 h2 搬到啲卡下面（讀者見到一堆冇上文嘅卡先見到標題）
+  // 全部 rendered test 都照綠 —— 實測過。
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const main = await render(language);
+    for (const id of IMAGE_SECTION_IDS) {
+      const section = sectionById(main, id);
+      const positions = {
+        heading: section.indexOf("<h2"),
+        caption: section.indexOf("data-pos-demo-caption"),
+        grid: section.indexOf("data-pos-feature-grid"),
+        firstCardHeading: section.indexOf("<h3"),
+      };
+      for (const [name, index] of Object.entries(positions)) {
+        assert.notEqual(index, -1, `${language} #${id}: should render its ${name}`);
+      }
+      assert.ok(positions.heading < positions.caption,
+        `${language} #${id}: the section heading should come before the demo-language caption`);
+      assert.ok(positions.caption < positions.grid,
+        `${language} #${id}: the caption should come before the images it describes`);
+      assert.ok(positions.heading < positions.firstCardHeading,
+        `${language} #${id}: the section heading should come before the first card heading`);
+    }
+  }
+});
+
 test("workflow renders each approved screenshot beside its matching stage and step number", async () => {
   const main = await render("en");
   const workflow = sectionById(main, "workflow");
@@ -393,6 +459,53 @@ test("all three languages render the same 18 unique images with exact localized 
       assert.equal(decodeAttribute(dialog.match(/aria-label="([^"]+)"/)?.[1] ?? ""), descriptions[index].imageAlt);
       assert.equal(decodeAttribute(dialog.match(/<button[^>]*aria-label="([^"]+)"/)?.[1] ?? ""), content.imageDialogCloseLabel);
     });
+  }
+});
+
+test("every screenshot actually serves the asset its stable ID names", async () => {
+  // Source contract 只講「唔准繞過 image map 去 import 資產」，佢睇唔到真正流入
+  // <Image src> 嘅係咩：一句 hardcode 字串就可以令 18 格全部出同一張錯圖而
+  // 唔違反任何 import 規則。呢條由真 output 落手 —— 每個 id 出嗰張圖，檔名一定
+  // 要係佢自己。18 個資產嘅 basename 全部就係 `<id>.webp`（見 screenshot register）。
+  // 縮圖同放大圖係兩個獨立 <Image>，兩個都要驗：淨係驗縮圖嘅話，撳開之後見到
+  // 第二張圖係錯嘅都唔會紅。
+  const main = await render("en");
+  const sources = { trigger: new Map(), dialog: new Map() };
+  const urls = new Set();
+
+  for (const id of EXPECTED_IMAGE_IDS) {
+    for (const [surface, element] of [
+      ["trigger", triggerElementById(main, id)],
+      ["dialog", dialogById(main, id)],
+    ]) {
+      const url = decodeAttribute(element.match(/<img[^>]*\ssrc="([^"]+)"/)?.[1] ?? "");
+      const src = decodeURIComponent(url);
+      assert.ok(src, `${id}: the ${surface} should render an image source`);
+      assert.match(src, new RegExp(`\\b${escapeRegExp(id)}\\.[^/]*webp`),
+        `${id}: the ${surface} renders ${src}, which is not the asset this ID names`);
+      sources[surface].set(id, src);
+      // 攞底層靜態資產，唔行 `/_next/image` optimiser：真正要答嘅問題係「張圖
+      // 存唔存在」，而 36 次即場轉檔會拖到隔籬條 OG test 逾時（實撞過）。
+      urls.add(new URL(url, baseUrl).searchParams.get("url") ?? url);
+    }
+  }
+
+  for (const [surface, resolved] of Object.entries(sources)) {
+    assert.equal(new Set(resolved.values()).size, EXPECTED_IMAGE_IDS.length,
+      `two ${surface} screenshots resolved to the same file`);
+  }
+
+  // 名啱唔代表送到。每個資產都真係攞一次 —— 一組改到根目錄嘅 `/<id>.webp` 名
+  // 照樣啱、18 個照樣唔同，但用家見到嘅係 18 個 404。
+  assert.equal(urls.size, EXPECTED_IMAGE_IDS.length,
+    "the trigger and the dialog should share one asset per screenshot");
+  for (const url of urls) {
+    const response = await fetch(new URL(url, baseUrl));
+    assert.equal(response.status, 200, `${url} should be served`);
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    assert.ok(bytes.byteLength > 1000, `${url} should not be an empty file`);
+    assert.equal(new TextDecoder().decode(bytes.slice(0, 4)), "RIFF", `${url} should be the WebP asset`);
+    assert.equal(new TextDecoder().decode(bytes.slice(8, 12)), "WEBP", `${url} should be the WebP asset`);
   }
 });
 
