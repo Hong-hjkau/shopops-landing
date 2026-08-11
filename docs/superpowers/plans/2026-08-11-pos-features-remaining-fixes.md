@@ -30,8 +30,8 @@
 | F1 | `/pos/features` 宣告 `summary_large_image` 但冇 og:image / twitter:image，分享出空白卡 | ✅ **已做**（4ced55a） |
 | F3 | EN `goodToKnow` 自己寫第二套卡付款文案，同 canonical `feeNote` 分岔，讀落變成「唔記錄現金」 | ✅ **已做**（4ced55a） |
 | F6 | 頁面有 19 個價錢數字但零 VAT 說明（`vatNote` 之前只喺 `/pos`） | ✅ **已做**（4ced55a） |
-| F7 | 18 張截圖有 10 張冇「示範畫面為英文」caption，中文頁讀者會誤會加購只有英文 | ⏳ **第二批** |
-| F8 | 圖片 trigger 嘅 `aria-label` 蓋走 `alt`，18 張圖嘅描述螢幕閱讀器聽唔到 | ⏳ **第二批** |
+| F7 | 18 張截圖有 10 張冇「示範畫面為英文」caption，中文頁讀者會誤會加購只有英文 | ✅ **已做**（72f7c30） |
+| F8 | 圖片 trigger 嘅 `aria-label` 蓋走 `alt`，18 張圖嘅描述螢幕閱讀器聽唔到 | ✅ **已做**（72f7c30） |
 | F2 | 三語 `recipeBoundary` 硬編 `+£9`，違反 spec 驗收 #3；連 test 都鎖死咗個違規 | ⏳ **第三批** |
 | F5 | checkout 卡文案同 alt 都話有「daily report」，但張圖只有收款 modal，冇報表 | ⏳ **第三批** |
 | F4 | NVIDIA 商標 | 🟡 **一半已修**：素材已被另一條 branch 換走（live 已生效）；**register 嘅 trademark／licence 閘仍然未加**（grep 零命中）→ 第四批 |
@@ -77,7 +77,23 @@
 
 ## 剩餘批次
 
-### 第二批：F7 + F8（同一輪動 `PosImageDialog`）
+### ~~第二批：F7 + F8~~ ✅ 已完成（`72f7c30`）
+
+實際做法同下面 spec 嘅三個差異（已驗證、已過 Codex）：
+
+1. **caption 位置統一擺喺圖 grid 上面**，四個 section 一致，唔係「h2 下面」。原因：`#add-ons` 個 h2 之後已經有兩段價錢說明，caption 插喺中間會拆散佢哋；擺喺 grid 正上方語意最準（「下面啲圖係英文示範」）而且四區同一節奏。`#core` 本來就要咁做。
+2. **`copy.workflow.caption` 改名 `demoImageCaption`**（分歧項自己揀咗 Codex 嗰邊）。caption 而家四個 section 共用，個 key 名再收喺 `workflow.` 下面會誤導；順手加咗 `demoImageBadge`。
+3. **workflow 卡個 `1 · ` 序號**改成同 `/pos` `components/PosWorkflow.tsx` 一樣嘅圓形數字 badge（`PosFeatureStory` 新增選填 `step?: number`）。caption 抽走之後個序號冇咗依附，唔另創第三種寫法。
+
+⚠️ **順手提早做咗第六批第 1 項**：`tests/pos-content.test.mjs` 嗰條 grep 死 Tailwind class 嘅 test 被呢次改動撞爆，而 plan 指定嘅處理就係刪，所以即刻刪咗（原位留咗註解解釋）。第六批唔使再做呢項。
+
+🅿️ **一個做唔到、defer 咗嘅位**：plan 寫 F8 test 要驗「鍵盤 Enter/Space/Escape/關閉後 focus 回 trigger」。呢個 repo 冇 Playwright（`test:content` 純 fetch HTML），驗唔到真互動。已驗嘅係結構前提（native `<button type="button">` + native `<dialog>` + `onClose` 焦點回 trigger）。要真驗鍵盤要另開「加 Playwright」呢件事，未做。
+
+Mutation 驗證做咗 6 個，全部確認轉紅：①拆走一個 section caption ②拆走 `aria-describedby` ③掣內圖 `alt` 復辟 ④刪走成個 badge span ⑤badge 拆走 `aria-hidden` ⑥caption 由圖上面搬去圖下面。probe 零殘留。
+🩸 教訓：頭一次 mutation 揀錯咗 —— 將 `data-pos-demo-badge` 改名做 `data-pos-demo-badge-DISABLED`，但新名**包含**舊字串所以 regex 照中，test 假綠。**mutation 唔可以用 superset 字串，要真刪。**
+
+<details>
+<summary>原本嘅 spec（保留備查）</summary>
 
 兩條都改同一個檔，唔好分兩次。
 
@@ -101,6 +117,8 @@ const descriptionId = `pos-image-${id}-description`;
 - ❌ **唔好用** `aria-label={alt + actionLabel}`（Claude 原方案，Codex 否決：18 個掣 accessible name 變超長，screen reader 嘅 element list 冇得掃）
 - dialog 內嘅放大圖繼續保留描述性 `alt`
 - Test：18 個 description ID 要唯一、`aria-describedby` target 要存在、in-button 圖 `alt=""`、鍵盤 Enter/Space/Escape/關閉後 focus 回 trigger
+
+</details>
 
 ### 第三批：F2 + F5（三語文案）
 
@@ -135,7 +153,7 @@ const descriptionId = `pos-image-${id}-description`;
 
 ### 第六批：F11 test 重整（放最後，前五批會加新 test，一次過收）
 
-1. **刪** `tests/pos-content.test.mjs` 嗰條 assert 字面 Tailwind class 嘅（`/<h3 className="mt-3 text-xl font-bold text-text">\{title\}<\/h3>/`，364 / 370 附近）—— 零行為價值，rendered test 已有 heading hierarchy 覆蓋
+1. ~~**刪** `tests/pos-content.test.mjs` 嗰條 assert 字面 Tailwind class 嘅~~ ✅ **第二批已做**（`72f7c30`，原位留咗註解）
 2. **搬** 行為類 assert 去 `pos-features-rendered.test.mjs` 對真 output 驗（route 回應、三語內容、metadata、heading／DOM 次序、language-preserving links、`/pos` 同首頁入口）
 3. **保留** 真正屬架構契約嘅 source test（例如「唔准直接 import `../public/pos-demo`，必須經 stable image map」），但 test 名要改到誠實（`... source contract` 而唔係 `... renders ...`）
 4. rendered harness 嘅 `render()` 要接受 path，全檔共用同一個 server process（唔好每條 test 開一次 Next server）
