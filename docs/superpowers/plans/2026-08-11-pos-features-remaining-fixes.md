@@ -32,8 +32,8 @@
 | F6 | 頁面有 19 個價錢數字但零 VAT 說明（`vatNote` 之前只喺 `/pos`） | ✅ **已做**（4ced55a） |
 | F7 | 18 張截圖有 10 張冇「示範畫面為英文」caption，中文頁讀者會誤會加購只有英文 | ✅ **已做**（72f7c30） |
 | F8 | 圖片 trigger 嘅 `aria-label` 蓋走 `alt`，18 張圖嘅描述螢幕閱讀器聽唔到 | ✅ **已做**（72f7c30） |
-| F2 | 三語 `recipeBoundary` 硬編 `+£9`，違反 spec 驗收 #3；連 test 都鎖死咗個違規 | ⏳ **第三批** |
-| F5 | checkout 卡文案同 alt 都話有「daily report」，但張圖只有收款 modal，冇報表 | ⏳ **第三批** |
+| F2 | 三語 `recipeBoundary` 硬編 `+£9`，違反 spec 驗收 #3；連 test 都鎖死咗個違規 | ✅ **已做**（0f3c308） |
+| F5 | checkout 卡文案同 alt 都話有「daily report」，但張圖只有收款 modal，冇報表 | ✅ **已做**（0f3c308） |
 | F4 | NVIDIA 商標 | 🟡 **一半已修**：素材已被另一條 branch 換走（live 已生效）；**register 嘅 trademark／licence 閘仍然未加**（grep 零命中）→ 第四批 |
 | F10 | 加購／進階分流靠 hardcode id；hero 兩格都借單一項價錢代表成層 | ⏳ **第五批** |
 | F11 | 幾條 test 名寫住 render 但只 grep source，仲鎖死 Tailwind class | ⏳ **第六批** |
@@ -120,6 +120,22 @@ const descriptionId = `pos-image-${id}-description`;
 
 </details>
 
+### ~~第三批：F2 + F5~~ ✅ 已完成（`0f3c308`；另有 refactor `169477f`）
+
+實際做法同下面 spec 嘅差異：
+
+- **F2 個 assert 收得比 plan 辣**：唔止 `assert.doesNotMatch(recipeBoundary, /£/)`，係整份 `POS_FEATURES_CONTENT[lang]` 序列化之後零個 `£`（配合 spec 驗收 #3「頁面不另寫產品價錢常量」）。⚠️ **代價**：將來如果有正當理由喺 feature 文案出現 `£`（舉例、非產品價錢），會被誤殺，要當時放寬。Codex 認同呢個係測試政策取捨，唔算 bug。
+- **F2 個「改價 mutation test」擺咗喺 `tests/pos-content.test.mjs`**（唔係 rendered 檔）。原因：rendered harness 係 spawn 一個獨立 `next dev` process，喺 test process 度改 `POS_CONTENT` 影響唔到 server。所以由改 canonical 價落手嗰條 test 一定要喺同一個 process 行得到嘅 unit 層。
+- **F5 新文案**（三語）：title「收款並完成結帳」／body 講「喺未付款清單揀返張單」／alt 講「收款視窗及現金、信用卡選項」。⚠️ 首版寫「由未付款清單**開單**」被 Codex 捉到有歧義（讀得成開新單），已改。
+- **語意契約表**（Codex 上一輪提議）已落地：`IMAGE_SEMANTIC_CONTRACT` 喺 `tests/pos-features-rendered.test.mjs`，暫時只填 `checkout-report`。設計要點：**`required` 只可以由肉眼睇到嘅文案滿足**（rendered 一邊先剝走 `sr-only` 描述再驗），`forbidden` 就覆蓋晒連 alt／action label。呢個分層係 Codex 第一輪捉到嘅 P2 —— 唔分層嘅話，可見標題／內文可以退化到同張圖無關，靠隱藏 alt 保住個 required 假綠。
+
+Codex 兩輪：第一輪 2 條 P2（rendered 只驗 forbidden／中文「開單」歧義），修完第二輪 CLEAN。Mutation 4 個全紅。
+
+🆕 **Codex 順帶提出、已 defer 嘅一條**：唔應該為咗維持 `tests/pos-content.test.mjs` 嗰條「landing source 要出現 18 次 literal `POS_FEATURE_IMAGES["<id>"]`」契約，而永久保留 `standardAddOnImages` 兩條死 entry（= F17）。佢認為真正契約應該係「所有 ID 都經 `POS_FEATURE_IMAGES` 解析」，改完就可以刪 map、`buildDemoImage` 直接由 id 查圖。**併入 F17 + 第六批 test 重整一齊做**，唔好單獨郁（會令現有架構契約失效）。
+
+<details>
+<summary>原本嘅 spec（保留備查）</summary>
+
 ### 第三批：F2 + F5（三語文案）
 
 **F2**：三語 `recipeBoundary` 拎走 `+£9`（`lib/pos-features-content.ts` 132 / 214 / 296，行號要重對）。
@@ -130,6 +146,9 @@ const descriptionId = `pos-image-${id}-description`;
 **F5**：三語 story #4 嘅 title + body + imageAlt 全部拎走「daily report / 報表」（81 / 163 / 245，行號要重對）。
 - 檔名 `checkout-report.webp` 同 stable id `checkout-report` **建議唔改**（改名要同步 register／SHA／test／import 四處，收益近零）
 - Codex 建議建立「stable ID → required／forbidden semantic phrases」表，獨立於 content object（例如 `checkout-report` 嘅 alt 必須含付款語意、**不得**含 report／報表）。呢個比人手 tick 強，值得做
+
+
+</details>
 
 ### 第四批：F4 收尾（唔使重影，素材已好）
 
@@ -167,10 +186,17 @@ const descriptionId = `pos-image-${id}-description`;
 
 ---
 
-## 兩條優化（HONG 已批「做」）
+## 三條優化
 
+### ✅ 已做（`169477f`）
+- **`buildDemoImage(copy, id, image)`** —— 三處手砌同一組六 field dialog props（加 `badgeLabel` 嗰陣險啲漏一處），收成一個 helper
+- **Test 定位 regex 收成 helper** —— `triggerById` / `triggerElementById` / `dialogById`
+- ❌ **`data-pos-*` marker 抽共用常數：評估後唔做**。JSX 寫唔到 computed attribute name，要用 `{...{ [M.badge]: true }}` spread hack，讀落差過直接寫；而且現有重複本身已經有守衛（component 改名 → test 即刻紅）
+
+### ⏳ 未做
 1. **補齊 OG 圖 test 覆蓋** — 全 repo **零個** test assert 過任何 route 有 OG 圖。第一批只補咗 `/pos/features`；`/`、`/pos`、`/rota`、`/this-is-you` 四條仍然裸奔。抄第一批嗰條 test 嘅做法（驗 meta tag + 真 fetch 圖 + PNG magic bytes）。
 2. **`lib/og.tsx` tags 孤立 `·`** — `flexWrap` 換行時會留個分隔點喺行尾（`/pos` 同新嗰張都係）。改共用 renderer 影響三頁，第一批刻意冇動（守則 #3）。做嘅時候三頁一齊睇。
+3. 🔴 **互動層 test（零覆蓋，spec 驗收欠帳）** —— `docs/.../2026-08-06-pos-feature-screenshots-and-layout-design.md:163` 驗收第 9 條明寫「圖片可用 click、Enter／Space 開啟；Escape、關閉按鈕及 focus return 正常」，但現有 harness 淨係 `fetch()` HTML 用 regex 驗，**冇 DOM、冇 JS、冇真互動**，呢條驗收由頭到尾冇機器驗過。已查證：**jsdom 至今仍然未實作 `HTMLDialogElement.showModal()`**（[jsdom#3294](https://github.com/jsdom/jsdom/issues/3294)，2021-11 開到而家仲 open），所以 vitest + jsdom 對呢個 component 係死路 —— 要 mock `showModal`，等於驗緊個 mock。方案雙軌中，未拍板。
 
 ---
 
