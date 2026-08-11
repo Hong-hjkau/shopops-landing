@@ -220,6 +220,47 @@ async function fetchPage(language) {
   return response.text();
 }
 
+// 「核心 POS」以前指去 #workflow，真正嘅 #core 冇入口，而且次序同頁面唔一致。
+// 四個入口係上限：1024px 加到第五個，全部 label 會斷行兼同 logo 疊字。
+const EXPECTED_NAV_TARGETS = ["#core", "#advanced-operations", "#add-ons", "#good-to-know"];
+
+test("header nav points at the sections it names, in the order the page renders them", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const main = await render(language);
+    const nav = main.match(/<nav\b[\s\S]*?<\/nav>/)?.[0];
+    assert.ok(nav, `${language}: rendered page should contain the header nav`);
+
+    const navTargets = [...nav.matchAll(/href="(#[^"]+)"/g)].map((match) => match[1]);
+    assert.deepEqual(navTargets, EXPECTED_NAV_TARGETS, `${language}: nav should point at the sections it names`);
+
+    const sectionIds = [...main.matchAll(/<section\b[^>]*id="([^"]+)"/g)].map((match) => `#${match[1]}`);
+    for (const target of navTargets) {
+      assert.ok(sectionIds.includes(target), `${language}: nav points at ${target} but no section renders that id`);
+    }
+    assert.deepEqual(
+      navTargets,
+      sectionIds.filter((id) => navTargets.includes(id)),
+      `${language}: nav order should follow the order the sections actually render in`,
+    );
+
+    // F12 嘅真正 bug 唔係次序，係 label 同目標唔對口（「Core POS」指去咗 #workflow）。
+    const copy = POS_FEATURES_CONTENT[language];
+    const expectedLabels = {
+      "#core": copy.hero.corePriceLabel,
+      "#advanced-operations": copy.premiumTitle,
+      "#add-ons": copy.hero.standardAddOnPriceLabel,
+      "#good-to-know": copy.goodToKnowTitle,
+    };
+    const entries = [...nav.matchAll(/href="(#[^"]+)"[^>]*>([\s\S]*?)<\/a>/g)]
+      .map((match) => [match[1], visibleText(match[2])]);
+    assert.deepEqual(
+      Object.fromEntries(entries),
+      expectedLabels,
+      `${language}: each nav entry should carry the label of the section it links to`,
+    );
+  }
+});
+
 test("hero renders both add-on price bands, the demo CTA, and canonical trial terms", async () => {
   const main = await render("en");
   const hero = main.match(/<section\b[\s\S]*?<\/section>/)?.[0];
@@ -517,7 +558,7 @@ test("rendered premium panels expose complete delivery and finance workflows", a
     "delivery slots",
     "minimum order values",
     "delivery fees",
-    "collection code",
+    "driver collection code",
     "driver view",
     "confirm collection",
     "deliver or cancel",
@@ -528,6 +569,9 @@ test("rendered premium panels expose complete delivery and finance workflows", a
     "cash-only",
     "does not take online payments",
   ]) assert.match(delivery, new RegExp(phrase, "i"));
+  // 同一頁另一處用 "collection orders" 指外賣自取，所以送貨嗰個碼要講明係司機用嘅，
+  // 唔可以退返做冇修飾嘅 "collection code"。
+  assert.doesNotMatch(delivery, /(?<!driver )collection code/i);
 
   for (const phrase of [
     "suppliers, purchases, receiving and stock intake",
@@ -538,12 +582,15 @@ test("rendered premium panels expose complete delivery and finance workflows", a
     "VAT paid on purchases",
     "1 pack = 500 g",
     "stocktakes and stock valuations",
-    "actual usage, cost, expenses, labour and Profit and loss",
-    "actual cost and Profit and loss",
+    "actual usage, cost, expenses, labour and profit and loss",
+    "actual cost and profit and loss",
     "Recipe costing is a separate estimate",
     "does not submit directly to HMRC",
   ]) assert.match(finance, new RegExp(phrase, "i"));
   assert.doesNotMatch(finance, /Profit and loss[^.]*straight-line estimate/i);
+  // 句中嘅 "profit and loss" 係普通名詞，唔係文件名，所以唔可以大寫返轉頭。
+  // 呢條要 case-sensitive —— 上面嗰批 assert 全部帶 `i`，捉唔到大小寫倒退。
+  assert.doesNotMatch(finance, /[a-z,] Profit and loss/);
 });
 
 test("Good to know renders the four operational boundaries instead of pricing reminders", async () => {

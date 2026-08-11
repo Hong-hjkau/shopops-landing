@@ -95,10 +95,13 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   return (
     <main lang={lang} className="flex flex-col">
       <SiteHeader
+        // 「核心 POS」以前指去 #workflow，撳落去去咗落單流程嗰段，真正嘅 #core 反而
+        // 冇入口。而家指返 #core，四個入口亦跟返 section 喺頁面出現嘅次序。
+        // 維持四個：1024px 實測第五個入口會迫到全部 label 斷行、同 logo 疊字。
         navLinks={[
-          { href: "#workflow", label: copy.hero.corePriceLabel },
-          { href: "#add-ons", label: copy.hero.standardAddOnPriceLabel },
+          { href: "#core", label: copy.hero.corePriceLabel },
           { href: "#advanced-operations", label: copy.premiumTitle },
+          { href: "#add-ons", label: copy.hero.standardAddOnPriceLabel },
           { href: "#good-to-know", label: copy.goodToKnowTitle },
         ] satisfies NavLink[]}
         cta={{ href: contactHref, label: pricing.cta }}
