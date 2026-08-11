@@ -63,6 +63,13 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const financeAddOn = getPosFeatureAddOn(lang, "finance_inventory");
   const recipeAddOn = getPosFeatureAddOn(lang, "recipe_costing");
   const trialReassurance = POS_CONTENT[lang].hero.reassurance;
+  // 每個有截圖嘅 section 出一次，貼住圖 grid 上面。之前係逐張卡重複同一句
+  // （core 區一連 4 次），噪音大而且四個 section 入面得兩個講過。
+  const demoImageCaption = (
+    <p data-pos-demo-caption className="mt-6 max-w-2xl text-sm leading-6 text-text-secondary">
+      {copy.demoImageCaption}
+    </p>
+  );
 
   return (
     <main lang={lang} className="flex flex-col">
@@ -113,10 +120,11 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
 
       <section id="workflow" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-10 max-w-3xl">
+          <div className="max-w-3xl">
             <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.workflow.title}</h2>
           </div>
-          <div data-pos-feature-grid className="grid gap-6 md:grid-cols-2">
+          {demoImageCaption}
+          <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
             {copy.workflow.stories.map((story, index) => (
               <PosFeatureStory
                 key={story.title}
@@ -125,7 +133,8 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 imageId={workflowImages[index].id}
                 imageActionLabel={story.imageActionLabel}
                 imageDialogCloseLabel={copy.imageDialogCloseLabel}
-                caption={`${index + 1} · ${copy.workflow.caption}`}
+                imageBadgeLabel={copy.demoImageBadge}
+                step={index + 1}
                 title={story.title}
                 description={story.body}
               />
@@ -140,6 +149,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
             <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.core.title}</h2>
             <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{copy.core.eyebrow}</p>
           </div>
+          {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
             {copy.core.cards.map((card, index) => (
               <PosFeatureStory
@@ -149,7 +159,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 imageId={coreImages[index].id}
                 imageActionLabel={card.imageActionLabel}
                 imageDialogCloseLabel={copy.imageDialogCloseLabel}
-                caption={copy.workflow.caption}
+                imageBadgeLabel={copy.demoImageBadge}
                 title={card.title}
                 description={card.body}
               />
@@ -161,6 +171,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
       <section id="advanced-operations" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.premiumTitle}</h2>
+          {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
             <PosPremiumFeature
               id="delivery"
@@ -172,7 +183,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               benefits={copy.delivery.benefits}
               boundary={`${copy.delivery.cashOnly} ${copy.delivery.onlinePaymentBoundary}`}
               bundleExamples={[`${copy.hero.corePriceLabel} + ${deliveryAddOn.label}: £${featurePricing.corePlusDelivery}${pricing.monthlyUnit}`]}
-              image={{ id: "delivery", image: POS_FEATURE_IMAGES["delivery"], alt: copy.addOns.delivery.imageAlt, actionLabel: copy.addOns.delivery.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, sizes: "(max-width: 768px) 100vw, 50vw" }}
+              image={{ id: "delivery", image: POS_FEATURE_IMAGES["delivery"], alt: copy.addOns.delivery.imageAlt, actionLabel: copy.addOns.delivery.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, badgeLabel: copy.demoImageBadge, sizes: "(max-width: 768px) 100vw, 50vw" }}
             />
             <PosPremiumFeature
               id="finance"
@@ -187,7 +198,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 `${copy.hero.corePriceLabel} + ${financeAddOn.label}: £${featurePricing.corePlusFinance}${pricing.monthlyUnit}`,
                 `${copy.hero.corePriceLabel} + ${financeAddOn.label} + ${recipeAddOn.label}: £${featurePricing.corePlusFinanceAndRecipe}${pricing.monthlyUnit}`,
               ]}
-              image={{ id: "finance_inventory", image: POS_FEATURE_IMAGES["finance_inventory"], alt: copy.addOns.finance_inventory.imageAlt, actionLabel: copy.addOns.finance_inventory.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, sizes: "(max-width: 768px) 100vw, 50vw" }}
+              image={{ id: "finance_inventory", image: POS_FEATURE_IMAGES["finance_inventory"], alt: copy.addOns.finance_inventory.imageAlt, actionLabel: copy.addOns.finance_inventory.imageActionLabel, closeLabel: copy.imageDialogCloseLabel, badgeLabel: copy.demoImageBadge, sizes: "(max-width: 768px) 100vw, 50vw" }}
             />
           </div>
         </div>
@@ -198,6 +209,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.hero.standardAddOnPriceLabel}</h2>
           <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsRequirement}</p>
           <p className="mt-2 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsBillingNote}</p>
+          {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-5 md:grid-cols-2">
             {standardAddOns.map((item) => (
               <PosAddOnCard
@@ -208,7 +220,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 detail={copy.addOns[item.id].body}
                 monthlyPrice={item.monthlyPrice}
                 monthlyUnit={pricing.monthlyUnit}
-                image={{ id: item.id, image: standardAddOnImages[item.id], alt: copy.addOns[item.id].imageAlt, actionLabel: copy.addOns[item.id].imageActionLabel, closeLabel: copy.imageDialogCloseLabel, sizes: "(max-width: 768px) 100vw, 50vw" }}
+                image={{ id: item.id, image: standardAddOnImages[item.id], alt: copy.addOns[item.id].imageAlt, actionLabel: copy.addOns[item.id].imageActionLabel, closeLabel: copy.imageDialogCloseLabel, badgeLabel: copy.demoImageBadge, sizes: "(max-width: 768px) 100vw, 50vw" }}
               />
             ))}
           </div>

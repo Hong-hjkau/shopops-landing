@@ -361,14 +361,10 @@ test("POS feature page routes every screenshot through the stable image map", ()
   }
 });
 
-test("POS feature story cards sit below their workflow section heading", () => {
-  const story = readFileSync(
-    new URL("../components/PosFeatureStory.tsx", import.meta.url),
-    "utf8",
-  );
-
-  assert.match(story, /<h3 className="mt-3 text-xl font-bold text-text">\{title\}<\/h3>/);
-});
+// 刪走咗：「POS feature story cards sit below their workflow section heading」。
+// 佢個名講標題層級，實際只係 grep 死 PosFeatureStory 入面一串 Tailwind class ——
+// 改樣就紅、改壞結構反而唔紅，零行為價值。標題層級由
+// tests/pos-features-rendered.test.mjs 對住真 output 驗。
 
 test("POS feature standard add-ons keep their own prices when pricing groups are reordered", () => {
   const pricing = POS_CONTENT.en.pricing;

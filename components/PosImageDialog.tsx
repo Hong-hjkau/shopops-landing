@@ -9,6 +9,7 @@ export type PosImageDialogProps = {
   alt: string;
   actionLabel: string;
   closeLabel: string;
+  badgeLabel: string;
   sizes: string;
 };
 
@@ -18,10 +19,14 @@ export default function PosImageDialog({
   alt,
   actionLabel,
   closeLabel,
+  badgeLabel,
   sizes,
 }: PosImageDialogProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  // Accessible name 講「撳落去會做咩」，description 講「張圖係咩」。兩者夾埋
+  // 先完整；舊寫法用 aria-label 蓋走 alt，描述根本讀唔到。
+  const descriptionId = `pos-image-${id}-description`;
 
   function openDialog() {
     dialogRef.current?.showModal();
@@ -37,18 +42,30 @@ export default function PosImageDialog({
         ref={triggerRef}
         type="button"
         aria-label={actionLabel}
+        aria-describedby={descriptionId}
         data-pos-image-id={id}
         onClick={openDialog}
-        className="block w-full cursor-zoom-in overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        className="relative block w-full cursor-zoom-in overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
         <Image
           src={image}
-          alt={alt}
+          alt=""
           loading="lazy"
           sizes={sizes}
           className="h-auto w-full border-b border-border"
         />
+        {/* 示範畫面全部係英文。Section caption 已經講咗一次，呢個角落 badge 係
+            視覺補強，令手機長頁捲到中段嘅讀者唔使返上去搵。螢幕閱讀器唔需要
+            再讀一次（description 已經寫住「英文示範…」），所以 aria-hidden。 */}
+        <span
+          aria-hidden="true"
+          data-pos-demo-badge
+          className="absolute right-2 top-2 rounded-full bg-hero-bg px-2 py-0.5 text-xs font-semibold text-hero-text"
+        >
+          {badgeLabel}
+        </span>
       </button>
+      <span id={descriptionId} className="sr-only">{alt}</span>
 
       <dialog
         ref={dialogRef}

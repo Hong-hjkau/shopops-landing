@@ -7,7 +7,8 @@ export default function PosFeatureStory({
   imageId,
   imageActionLabel,
   imageDialogCloseLabel,
-  caption,
+  imageBadgeLabel,
+  step,
   title,
   description,
 }: {
@@ -16,7 +17,9 @@ export default function PosFeatureStory({
   imageId: string;
   imageActionLabel: string;
   imageDialogCloseLabel: string;
-  caption: string;
+  imageBadgeLabel: string;
+  /** 流程次序（由落單到結帳）。核心功能卡冇次序，所以係選填。 */
+  step?: number;
   title: string;
   description: string;
 }) {
@@ -28,11 +31,22 @@ export default function PosFeatureStory({
         alt={alt}
         actionLabel={imageActionLabel}
         closeLabel={imageDialogCloseLabel}
+        badgeLabel={imageBadgeLabel}
         sizes="(max-width: 768px) 100vw, 50vw"
       />
       <div className="p-6">
-        <p className="text-sm font-semibold text-accent-strong">{caption}</p>
-        <h3 className="mt-3 text-xl font-bold text-text">{title}</h3>
+        <div className="flex items-center gap-3">
+          {step === undefined ? null : (
+            // 同 /pos 嘅 PosWorkflow 一樣嘅圓形序號，唔另創第三種步驟寫法。
+            <span
+              data-pos-step={step}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-on-accent"
+            >
+              {step}
+            </span>
+          )}
+          <h3 className="text-xl font-bold text-text">{title}</h3>
+        </div>
         <p className="mt-3 leading-7 text-text-secondary">{description}</p>
       </div>
     </article>

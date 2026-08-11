@@ -99,6 +99,49 @@ function headings(main) {
   }));
 }
 
+// 18 張已批核截圖，按頁面出現次序。同 lib/pos-feature-images.ts 嘅 register 對應。
+const EXPECTED_IMAGE_IDS = [
+  "order-entry", "kitchen-order", "floor-progress", "checkout-report",
+  "bilingual", "offline_backup", "menu_management", "sold_out",
+  "delivery", "finance_inventory",
+  "scheduling", "reservations", "reviews", "food_safety",
+  "allergens", "recipe_costing", "custom_domain", "signage",
+];
+
+const IMAGE_SECTION_IDS = ["workflow", "core", "advanced-operations", "add-ons"];
+
+function countMatches(text, pattern) {
+  return (text.match(pattern) ?? []).length;
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function triggerById(main, id) {
+  const trigger = main.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[^>]*>`))?.[0];
+  assert.ok(trigger, `rendered page should contain a trigger for ${id}`);
+  return trigger;
+}
+
+// 連內容嘅完整 <button>…</button>（trigger 入面冇巢狀 button）。
+function triggerElementById(main, id) {
+  const element = main.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[\\s\\S]*?</button>`))?.[0];
+  assert.ok(element, `rendered page should contain a complete trigger element for ${id}`);
+  return element;
+}
+
+// 圖片語意（alt / action label）跟 EXPECTED_IMAGE_IDS 同一次序。
+function imageDescriptions(content) {
+  return [
+    ...content.workflow.stories,
+    ...content.core.cards,
+    content.addOns.delivery,
+    content.addOns.finance_inventory,
+    ...EXPECTED_IMAGE_IDS.slice(10).map((id) => content.addOns[id]),
+  ];
+}
+
 before(async () => {
   const port = await reservePort();
   baseUrl = `http://127.0.0.1:${port}`;
@@ -150,7 +193,7 @@ test("hero renders both add-on price bands, the demo CTA, and canonical trial te
   assert.match(text, /3-day free trial · No card needed for the trial · We set up your menu for you/);
 });
 
-test("workflow renders each approved screenshot beside its matching stage and language caption", async () => {
+test("workflow renders each approved screenshot beside its matching stage and step number", async () => {
   const main = await render("en");
   const workflow = sectionById(main, "workflow");
   const stories = [...workflow.matchAll(/<article\b[\s\S]*?<\/article>/g)].map((match) => match[0]);
@@ -165,7 +208,13 @@ test("workflow renders each approved screenshot beside its matching stage and la
   expectedPairs.forEach(([asset, title], index) => {
     assert.match(stories[index], new RegExp(asset));
     assert.match(visibleText(stories[index]), new RegExp(title));
-    assert.match(visibleText(stories[index]), /Demo screens are in English\. ShopOps supports English and Chinese\./);
+    // 步驟序號留喺卡上（佢係流程次序），但示範語言 caption 唔再逐卡重複 ——
+    // 見下面 "every screenshot section states the demo-language caption exactly once"。
+    assert.match(stories[index], new RegExp(`data-pos-step="${index + 1}"`));
+    assert.doesNotMatch(
+      visibleText(stories[index]),
+      /Demo screens are in English\. ShopOps supports English and Chinese\./,
+    );
   });
 });
 
@@ -198,15 +247,8 @@ test("workflow screenshots render accessible lazy image-dialog triggers without 
 
 test("all 18 feature screenshots render once in the approved section order", async () => {
   const main = await render("en");
-  const expectedIds = [
-    "order-entry", "kitchen-order", "floor-progress", "checkout-report",
-    "bilingual", "offline_backup", "menu_management", "sold_out",
-    "delivery", "finance_inventory",
-    "scheduling", "reservations", "reviews", "food_safety",
-    "allergens", "recipe_costing", "custom_domain", "signage",
-  ];
   const renderedIds = [...main.matchAll(/data-pos-image-id="([^"]+)"/g)].map((match) => match[1]);
-  assert.deepEqual(renderedIds, expectedIds);
+  assert.deepEqual(renderedIds, EXPECTED_IMAGE_IDS);
   assert.equal(new Set(renderedIds).size, 18);
 
   const sectionIds = [...main.matchAll(/<section[^>]*id="([^"]+)"/g)].map((match) => match[1]);
@@ -217,29 +259,15 @@ test("all 18 feature screenshots render once in the approved section order", asy
 });
 
 test("all three languages render the same 18 unique images with exact localized dialog labels", async () => {
-  const expectedIds = [
-    "order-entry", "kitchen-order", "floor-progress", "checkout-report",
-    "bilingual", "offline_backup", "menu_management", "sold_out",
-    "delivery", "finance_inventory",
-    "scheduling", "reservations", "reviews", "food_safety",
-    "allergens", "recipe_costing", "custom_domain", "signage",
-  ];
-
   for (const language of ["en", "zh-Hant", "zh-Hans"]) {
     const main = await render(language);
     const content = POS_FEATURES_CONTENT[language];
-    const descriptions = [
-      ...content.workflow.stories,
-      ...content.core.cards,
-      content.addOns.delivery,
-      content.addOns.finance_inventory,
-      ...expectedIds.slice(10).map((id) => content.addOns[id]),
-    ];
+    const descriptions = imageDescriptions(content);
     const renderedIds = [...main.matchAll(/data-pos-image-id="([^"]+)"/g)].map((match) => match[1]);
-    assert.deepEqual(renderedIds, expectedIds);
+    assert.deepEqual(renderedIds, EXPECTED_IMAGE_IDS);
     assert.equal(new Set(renderedIds).size, 18);
 
-    expectedIds.forEach((id, index) => {
+    EXPECTED_IMAGE_IDS.forEach((id, index) => {
       const trigger = main.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[^>]*>`))?.[0];
       const dialog = main.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?<\\/dialog>`))?.[0];
       assert.ok(trigger, `${language} ${id} should render a trigger`);
@@ -258,6 +286,89 @@ test("two-column story images request half-width desktop sources", async () => {
     const thumbnailSizes = [...section.matchAll(/<button[^>]*data-pos-image-id[^>]*>[\s\S]*?<img[^>]*sizes="([^"]+)"/g)].map((match) => match[1]);
     assert.equal(thumbnailSizes.length, 4);
     assert.deepEqual(thumbnailSizes, Array(4).fill("(max-width: 768px) 100vw, 50vw"));
+  }
+});
+
+test("every screenshot section states the demo-language caption exactly once, above its images", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const main = await render(language);
+    const caption = POS_FEATURES_CONTENT[language].demoImageCaption;
+
+    for (const id of IMAGE_SECTION_IDS) {
+      const section = sectionById(main, id);
+      assert.equal(
+        countMatches(section, /data-pos-demo-caption/g),
+        1,
+        `${language} #${id} should carry the demo caption exactly once`,
+      );
+      assertTextIncludes(visibleText(section), caption);
+      // Caption 要行先，否則手機長頁讀者見到圖之後先見到解釋。
+      assert.ok(
+        section.indexOf("data-pos-demo-caption") < section.indexOf("data-pos-image-id"),
+        `${language} #${id} caption should precede its screenshots`,
+      );
+    }
+
+    // 全頁淨係四次 —— 唔可以退化返逐張圖重複（原本 core 區重複咗 4 次）。
+    assert.equal(countMatches(main, /data-pos-demo-caption/g), IMAGE_SECTION_IDS.length);
+    assert.equal(
+      countMatches(visibleText(main), new RegExp(escapeRegExp(caption), "g")),
+      IMAGE_SECTION_IDS.length,
+      `${language} caption text should appear once per screenshot section`,
+    );
+  }
+});
+
+test("all 18 screenshots carry a demo-language badge that screen readers do not repeat", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const main = await render(language);
+    const badge = POS_FEATURES_CONTENT[language].demoImageBadge;
+
+    assert.equal(countMatches(main, /data-pos-demo-badge/g), 18, `${language} should badge all 18 screenshots`);
+    for (const id of EXPECTED_IMAGE_IDS) {
+      const trigger = triggerElementById(main, id);
+      const chip = trigger.match(/<span[^>]*data-pos-demo-badge[^>]*>([\s\S]*?)<\/span>/)?.[0];
+      assert.ok(chip, `${language} ${id} should render a demo badge inside its trigger`);
+      assert.equal(visibleText(chip), badge);
+      // Badge 淨係視覺補強；描述已經喺 aria-describedby 講咗，唔好再讀多次。
+      assert.match(chip, /aria-hidden="true"/);
+    }
+  }
+});
+
+test("image triggers name the action and describe the picture without swallowing the alt text", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const main = await render(language);
+    const content = POS_FEATURES_CONTENT[language];
+    const descriptions = imageDescriptions(content);
+    const seenIds = new Set();
+
+    EXPECTED_IMAGE_IDS.forEach((id, index) => {
+      const trigger = triggerById(main, id);
+      const describedBy = decodeAttribute(trigger.match(/aria-describedby="([^"]+)"/)?.[1] ?? "");
+      assert.ok(describedBy, `${language} ${id} trigger should point at a description`);
+      assert.equal(seenIds.has(describedBy), false, `${describedBy} must be unique on the page`);
+      seenIds.add(describedBy);
+
+      // Accessible name 講「做咩」，description 講「係咩」。
+      assert.equal(decodeAttribute(trigger.match(/aria-label="([^"]+)"/)?.[1] ?? ""), descriptions[index].imageActionLabel);
+      const target = main.match(new RegExp(`<span[^>]*id="${describedBy}"[^>]*>([\\s\\S]*?)</span>`));
+      assert.ok(target, `${language} ${describedBy} should exist in the DOM`);
+      assert.equal(visibleText(target[1]), descriptions[index].imageAlt);
+      assert.match(target[0], /class="[^"]*\bsr-only\b/);
+
+      // 掣入面張圖係裝飾（描述已喺 span），唔好再讀一次。
+      const thumbnail = main.match(new RegExp(`<button[^>]*data-pos-image-id="${id}"[^>]*>[\\s\\S]*?<img[^>]*>`))?.[0];
+      assert.ok(thumbnail, `${language} ${id} should render a thumbnail image`);
+      assert.match(thumbnail.match(/<img[^>]*>$/)?.[0] ?? "", /alt=""/);
+
+      // 放大圖仍然要有描述性 alt。
+      const dialog = main.match(new RegExp(`<dialog[^>]*data-pos-image-dialog="${id}"[\\s\\S]*?</dialog>`))?.[0];
+      assert.ok(dialog);
+      assert.equal(decodeAttribute(dialog.match(/<img[^>]*alt="([^"]*)"/)?.[1] ?? ""), descriptions[index].imageAlt);
+    });
+
+    assert.equal(seenIds.size, 18);
   }
 });
 

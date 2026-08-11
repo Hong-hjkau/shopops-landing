@@ -26,9 +26,13 @@ export type PosFeaturesContent = {
     standardAddOnPriceLabel: string;
     premiumAddOnPriceLabel: string;
   };
+  // 示範截圖全部係英文畫面。呢兩句唔屬任何一個 section —— 四個有截圖嘅 section
+  // （workflow / core / advanced-operations / add-ons）共用同一句，所以放頂層，
+  // 唔再收喺 `workflow.` 下面扮 workflow 專用。
+  demoImageCaption: string;
+  demoImageBadge: string;
   workflow: {
     title: string;
-    caption: string;
     stories: readonly [FeatureCard, FeatureCard, FeatureCard, FeatureCard];
   };
   core: {
@@ -78,9 +82,10 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       standardAddOnPriceLabel: "Choose-your-own operations tools",
       premiumAddOnPriceLabel: "Advanced operations (Delivery or finance)",
     },
+    demoImageCaption: "Demo screens are in English. ShopOps supports English and Chinese.",
+    demoImageBadge: "EN demo",
     workflow: {
       title: "From order to checkout",
-      caption: "Demo screens are in English. ShopOps supports English and Chinese.",
       stories: [
         { title: "Staff enters the order", body: "Staff enter dine-in or collection orders in the POS. Dine-in guests can also scan a table QR code, with optional staff confirmation before the order reaches the kitchen.", imageAlt: "English demo POS screen showing staff entering a dine-in order and its items.", imageActionLabel: "Enlarge the order-entry demo screen" },
         { title: "Kitchen receives the order", body: "The kitchen sees the order and updates its preparation status.", imageAlt: "English demo kitchen screen showing an incoming order ready for preparation.", imageActionLabel: "Enlarge the kitchen-order demo screen" },
@@ -159,9 +164,10 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       standardAddOnPriceLabel: "自選營運功能",
       premiumAddOnPriceLabel: "進階營運功能（送貨或財務）",
     },
+    demoImageCaption: "示範畫面為英文，系統支援英文及中文。",
+    demoImageBadge: "英文示範",
     workflow: {
       title: "由落單到結帳",
-      caption: "示範畫面為英文，系統支援英文及中文。",
       stories: [
         { title: "員工輸入訂單", body: "員工在 POS 輸入堂食或外賣自取訂單。堂食客人亦可掃枱上 QR code 點餐，餐廳可設定先由員工確認再送到廚房。", imageAlt: "英文示範 POS 畫面，顯示員工輸入堂食訂單及菜式。", imageActionLabel: "放大落單示範畫面" },
         { title: "廚房收到訂單", body: "廚房看到訂單，並更新準備狀態。", imageAlt: "英文示範廚房畫面，顯示等候準備的新訂單。", imageActionLabel: "放大廚房訂單示範畫面" },
@@ -240,9 +246,10 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
       standardAddOnPriceLabel: "自选营运功能",
       premiumAddOnPriceLabel: "进阶营运功能（配送或财务）",
     },
+    demoImageCaption: "演示画面为英文，系统支持英文及中文。",
+    demoImageBadge: "英文演示",
     workflow: {
       title: "从点餐到结账",
-      caption: "演示画面为英文，系统支持英文及中文。",
       stories: [
         { title: "员工输入订单", body: "员工在 POS 输入堂食或外卖自取订单。堂食顾客也可扫桌上 QR code 点餐，餐厅可设置先由员工确认再送到厨房。", imageAlt: "英文演示 POS 画面，显示员工输入堂食订单及菜品。", imageActionLabel: "放大点餐演示画面" },
         { title: "厨房收到订单", body: "厨房看到订单，并更新准备状态。", imageAlt: "英文演示厨房画面，显示等待准备的新订单。", imageActionLabel: "放大厨房订单演示画面" },
