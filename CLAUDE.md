@@ -19,6 +19,7 @@ Marketing site，對外推廣 ShopOps（核心 POS 產品）。Live: [shopops-la
 - Tailwind v4
 - Resend (contact form 後端)
 - Upstash Redis（rate limit，見 memory `reference_upstash_ratelimit.md`）
+- 測試：`node --test`（content / rendered HTML）+ `@playwright/test`（互動 / 鍵盤 / a11y），分層講解見 [AGENTS.md](./AGENTS.md)
 
 ## 部署
 

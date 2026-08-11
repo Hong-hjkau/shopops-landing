@@ -87,7 +87,7 @@
 
 ⚠️ **順手提早做咗第六批第 1 項**：`tests/pos-content.test.mjs` 嗰條 grep 死 Tailwind class 嘅 test 被呢次改動撞爆，而 plan 指定嘅處理就係刪，所以即刻刪咗（原位留咗註解解釋）。第六批唔使再做呢項。
 
-🅿️ **一個做唔到、defer 咗嘅位**：plan 寫 F8 test 要驗「鍵盤 Enter/Space/Escape/關閉後 focus 回 trigger」。呢個 repo 冇 Playwright（`test:content` 純 fetch HTML），驗唔到真互動。已驗嘅係結構前提（native `<button type="button">` + native `<dialog>` + `onClose` 焦點回 trigger）。要真驗鍵盤要另開「加 Playwright」呢件事，未做。
+🅿️ ~~**一個做唔到、defer 咗嘅位**：plan 寫 F8 test 要驗「鍵盤 Enter/Space/Escape/關閉後 focus 回 trigger」。呢個 repo 冇 Playwright…~~ ✅ **已補**，見下面「互動層測試（Playwright）」section。連 F8 嘅 accessibility tree 都真驗埋（`toHaveAccessibleDescription`）。
 
 Mutation 驗證做咗 6 個，全部確認轉紅：①拆走一個 section caption ②拆走 `aria-describedby` ③掣內圖 `alt` 復辟 ④刪走成個 badge span ⑤badge 拆走 `aria-hidden` ⑥caption 由圖上面搬去圖下面。probe 零殘留。
 🩸 教訓：頭一次 mutation 揀錯咗 —— 將 `data-pos-demo-badge` 改名做 `data-pos-demo-badge-DISABLED`，但新名**包含**舊字串所以 regex 照中，test 假綠。**mutation 唔可以用 superset 字串，要真刪。**
@@ -196,7 +196,64 @@ Codex 兩輪：第一輪 2 條 P2（rendered 只驗 forbidden／中文「開單�
 ### ⏳ 未做
 1. **補齊 OG 圖 test 覆蓋** — 全 repo **零個** test assert 過任何 route 有 OG 圖。第一批只補咗 `/pos/features`；`/`、`/pos`、`/rota`、`/this-is-you` 四條仍然裸奔。抄第一批嗰條 test 嘅做法（驗 meta tag + 真 fetch 圖 + PNG magic bytes）。
 2. **`lib/og.tsx` tags 孤立 `·`** — `flexWrap` 換行時會留個分隔點喺行尾（`/pos` 同新嗰張都係）。改共用 renderer 影響三頁，第一批刻意冇動（守則 #3）。做嘅時候三頁一齊睇。
-3. 🔴 **互動層 test（零覆蓋，spec 驗收欠帳）** —— `docs/.../2026-08-06-pos-feature-screenshots-and-layout-design.md:163` 驗收第 9 條明寫「圖片可用 click、Enter／Space 開啟；Escape、關閉按鈕及 focus return 正常」，但現有 harness 淨係 `fetch()` HTML 用 regex 驗，**冇 DOM、冇 JS、冇真互動**，呢條驗收由頭到尾冇機器驗過。已查證：**jsdom 至今仍然未實作 `HTMLDialogElement.showModal()`**（[jsdom#3294](https://github.com/jsdom/jsdom/issues/3294)，2021-11 開到而家仲 open），所以 vitest + jsdom 對呢個 component 係死路 —— 要 mock `showModal`，等於驗緊個 mock。方案雙軌中，未拍板。
+3. ✅ **互動層 test —— 已做**（見下面獨立 section）
+
+---
+
+---
+
+## 互動層測試（Playwright）—— 2026-08-11 新增
+
+**點解要做**：`docs/superpowers/specs/2026-08-06-pos-feature-screenshots-and-layout-design.md:163` 驗收第 9 條明寫「圖片可用 click、Enter／Space 開啟；Escape、關閉按鈕及 focus return 正常」。舊 harness 淨係 `fetch()` HTML 用 regex 驗（冇 DOM、冇 JS、冇互動），**呢條驗收由頭到尾冇機器驗過，係一筆已經欠咗嘅 spec 驗收**。
+
+**點解一定要真瀏覽器**：[jsdom#3294](https://github.com/jsdom/jsdom/issues/3294) —— jsdom 由 2021-11 到而家仍然**未實作 `HTMLDialogElement.showModal()`**。vitest + jsdom 走呢條路要 mock `showModal`，等於驗緊個 mock；Escape 關閉同 focus return 更加係瀏覽器行為，mock 唔到。⚠️ **以後唔好再提議喺呢個 repo 用 jsdom 測 dialog。**
+
+**方案雙軌**（Claude + Codex 各寫一份，HONG 拍板即刻做）。兩份一致：要真瀏覽器、揀 Playwright、唔郁現有 rendered test。兩處分歧，**兩處都跟咗 Codex**：
+
+| | Claude 原本 | 落地 | 點解 |
+|---|---|---|---|
+| Runner | Playwright 當 library 塞入現有 `node --test` | 獨立 `@playwright/test` | 要驗 `toBeFocused()` 呢類時序敏感嘢，冇 auto-wait 就係製造 flaky test。慳一個 config 檔唔值 |
+| Server | `next dev` | `next start` 食 production build | 驗到嘅係真正 ship 出去嗰個版本 |
+
+**落地內容**：`playwright.config.ts`（port 3210 避開 3000-3004、`retries: 0`、`trace: retain-on-failure`）+ `e2e/pos-image-dialog.spec.ts`（5 條，覆蓋驗收第 9 條六項，另加一條用 `toHaveAccessibleName` / `toHaveAccessibleDescription` 驗**瀏覽器計出嚟嘅 accessibility tree** —— 呢條先係 F8 修復嘅真正驗證，舊 harness 只可以睇 attribute 有冇出現）。
+
+**兩個 suite 嘅職責分工（唔好搞亂）**：
+- `tests/pos-features-rendered.test.mjs` 負責「**係咪啱啱 18 張、次序啱唔啱、文案啱唔啱**」
+- `e2e/pos-image-dialog.spec.ts` 負責「**頁面上每一張都撳得開、關得返、focus 返到**」，個 id 清單**由真頁面問返**（`page.locator("[data-pos-image-id]").evaluateAll(...)`），唔喺 e2e 另存一份 —— 否則同 rendered suite 各有一份 18 個 id，改一邊就分岔。
+
+⚠️ **但數量斷言唔可以慳**（Codex 第四輪 P2）。兩個 suite **睇緊唔同 server mode**：rendered 用 `next dev`，e2e 用 production build。所以「兩條 test 加埋就覆蓋完整」呢個想法有窿 —— 一個 production 專有嘅圖片流失（得返 1 張）會**兩邊一齊假綠**：rendered 喺 dev 見到 18 張照過，e2e 掃到嗰 1 張開關成功都照過。所以 e2e 要自己 assert 數量：
+
+```ts
+const EXPECTED_SCREENSHOT_COUNT =
+  EN.workflow.stories.length + EN.core.cards.length + Object.keys(EN.addOns).length;
+expect(ids.length).toBe(EXPECTED_SCREENSHOT_COUNT);
+```
+
+**由 content 推導唔硬編 `18`**：加第 19 張圖唔使記住兩個檔一齊改。（原本想直接數 `POS_FEATURE_IMAGES` 個 register，但佢 import 緊 `.webp`，Playwright 嘅 TS transform 食唔到。）職責分工仍然成立：**rendered suite 釘死「邊 18 個 id、乜次序」，e2e 釘死「production DOM 同 content 對得上、每張都撳得郁」**。已 mutation 驗過（`standardAddOns.slice(0, 1)` 模擬 8 張加購圖流失剩 1 張 → `Expected: 18 / Received: 11`，紅）。
+
+**npm script**：`test:e2e` = `npm run build && playwright test`（一定測最新 source）；`pretest:e2e` = `playwright install chromium`（npm 自動跑，HONG 唔使記任何手動步驟）；`verify` 尾段由獨立 `npm run build` 改成 `npm run test:e2e`。
+
+**成本實測**：`npm run verify` 全套 **19 秒**（e2e 佔 ~5 秒）。Chromium binary 約 **550MB**（`chromium-1234` 356M + headless shell 196M），存喺全機共用嘅 `~/Library/Caches/ms-playwright`，係「每個 Playwright 版本一次」唔係每個 project 一次。
+
+### 🩸 呢輪學到嘅坑
+
+1. **等 hydration 有兩個都唔得嘅做法，繞咗一個圈先搵到啱嘅**（Codex 連續兩輪 P2）：
+   - ❌ **`toBeEnabled()`** —— 個 button 本來就冇 `disabled`，SSR HTML 一出就成立，等唔到 React 掛好 handler。慢機上會喺 handler 未掛好之前撳落去 → 間歇性紅。
+   - ❌ **`expect(async () => {…}).toPass()` 重試同一個手勢** —— 我第二次嘅答案，被 Codex 推翻。佢啱：咁樣將規格嘅「撳一下就開」偷偷變成「15 秒內重複撳最終會開」，**反而冚住「第一下被 hydration 食咗」呢個真實 UX 問題**。
+   - ❌ **Codex 提議嘅「hydration 前將 button `disabled`」** —— 冇跟。呢個係為咗測試訊號而改 production 行為（18 個 instance 都要加 state flip），而且 disabled button 會被抽離 tab order，hydration 期間對鍵盤用家反而更差。測試需求唔應該推動產品行為改變。
+   - ✅ **等 React 喺元素上面掛好 `__reactProps$…`，然後單次、唔重試嘅手勢**。React 19 嘅 root-level delegated listener 讀嘅正正就係呢個 property，所以佢出現 = handler 接通咗。純測試側，零 production 改動，而且同規格語意一致。React 改名嘅話個 gate 會 timeout **大聲紅**，唔會假綠。
+
+   **點證明個 gate 唔係擺設**（本機太快，拆走佢連跑 3 次都照綠，證明唔到嘢）：做咗個對照實驗 —— `page.route("**/*.js")` 拖慢 1.5 秒 + `page.goto(..., { waitUntil: "commit" })`，**冇 gate 嘅單次撳紅咗，有 gate 嗰條綠**。⚠️ `waitUntil` 一定要 `commit`：預設 `load` 會等埋 script 落齊，根本造唔到空隙，實驗會假綠。
+2. **`.next/BUILD_ID` guard 只證明「曾經 build」，證明唔到「係最新」**（Codex P2）。獨立跑 e2e 而冇重新 build 就會測緊舊版本假綠。解法：`test:e2e` 自己包住 `npm run build`。
+3. **撳 backdrop 唔可以用 `modal.click({position})`** —— 個座標係相對 dialog 個盒，會撞正入面嗰個 `<div>`，`target !== currentTarget` 就唔會關。真 backdrop 係盒**以外**嘅暗區，瀏覽器會將嗰度嘅 click 派去 `<dialog>` 自己。用 `page.mouse.click(5, 5)`。
+4. **`trace: "on-first-retry"` 配 `retries: 0` = 永遠冇 trace**。要 `retain-on-failure`。
+5. **`onClose={() => triggerRef.current?.focus()}` 拆走都唔會紅** —— 因為 native modal `<dialog>` 關閉時瀏覽器本身就會還原 focus（HTML spec 行為）。Codex 判斷：同 native close algorithm 唔完全等價（非模態情況），**唔應該順手刪**。個 test 驗唔到嗰行唔代表 test 有問題 —— 規格要求嘅係「focus return 正常」呢個用家可見結果，如果將來有人將 `<dialog>` 換成 div-based modal，test 就會捉到。
+
+### ⏳ 未做（將來擴展）
+
+- `/pos`、`/rota`、`/this-is-you` 嘅互動未覆蓋
+- `SiteHeader` 語言切換未覆蓋
+- 跨瀏覽器（而家只行 chromium）、visual regression —— 都係另案
 
 ---
 

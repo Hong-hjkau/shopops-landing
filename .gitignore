@@ -45,3 +45,9 @@ next-env.d.ts
 
 .vercel
 .superpowers/
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
