@@ -7,8 +7,10 @@ import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import {
   POS_FEATURES_CONTENT,
   getPosFeatureAddOn,
+  getPosFeatureAddOnPriceText,
   getPosFeaturePricing,
-  getStandardPosFeatureAddOnPrice,
+  getPosFeatureBundleExamples,
+  getPremiumPosFeatureAddOns,
   getStandardPosFeatureAddOns,
   type PosFeaturesContent,
 } from "@/lib/pos-features-content";
@@ -79,7 +81,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
   const featurePricing = getPosFeaturePricing(lang);
   const contactHref = contactHrefs[lang];
   const standardAddOns = getStandardPosFeatureAddOns(lang);
-  const standardAddOnPrice = getStandardPosFeatureAddOnPrice(lang);
+  const premiumAddOns = getPremiumPosFeatureAddOns(lang);
   const deliveryAddOn = getPosFeatureAddOn(lang, "delivery");
   const financeAddOn = getPosFeatureAddOn(lang, "finance_inventory");
   const recipeAddOn = getPosFeatureAddOn(lang, "recipe_costing");
@@ -120,13 +122,16 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               <p className="mt-2 text-3xl font-bold">£{pricing.core.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
             </div>
             <div data-pos-price-add-ons className="grid gap-3 sm:grid-cols-2">
+              {/* 兩格都講成層加購，所以出成層嘅價：同層一個價出單價，唔一致出區間。
+                  以前借 delivery / scheduling 單項嘅價代表成層，加多個唔同價嘅
+                  加購就會靜靜講錯數。 */}
               <div data-pos-price-tier="advanced-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
                 <p className="text-sm text-hero-text-secondary">{copy.hero.premiumAddOnPriceLabel}</p>
-                <p className="mt-2 text-3xl font-bold">+£{deliveryAddOn.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+                <p className="mt-2 text-3xl font-bold">{getPosFeatureAddOnPriceText(lang, "premium")}<span className="text-base">{pricing.monthlyUnit}</span></p>
               </div>
               <div data-pos-price-tier="standard-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
                 <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
-                <p className="mt-2 text-3xl font-bold">+£{standardAddOnPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+                <p className="mt-2 text-3xl font-bold">{getPosFeatureAddOnPriceText(lang, "card")}<span className="text-base">{pricing.monthlyUnit}</span></p>
               </div>
             </div>
           </div>
@@ -197,33 +202,24 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.premiumTitle}</h2>
           {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
-            <PosPremiumFeature
-              id="delivery"
-              eyebrow={copy.delivery.eyebrow}
-              title={deliveryAddOn.label}
-              body={copy.delivery.body}
-              monthlyPrice={deliveryAddOn.monthlyPrice}
-              monthlyUnit={pricing.monthlyUnit}
-              benefits={copy.delivery.benefits}
-              boundary={`${copy.delivery.cashOnly} ${copy.delivery.onlinePaymentBoundary}`}
-              bundleExamples={[`${copy.hero.corePriceLabel} + ${deliveryAddOn.label}: £${featurePricing.corePlusDelivery}${pricing.monthlyUnit}`]}
-              image={buildDemoImage(copy, "delivery", POS_FEATURE_IMAGES["delivery"])}
-            />
-            <PosPremiumFeature
-              id="finance"
-              eyebrow={copy.finance.eyebrow}
-              title={financeAddOn.label}
-              body={copy.finance.body}
-              monthlyPrice={financeAddOn.monthlyPrice}
-              monthlyUnit={pricing.monthlyUnit}
-              benefits={copy.finance.benefits}
-              boundary={`${copy.finance.recipeBoundary} ${copy.finance.hmrcBoundary}`}
-              bundleExamples={[
-                `${copy.hero.corePriceLabel} + ${financeAddOn.label}: £${featurePricing.corePlusFinance}${pricing.monthlyUnit}`,
-                `${copy.hero.corePriceLabel} + ${financeAddOn.label} + ${recipeAddOn.label}: £${featurePricing.corePlusFinanceAndRecipe}${pricing.monthlyUnit}`,
-              ]}
-              image={buildDemoImage(copy, "finance_inventory", POS_FEATURE_IMAGES["finance_inventory"])}
-            />
+            {premiumAddOns.map(({ id, label, monthlyPrice }) => {
+              const panel = copy.premium[id];
+              return (
+                <PosPremiumFeature
+                  key={id}
+                  id={id}
+                  eyebrow={panel.eyebrow}
+                  title={label}
+                  body={panel.body}
+                  monthlyPrice={monthlyPrice}
+                  monthlyUnit={pricing.monthlyUnit}
+                  benefits={panel.benefits}
+                  boundary={Object.values(panel.boundaries).join(" ")}
+                  bundleExamples={getPosFeatureBundleExamples(lang, id)}
+                  image={buildDemoImage(copy, id, POS_FEATURE_IMAGES[id])}
+                />
+              );
+            })}
           </div>
         </div>
       </section>

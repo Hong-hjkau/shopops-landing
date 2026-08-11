@@ -5,9 +5,12 @@ import { POS_CONTENT } from "../lib/pos-content.ts";
 import * as posFeaturesModule from "../lib/pos-features-content.ts";
 const {
   POS_FEATURES_CONTENT,
+  POS_FEATURE_PRESENTATION,
   getPosFeaturePricing,
   getPosFeatureAddOn,
-  getStandardPosFeatureAddOnPrice,
+  getPosFeatureAddOnPriceText,
+  getPosFeatureBundleExamples,
+  getPremiumPosFeatureAddOns,
   getStandardPosFeatureAddOns,
 } = posFeaturesModule;
 
@@ -76,8 +79,8 @@ test("POS feature content maps every priced add-on by its stable ID", () => {
     assert.deepEqual(Object.keys(content.addOns).sort(), [...nineIds, ...nineteenIds].sort());
     assert.equal(Array.isArray(content.workflow), false);
     assert.equal(content.workflow.stories.length, 4);
-    assert.match(content.delivery.cashOnly, /cash|現金|现金/i);
-    assert.match(content.finance.hmrcBoundary, /HMRC/);
+    assert.match(content.premium.delivery.boundaries.cashOnly, /cash|現金|现金/i);
+    assert.match(content.premium.finance_inventory.boundaries.hmrc, /HMRC/);
     for (const description of Object.values(content.addOns)) {
       assert.equal("title" in description, false, "add-on labels must come only from POS_CONTENT");
     }
@@ -224,10 +227,10 @@ test("public POS feature copy rejects affirmative online-payment and card-delive
   };
 
   const assertPublicPaymentBoundaries = (content, rules) => {
-    const { delivery } = content;
-    assert.match(delivery.cashOnly, rules.cash);
-    assert.doesNotMatch(delivery.cashOnly, rules.card);
-    assert.match(delivery.onlinePaymentBoundary, rules.negative);
+    const { boundaries } = content.premium.delivery;
+    assert.match(boundaries.cashOnly, rules.cash);
+    assert.doesNotMatch(boundaries.cashOnly, rules.card);
+    assert.match(boundaries.onlinePayment, rules.negative);
     const publicCopy = JSON.stringify(content);
     for (const affirmative of rules.affirmativePublicClaims) {
       assert.doesNotMatch(publicCopy, affirmative);
@@ -246,7 +249,13 @@ test("public POS feature copy rejects affirmative online-payment and card-delive
     }
     assert.throws(() => assertPublicPaymentBoundaries({
       ...content,
-      delivery: { ...content.delivery, cashOnly: rules.cashAndCardMutant },
+      premium: {
+        ...content.premium,
+        delivery: {
+          ...content.premium.delivery,
+          boundaries: { ...content.premium.delivery.boundaries, cashOnly: rules.cashAndCardMutant },
+        },
+      },
     }, rules));
     for (const affirmativeMutant of rules.affirmativeMutants) {
       assert.throws(() => assertPublicPaymentBoundaries({
@@ -330,8 +339,9 @@ test("POS features route renders localized content with shareable language and c
   assert.match(header, /languageHrefs/);
   assert.match(landing, /POS_FEATURES_CONTENT\[lang\]/);
   assert.match(landing, /item\.id/);
-  assert.match(landing, /getStandardPosFeatureAddOnPrice/);
+  assert.match(landing, /getPosFeatureAddOnPriceText/);
   assert.match(landing, /getStandardPosFeatureAddOns/);
+  assert.match(landing, /getPremiumPosFeatureAddOns/);
   assert.match(landing, /const trialReassurance = POS_CONTENT\[lang\]\.hero\.reassurance/);
 
   for (const language of languages) {
@@ -366,6 +376,97 @@ test("POS feature page routes every screenshot through the stable image map", ()
 // 改樣就紅、改壞結構反而唔紅，零行為價值。標題層級由
 // tests/pos-features-rendered.test.mjs 對住真 output 驗。
 
+test("the presentation contract covers every priced add-on exactly once", () => {
+  const pricedIds = POS_CONTENT.en.pricing.addOnGroups.flatMap((group) => group.items.map((item) => item.id));
+
+  assert.deepEqual(Object.keys(POS_FEATURE_PRESENTATION).sort(), [...pricedIds].sort());
+  for (const [id, presentation] of Object.entries(POS_FEATURE_PRESENTATION)) {
+    assert.ok(["card", "premium"].includes(presentation.layout), `${id}: unknown layout`);
+    assert.equal("bundles" in presentation, presentation.layout === "premium",
+      `${id}: only premium panels list bundle examples`);
+  }
+
+  // Runtime 版嘅對帳。Compile 期由 PosPremiumFeatureId mapped type 守住，但呢條
+  // 令三語其中一語漏咗 panel 文案時，唔使等 tsc 都即刻紅。
+  const premiumIds = Object.entries(POS_FEATURE_PRESENTATION)
+    .filter(([, presentation]) => presentation.layout === "premium")
+    .map(([id]) => id);
+  for (const lang of languages) {
+    assert.deepEqual(Object.keys(POS_FEATURES_CONTENT[lang].premium).sort(), [...premiumIds].sort(),
+      `${lang}: every premium-layout add-on needs its own panel copy`);
+  }
+});
+
+test("every language ships the same premium bullets and boundary sentences", () => {
+  // 定長 tuple 已經釘死每個 panel 幾多粒 bullet，但三語各寫一份 —— 呢條由英文
+  // 嗰份做基準逐語對數，令「某一語少咗一粒 / 少咗一句界線」大聲紅，唔使靠肉眼。
+  const reference = POS_FEATURES_CONTENT.en.premium;
+
+  for (const lang of languages) {
+    const premium = POS_FEATURES_CONTENT[lang].premium;
+    for (const [id, panel] of Object.entries(reference)) {
+      assert.equal(premium[id].benefits.length, panel.benefits.length,
+        `${lang}: ${id} should ship the same number of bullets as English`);
+      assert.deepEqual(Object.keys(premium[id].boundaries), Object.keys(panel.boundaries),
+        `${lang}: ${id} should ship the same boundary sentences, in the same order`);
+      for (const [key, sentence] of Object.entries(premium[id].boundaries)) {
+        assert.ok(sentence.trim(), `${lang}: ${id}.${key} should not be blank`);
+      }
+      for (const [index, bullet] of premium[id].benefits.entries()) {
+        assert.ok(bullet.trim(), `${lang}: ${id} bullet ${index} should not be blank`);
+      }
+    }
+  }
+});
+
+test("premium bundle examples come from canonical prices instead of a copied figure", () => {
+  const [single] = getPosFeatureBundleExamples("en", "delivery");
+  assert.equal(single, "Core POS + Online delivery orders: £38/month");
+
+  assert.deepEqual(getPosFeatureBundleExamples("en", "finance_inventory"), [
+    "Core POS + Finance and inventory: £38/month",
+    "Core POS + Finance and inventory + Recipe costing: £47/month",
+  ]);
+
+  const pricing = POS_CONTENT.en.pricing;
+  const originalGroups = pricing.addOnGroups;
+  try {
+    pricing.addOnGroups = [
+      { monthlyPrice: 40, items: originalGroups[0].items },
+      { monthlyPrice: 19, items: originalGroups[1].items },
+    ];
+    assert.deepEqual(getPosFeatureBundleExamples("en", "finance_inventory"), [
+      "Core POS + Finance and inventory: £38/month",
+      "Core POS + Finance and inventory + Recipe costing: £78/month",
+    ], "a recipe-costing price change must flow into the finance bundle example");
+  } finally {
+    pricing.addOnGroups = originalGroups;
+  }
+});
+
+test("the card and premium split follows the presentation contract, not a hardcoded ID list", () => {
+  const original = POS_FEATURE_PRESENTATION.signage;
+  const standardBefore = getStandardPosFeatureAddOns("en").map((item) => item.id);
+  const premiumBefore = getPremiumPosFeatureAddOns("en").map((item) => item.id);
+
+  assert.ok(standardBefore.includes("signage"));
+  assert.deepEqual(premiumBefore, ["delivery", "finance_inventory"]);
+
+  try {
+    POS_FEATURE_PRESENTATION.signage = { layout: "premium", bundles: [[]] };
+    assert.equal(getStandardPosFeatureAddOns("en").some((item) => item.id === "signage"), false,
+      "an add-on promoted to the premium layout must leave the selectable-tools list");
+    assert.deepEqual(getPremiumPosFeatureAddOns("en").map((item) => item.id),
+      ["signage", "delivery", "finance_inventory"],
+      "an add-on promoted to the premium layout must join the advanced-operations list");
+  } finally {
+    POS_FEATURE_PRESENTATION.signage = original;
+  }
+
+  assert.deepEqual(getStandardPosFeatureAddOns("en").map((item) => item.id), standardBefore);
+  assert.deepEqual(getPremiumPosFeatureAddOns("en").map((item) => item.id), premiumBefore);
+});
+
 test("POS feature standard add-ons keep their own prices when pricing groups are reordered", () => {
   const pricing = POS_CONTENT.en.pricing;
   const originalGroups = pricing.addOnGroups;
@@ -380,7 +481,9 @@ test("POS feature standard add-ons keep their own prices when pricing groups are
       { monthlyPrice: 23, items: [premiumItems[0]] },
     ];
 
-    assert.equal(getStandardPosFeatureAddOnPrice("en"), 13);
+    // 標準層而家橫跨兩個價，所以 hero 嗰格要出區間，唔可以借第一項嘅 13 做代表。
+    assert.equal(getPosFeatureAddOnPriceText("en", "card"), "+£13–£17");
+    assert.equal(getPosFeatureAddOnPriceText("en", "premium"), "+£23–£29");
     assert.deepEqual(
       getStandardPosFeatureAddOns("en").map((item) => [item.id, item.monthlyPrice]),
       [

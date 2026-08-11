@@ -3,7 +3,11 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { fileURLToPath } from "node:url";
-import { POS_FEATURES_CONTENT } from "../lib/pos-features-content.ts";
+import {
+  POS_FEATURES_CONTENT,
+  getPosFeatureAddOnPriceText,
+  getPremiumPosFeatureAddOns,
+} from "../lib/pos-features-content.ts";
 import { POS_CONTENT } from "../lib/pos-content.ts";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -274,6 +278,40 @@ test("hero renders both add-on price bands, the demo CTA, and canonical trial te
   assert.match(text, /\+£\s*19\s*\/month/);
   assert.match(text, /Book a demo & free trial setup/);
   assert.match(text, /3-day free trial · No card needed for the trial · We set up your menu for you/);
+});
+
+test("each hero add-on tier prices its whole layer instead of borrowing one add-on's price", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const hero = sectionById(await render(language), "hero");
+    const unit = POS_CONTENT[language].pricing.monthlyUnit;
+
+    for (const [tier, layout] of [["standard-add-ons", "card"], ["advanced-add-ons", "premium"]]) {
+      const tile = hero.match(new RegExp(`<div[^>]*data-pos-price-tier="${tier}"[\\s\\S]*?</div>`))?.[0];
+      assert.ok(tile, `${language}: hero should render the ${tier} tier`);
+      // visibleText 會喺 tag 之間補空格，價錢同單位本身係貼住嘅，所以剝走空白先比。
+      const price = visibleText(tile.match(/<p class="mt-2[\s\S]*?<\/p>/)?.[0] ?? "").replace(/\s+/g, "");
+      assert.equal(price, `${getPosFeatureAddOnPriceText(language, layout)}${unit}`.replace(/\s+/g, ""),
+        `${language}: the ${tier} tile should price the whole ${layout} layer`);
+    }
+  }
+});
+
+test("the advanced-operations section renders one panel per premium add-on, each with its own price", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    const section = sectionById(await render(language), "advanced-operations");
+    const panels = [...section.matchAll(/<article\b[^>]*id="([^"]+)"[\s\S]*?<\/article>/g)];
+    const premiumAddOns = getPremiumPosFeatureAddOns(language);
+
+    assert.deepEqual(panels.map((match) => match[1]), premiumAddOns.map((item) => item.id),
+      `${language}: premium panels should follow the presentation contract, in order`);
+
+    for (const [index, panel] of panels.entries()) {
+      const { label, monthlyPrice } = premiumAddOns[index];
+      const text = visibleText(panel[0]);
+      assertTextIncludes(text, label);
+      assertTextIncludes(text.replace(/\s+/g, ""), `+£${monthlyPrice}${POS_CONTENT[language].pricing.monthlyUnit}`.replace(/\s+/g, ""));
+    }
+  }
 });
 
 test("workflow renders each approved screenshot beside its matching stage and step number", async () => {
@@ -551,7 +589,7 @@ test("rendered £9 cards include every approved capability and the allergen safe
 test("rendered premium panels expose complete delivery and finance workflows", async () => {
   const main = await render("en");
   const delivery = visibleText(main.match(/<article[^>]*id="delivery"[\s\S]*?<\/article>/)?.[0] ?? "");
-  const finance = visibleText(main.match(/<article[^>]*id="finance"[\s\S]*?<\/article>/)?.[0] ?? "");
+  const finance = visibleText(main.match(/<article[^>]*id="finance_inventory"[\s\S]*?<\/article>/)?.[0] ?? "");
 
   for (const phrase of [
     "postcode areas",
@@ -682,7 +720,7 @@ test("Traditional and Simplified pages render their fixed canonical names and En
       for (const phrase of phrases) assertTextIncludes(text, phrase);
     }
     for (const phrase of checks.delivery) assertTextIncludes(visibleText(articleById(main, "delivery")), phrase);
-    for (const phrase of checks.finance) assertTextIncludes(visibleText(articleById(main, "finance")), phrase);
+    for (const phrase of checks.finance) assertTextIncludes(visibleText(articleById(main, "finance_inventory")), phrase);
     for (const phrase of checks.good) assertTextIncludes(visibleText(sectionById(main, "good-to-know")), phrase);
   }
 });

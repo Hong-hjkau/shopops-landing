@@ -1,6 +1,37 @@
 import type { Lang } from "./i18n";
 import { POS_CONTENT, type PosAddOnId, type PosAddOnItem } from "./pos-content.ts";
 
+// 邊個加購用細卡、邊個用大 panel，係 **呢一頁點樣呈現** 嘅決定，唔係定價模型嘅一部分。
+// 所以留喺 Landing 層：`/pos` 根本唔需要知呢件事，寫入 POS_CONTENT 只會污染 canonical
+// 來源。亦都唔可以用「monthlyPrice === 19 就當 premium」—— 價錢 ≠ 內容複雜度，將來一個
+// 簡單嘅 £19 加購未必需要大 panel。
+export type PosFeatureLayout = "card" | "premium";
+
+type PosFeaturePresentation =
+  | { layout: "card" }
+  // `bundles` 每個元素係「除咗自己之外仲要夾埋邊幾個加購」。價錢同 label 由 canonical
+  // 來源砌返出嚟，所以改價唔使記住改文案。
+  | { layout: "premium"; bundles: readonly (readonly PosAddOnId[])[] };
+
+export const POS_FEATURE_PRESENTATION = {
+  scheduling: { layout: "card" },
+  reservations: { layout: "card" },
+  reviews: { layout: "card" },
+  food_safety: { layout: "card" },
+  allergens: { layout: "card" },
+  recipe_costing: { layout: "card" },
+  custom_domain: { layout: "card" },
+  signage: { layout: "card" },
+  delivery: { layout: "premium", bundles: [[]] },
+  finance_inventory: { layout: "premium", bundles: [[], ["recipe_costing"]] },
+} as const satisfies Record<PosAddOnId, PosFeaturePresentation>;
+
+// 每個 layout 係 "premium" 嘅 id 都必須有自己嘅 panel 文案同 boundary key。加多一個
+// premium 加購而唔補三語文案 → tsc 即刻紅，唔使靠人記得對帳。
+export type PosPremiumFeatureId = {
+  [K in PosAddOnId]: (typeof POS_FEATURE_PRESENTATION)[K]["layout"] extends "premium" ? K : never;
+}[PosAddOnId];
+
 type ImageSemantics = {
   imageAlt: string;
   imageActionLabel: string;
@@ -14,6 +45,32 @@ type FeatureCard = ImageSemantics & {
 type AddOnDescription = ImageSemantics & {
   outcome: string;
   body: string;
+};
+
+// 每個 premium panel 嘅形狀。
+// - `boundaries` 用具名 key 而唔係位置式 tuple：`cashOnly` 有安全含意
+//   （tests/pos-content.test.mjs 驗佢一定講現金、一定唔提信用卡），位置式索引
+//   會令翻譯調轉兩句嘅次序都睇唔出。
+// - `benefits` 反而**要**定長 tuple：三語各自一份，寬鬆成 `readonly string[]`
+//   嘅話，某一語漏咗一粒 bullet 都唔會紅。
+type PremiumFeatureShapes = {
+  delivery: {
+    boundaries: "cashOnly" | "onlinePayment";
+    benefits: readonly [string, string, string, string, string];
+  };
+  finance_inventory: {
+    boundaries: "recipeCosting" | "hmrc";
+    benefits: readonly [string, string, string, string, string, string];
+  };
+};
+
+type PosPremiumCopy = {
+  [K in PosPremiumFeatureId]: {
+    eyebrow: string;
+    body: string;
+    benefits: PremiumFeatureShapes[K]["benefits"];
+    boundaries: Readonly<Record<PremiumFeatureShapes[K]["boundaries"], string>>;
+  };
 };
 
 export type PosFeaturesContent = {
@@ -43,20 +100,7 @@ export type PosFeaturesContent = {
   addOns: Record<PosAddOnId, AddOnDescription>;
   imageDialogCloseLabel: string;
   premiumTitle: string;
-  delivery: {
-    eyebrow: string;
-    body: string;
-    benefits: readonly [string, string, string, string, string];
-    cashOnly: string;
-    onlinePaymentBoundary: string;
-  };
-  finance: {
-    eyebrow: string;
-    body: string;
-    benefits: readonly [string, string, string, string, string, string];
-    recipeBoundary: string;
-    hmrcBoundary: string;
-  };
+  premium: PosPremiumCopy;
   goodToKnowTitle: string;
   // 卡付款嗰條**刻意唔喺度**：佢係 canonical `POS_CONTENT[lang].pricing.feeNote`，
   // 由 PosFeaturesLanding 插入。功能頁曾經自己寫過第二套（"records card payments
@@ -117,32 +161,38 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
     },
     imageDialogCloseLabel: "Close enlarged image",
     premiumTitle: "Advanced operations",
-    delivery: {
-      eyebrow: "For direct delivery orders",
-      body: "Customers submit delivery orders through the restaurant's own ShopOps web page. Staff manage the order and the driver journey in one flow.",
-      benefits: [
-        "Set postcode areas, delivery slots, minimum order values and delivery fees.",
-        "Give each order a driver collection code and each driver a dedicated driver view.",
-        "The driver flow covers collect, confirm collection, deliver or cancel, then return for cash reconciliation.",
-        "Set driver pay per order and per mile or kilometre.",
-        "Use actual driving distance when available; otherwise estimate with straight-line distance.",
-      ],
-      cashOnly: "Delivery orders are cash-only.",
-      onlinePaymentBoundary: "ShopOps does not take online payments for delivery orders.",
-    },
-    finance: {
-      eyebrow: "For actual stock and finance figures",
-      body: "Record suppliers, purchases, receiving and stock intake, then use confirmed information to understand actual stock movement and costs.",
-      benefits: [
-        "AI scans invoice photos or PDFs to create a draft for staff to check. Nothing is received into stock until a person confirms it.",
-        "Classify each invoice line as company stock or excluded private use.",
-        "Scan VAT paid on purchases and leave uncertain values for staff confirmation.",
-        "Convert purchasing and stock units, for example 1 pack = 500 g.",
-        "Run stocktakes and stock valuations, then compare actual usage, cost, expenses, labour and profit and loss.",
-        "Export the confirmed figures to Excel for your accountant or other checks.",
-      ],
-      recipeBoundary: "Finance and inventory uses purchases, stocktakes and usage to calculate actual cost and profit and loss. Recipe costing is a separate estimate per dish or portion and needs recipe setup with matching units.",
-      hmrcBoundary: "ShopOps can record sales and purchase VAT and export the figures. It does not submit directly to HMRC or file VAT Returns; use compatible accounting software or an accountant.",
+    premium: {
+      delivery: {
+        eyebrow: "For direct delivery orders",
+        body: "Customers submit delivery orders through the restaurant's own ShopOps web page. Staff manage the order and the driver journey in one flow.",
+        benefits: [
+          "Set postcode areas, delivery slots, minimum order values and delivery fees.",
+          "Give each order a driver collection code and each driver a dedicated driver view.",
+          "The driver flow covers collect, confirm collection, deliver or cancel, then return for cash reconciliation.",
+          "Set driver pay per order and per mile or kilometre.",
+          "Use actual driving distance when available; otherwise estimate with straight-line distance.",
+        ],
+        boundaries: {
+          cashOnly: "Delivery orders are cash-only.",
+          onlinePayment: "ShopOps does not take online payments for delivery orders.",
+        },
+      },
+      finance_inventory: {
+        eyebrow: "For actual stock and finance figures",
+        body: "Record suppliers, purchases, receiving and stock intake, then use confirmed information to understand actual stock movement and costs.",
+        benefits: [
+          "AI scans invoice photos or PDFs to create a draft for staff to check. Nothing is received into stock until a person confirms it.",
+          "Classify each invoice line as company stock or excluded private use.",
+          "Scan VAT paid on purchases and leave uncertain values for staff confirmation.",
+          "Convert purchasing and stock units, for example 1 pack = 500 g.",
+          "Run stocktakes and stock valuations, then compare actual usage, cost, expenses, labour and profit and loss.",
+          "Export the confirmed figures to Excel for your accountant or other checks.",
+        ],
+        boundaries: {
+          recipeCosting: "Finance and inventory uses purchases, stocktakes and usage to calculate actual cost and profit and loss. Recipe costing is a separate estimate per dish or portion and needs recipe setup with matching units.",
+          hmrc: "ShopOps can record sales and purchase VAT and export the figures. It does not submit directly to HMRC or file VAT Returns; use compatible accounting software or an accountant.",
+        },
+      },
     },
     goodToKnowTitle: "Good to know",
     goodToKnow: {
@@ -199,32 +249,38 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
     },
     imageDialogCloseLabel: "關閉放大圖片",
     premiumTitle: "進階營運功能",
-    delivery: {
-      eyebrow: "直接送貨訂單",
-      body: "客人從餐廳自己的 ShopOps 網頁提交送貨訂單，員工在同一流程管理訂單及司機進度。",
-      benefits: [
-        "設定 postcode 區域、送貨時段、最低消費及運費。",
-        "每張訂單提供取貨碼，司機使用專用版面。",
-        "司機流程包括取貨、確認取貨、送達或取消，最後回店做現金對帳。",
-        "按每單及每英里或公里設定司機薪酬。",
-        "能取得實際行車距離時使用該距離，否則以直線距離估算。",
-      ],
-      cashOnly: "送貨訂單只收現金。",
-      onlinePaymentBoundary: "ShopOps 送貨訂單不接受網上付款。",
-    },
-    finance: {
-      eyebrow: "實際庫存及財務數字",
-      body: "記錄供應商、採購、收貨及入庫，再用確認後的資料了解實際庫存變動及成本。",
-      benefits: [
-        "AI 掃描 Invoice 相片或 PDF，先建立草稿讓員工檢查；員工確認後才會入庫。",
-        "把每行 Invoice 分類為公司庫存，或因私人用途而排除。",
-        "掃描採購時支付的 VAT；不肯定的數值保留待員工確認。",
-        "轉換採購及庫存單位，例如 1 pack = 500 g。",
-        "進行盤點及存貨估值，再比較實際耗用、成本、開支、人工及損益。",
-        "把確認後的數字匯出到 Excel，交給會計師或另行核對。",
-      ],
-      recipeBoundary: "財務及庫存按採購、盤點及耗用計算實際成本和損益。食譜成本是每道菜或每份的獨立估算，需要先設定食譜，並使用一致單位。",
-      hmrcBoundary: "ShopOps 可記錄銷售及採購 VAT 並匯出資料，但不會直接向 HMRC 提交 VAT Return；請使用相容會計軟件或交由會計師處理。",
+    premium: {
+      delivery: {
+        eyebrow: "直接送貨訂單",
+        body: "客人從餐廳自己的 ShopOps 網頁提交送貨訂單，員工在同一流程管理訂單及司機進度。",
+        benefits: [
+          "設定 postcode 區域、送貨時段、最低消費及運費。",
+          "每張訂單提供取貨碼，司機使用專用版面。",
+          "司機流程包括取貨、確認取貨、送達或取消，最後回店做現金對帳。",
+          "按每單及每英里或公里設定司機薪酬。",
+          "能取得實際行車距離時使用該距離，否則以直線距離估算。",
+        ],
+        boundaries: {
+          cashOnly: "送貨訂單只收現金。",
+          onlinePayment: "ShopOps 送貨訂單不接受網上付款。",
+        },
+      },
+      finance_inventory: {
+        eyebrow: "實際庫存及財務數字",
+        body: "記錄供應商、採購、收貨及入庫，再用確認後的資料了解實際庫存變動及成本。",
+        benefits: [
+          "AI 掃描 Invoice 相片或 PDF，先建立草稿讓員工檢查；員工確認後才會入庫。",
+          "把每行 Invoice 分類為公司庫存，或因私人用途而排除。",
+          "掃描採購時支付的 VAT；不肯定的數值保留待員工確認。",
+          "轉換採購及庫存單位，例如 1 pack = 500 g。",
+          "進行盤點及存貨估值，再比較實際耗用、成本、開支、人工及損益。",
+          "把確認後的數字匯出到 Excel，交給會計師或另行核對。",
+        ],
+        boundaries: {
+          recipeCosting: "財務及庫存按採購、盤點及耗用計算實際成本和損益。食譜成本是每道菜或每份的獨立估算，需要先設定食譜，並使用一致單位。",
+          hmrc: "ShopOps 可記錄銷售及採購 VAT 並匯出資料，但不會直接向 HMRC 提交 VAT Return；請使用相容會計軟件或交由會計師處理。",
+        },
+      },
     },
     goodToKnowTitle: "需要知道",
     goodToKnow: {
@@ -281,32 +337,38 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
     },
     imageDialogCloseLabel: "关闭放大图片",
     premiumTitle: "进阶营运功能",
-    delivery: {
-      eyebrow: "直接送货订单",
-      body: "顾客从餐厅自己的 ShopOps 网页提交送货订单，员工在同一流程管理订单及司机进度。",
-      benefits: [
-        "设置 postcode 区域、送货时段、最低消费及运费。",
-        "每张订单提供取货码，司机使用专用页面。",
-        "司机流程包括取货、确认取货、送达或取消，最后回店做现金对账。",
-        "按每单及每英里或公里设置司机薪酬。",
-        "能取得实际行车距离时使用该距离，否则以直线距离估算。",
-      ],
-      cashOnly: "送货订单只收现金。",
-      onlinePaymentBoundary: "ShopOps 送货订单不接受在线付款。",
-    },
-    finance: {
-      eyebrow: "实际库存及财务数字",
-      body: "记录供应商、采购、收货及入库，再用确认后的资料了解实际库存变动及成本。",
-      benefits: [
-        "AI 扫描 Invoice 照片或 PDF，先建立草稿让员工检查；员工确认后才会入库。",
-        "把每行 Invoice 分类为公司库存，或因私人用途而排除。",
-        "扫描采购时支付的 VAT；不确定的数值保留待员工确认。",
-        "转换采购及库存单位，例如 1 pack = 500 g。",
-        "进行盘点及库存估值，再比较实际耗用、成本、开支、人工及损益。",
-        "把确认后的数字导出到 Excel，交给会计师或另外核对。",
-      ],
-      recipeBoundary: "财务及库存按采购、盘点及耗用计算实际成本和损益。食谱成本是每道菜或每份的独立估算，需要先设置食谱，并使用一致单位。",
-      hmrcBoundary: "ShopOps 可记录销售及采购 VAT 并导出资料，但不会直接向 HMRC 提交 VAT Return；请使用兼容会计软件或交由会计师处理。",
+    premium: {
+      delivery: {
+        eyebrow: "直接送货订单",
+        body: "顾客从餐厅自己的 ShopOps 网页提交送货订单，员工在同一流程管理订单及司机进度。",
+        benefits: [
+          "设置 postcode 区域、送货时段、最低消费及运费。",
+          "每张订单提供取货码，司机使用专用页面。",
+          "司机流程包括取货、确认取货、送达或取消，最后回店做现金对账。",
+          "按每单及每英里或公里设置司机薪酬。",
+          "能取得实际行车距离时使用该距离，否则以直线距离估算。",
+        ],
+        boundaries: {
+          cashOnly: "送货订单只收现金。",
+          onlinePayment: "ShopOps 送货订单不接受在线付款。",
+        },
+      },
+      finance_inventory: {
+        eyebrow: "实际库存及财务数字",
+        body: "记录供应商、采购、收货及入库，再用确认后的资料了解实际库存变动及成本。",
+        benefits: [
+          "AI 扫描 Invoice 照片或 PDF，先建立草稿让员工检查；员工确认后才会入库。",
+          "把每行 Invoice 分类为公司库存，或因私人用途而排除。",
+          "扫描采购时支付的 VAT；不确定的数值保留待员工确认。",
+          "转换采购及库存单位，例如 1 pack = 500 g。",
+          "进行盘点及库存估值，再比较实际耗用、成本、开支、人工及损益。",
+          "把确认后的数字导出到 Excel，交给会计师或另外核对。",
+        ],
+        boundaries: {
+          recipeCosting: "财务及库存按采购、盘点及耗用计算实际成本和损益。食谱成本是每道菜或每份的独立估算，需要先设置食谱，并使用一致单位。",
+          hmrc: "ShopOps 可记录销售及采购 VAT 并导出资料，但不会直接向 HMRC 提交 VAT Return；请使用兼容会计软件或交由会计师处理。",
+        },
+      },
     },
     goodToKnowTitle: "需要知道",
     goodToKnow: {
@@ -331,16 +393,57 @@ export function getPosFeatureAddOn(
   throw new Error(`Missing POS add-on pricing ID: ${id}`);
 }
 
-export function getStandardPosFeatureAddOns(lang: Lang): Array<PosAddOnItem & { monthlyPrice: number }> {
+function getPosFeatureAddOnsByLayout(
+  lang: Lang,
+  layout: PosFeatureLayout,
+): Array<PosAddOnItem & { monthlyPrice: number }> {
   return POS_CONTENT[lang].pricing.addOnGroups.flatMap((group) =>
     group.items
-      .filter((item) => item.id !== "delivery" && item.id !== "finance_inventory")
+      .filter((item) => POS_FEATURE_PRESENTATION[item.id].layout === layout)
       .map((item) => ({ ...item, monthlyPrice: group.monthlyPrice })),
   );
 }
 
-export function getStandardPosFeatureAddOnPrice(lang: Lang) {
-  return getPosFeatureAddOn(lang, "scheduling").monthlyPrice;
+export function getStandardPosFeatureAddOns(lang: Lang) {
+  return getPosFeatureAddOnsByLayout(lang, "card");
+}
+
+// 收窄放喺呢度而唔係 call site：filter 本身就係「呢個 id 一定係 premium」嘅根據，
+// 擺喺呢度 component 先攞到已經收窄嘅 id，唔使自己 `as` 一個冇根據嘅斷言。
+function isPremiumAddOn(item: PosAddOnItem): item is PosAddOnItem & { id: PosPremiumFeatureId } {
+  return POS_FEATURE_PRESENTATION[item.id].layout === "premium";
+}
+
+export function getPremiumPosFeatureAddOns(lang: Lang) {
+  return POS_CONTENT[lang].pricing.addOnGroups.flatMap((group) =>
+    group.items
+      .filter(isPremiumAddOn)
+      .map((item) => ({ ...item, monthlyPrice: group.monthlyPrice })),
+  );
+}
+
+// Hero 嗰兩格講緊成層加購，唔可以借其中一項嘅價做代表（舊寫法標準格攞 scheduling、
+// 進階格攞 delivery —— 同層有第二個價就即刻講錯數）。同層一個價就出單價，唔一致出區間。
+export function getPosFeatureAddOnPriceText(lang: Lang, layout: PosFeatureLayout) {
+  const prices = getPosFeatureAddOnsByLayout(lang, layout).map((item) => item.monthlyPrice);
+  if (prices.length === 0) throw new Error(`No POS add-on uses the ${layout} layout`);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  return min === max ? `+£${min}` : `+£${min}–£${max}`;
+}
+
+// Premium panel 嘅「核心 + X」例子。ID 由 presentation 契約嚟，價錢同 label 由
+// canonical 來源查，所以改價或者改 label 都唔會留低一句過時嘅例子。
+export function getPosFeatureBundleExamples(lang: Lang, id: PosPremiumFeatureId) {
+  const presentation = POS_FEATURE_PRESENTATION[id];
+  const { pricing } = POS_CONTENT[lang];
+  const coreLabel = POS_FEATURES_CONTENT[lang].hero.corePriceLabel;
+
+  return presentation.bundles.map((extras) => {
+    const items = [id, ...extras].map((addOnId) => getPosFeatureAddOn(lang, addOnId));
+    const total = items.reduce<number>((sum, item) => sum + item.monthlyPrice, pricing.core.monthlyPrice);
+    return `${coreLabel} + ${items.map((item) => item.label).join(" + ")}: £${total}${pricing.monthlyUnit}`;
+  });
 }
 
 export function getPosFeaturePricing(lang: Lang) {
