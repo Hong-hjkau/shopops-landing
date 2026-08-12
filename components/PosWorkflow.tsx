@@ -1,12 +1,14 @@
 import Image from "next/image";
-import orderEntry from "@/public/pos-demo/order-entry.webp";
-import kitchenOrder from "@/public/pos-demo/kitchen-order.webp";
-import floorProgress from "@/public/pos-demo/floor-progress.webp";
-import checkoutReport from "@/public/pos-demo/checkout-report.webp";
+import { POS_FEATURE_IMAGES, type PosFeatureImageId } from "@/lib/pos-feature-images";
 import type { Lang } from "@/lib/i18n";
 import type { PosSharedContent } from "@/lib/pos-content";
 
-const WORKFLOW_IMAGES = [orderEntry, kitchenOrder, floorProgress, checkoutReport] as const;
+// 呢四張圖同 `/pos/features` 係同一批資產。喺呢度直接 import 資產檔嘅話，換圖
+// 只會換到經 image map 嗰頁，`/pos` 同首頁會靜靜留喺舊圖，所以一律經 map 查。
+// `satisfies` 令打錯一個 id 即刻 tsc 紅。
+const WORKFLOW_IMAGE_IDS = [
+  "order-entry", "kitchen-order", "floor-progress", "checkout-report",
+] as const satisfies readonly PosFeatureImageId[];
 
 export default function PosWorkflow({
   copy,
@@ -27,7 +29,7 @@ export default function PosWorkflow({
           {copy.steps.map((step, index) => (
             <li key={step} className="overflow-hidden rounded-2xl border border-border bg-bg shadow-sm">
               <Image
-                src={WORKFLOW_IMAGES[index]}
+                src={POS_FEATURE_IMAGES[WORKFLOW_IMAGE_IDS[index]]}
                 alt={`${altPrefix}${step}`}
                 sizes="(max-width: 640px) 100vw, 50vw"
                 className="h-auto w-full border-b border-border"

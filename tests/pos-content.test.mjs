@@ -37,6 +37,19 @@ function localAssetImports(source) {
       && NON_SOURCE_SPECIFIER.test(specifier));
 }
 
+// 唯一准許踩 `public/pos-demo/` 嘅檔。
+const IMAGE_MAP = "lib/pos-feature-images.ts";
+
+// 由 source 抽一個 `const <name> = [ … ]` 入面嘅 stable id。搵唔到一定要嘈：
+// 靜靜返一個空 array 嘅話，兩個檔都搵唔到都會「相等」，個對照契約就變假綠。
+function idsInConst(source, name) {
+  const block = source.match(new RegExp(`const ${name} = \\[([\\s\\S]*?)\\]`))?.[1];
+  assert.ok(block, `${name}: expected an array literal naming screenshot IDs`);
+  const ids = [...block.matchAll(/"([\w-]+)"/g)].map((match) => match[1]);
+  assert.ok(ids.length > 0, `${name}: should name at least one screenshot`);
+  return ids;
+}
+
 function collectLocalImportGraph(entry) {
   const root = new URL("../", import.meta.url);
 
@@ -410,7 +423,7 @@ test("POS features page source contract: language and pricing come from the shar
   assert.match(landing, /const trialReassurance = POS_CONTENT\[lang\]\.hero\.reassurance/);
 });
 
-test("POS feature page source contract: screenshots resolve only through the stable image map", () => {
+test("source contract: every page showing the demo screenshots goes through the stable image map", () => {
   const landing = readFileSync(
     new URL("../components/PosFeaturesLanding.tsx", import.meta.url),
     "utf8",
@@ -426,25 +439,39 @@ test("POS feature page source contract: screenshots resolve only through the sta
   // import 一個 .webp，18 個 id、alt、dialog label 全部照樣過，但每格都會出錯圖。
   // 逐個檔列清單擋唔到「插多一個 helper module 幫手 import」呢種轉手，所以由
   // landing 行 import graph 收 closure —— 新加嘅檔會自動入網。
-  const graph = collectLocalImportGraph("components/PosFeaturesLanding.tsx");
+  // 契約唔可以淨係喺 /pos/features 成立。同一批 demo 截圖亦都出喺 /pos 同首頁
+  // （`PosWorkflow`）—— 嗰兩頁自己 import 資產嘅話，換圖只會換到 feature 頁，
+  // 另外兩頁靜靜留喺舊圖，而全套 test 一條都唔會紅。所以三個入口行同一條規矩。
+  const graphs = new Map([
+    "components/PosFeaturesLanding.tsx",
+    "app/pos/page.tsx",
+    "app/page.tsx",
+  ].map((entry) => [entry, collectLocalImportGraph(entry)]));
+
   // 一個數字 floor 證明唔到「行對咗路」—— 直接點名圖片路徑上每個 component 都
   // 要喺 closure 入面，closure 塌成得返幾個檔就會即刻紅。
+  const featureGraph = graphs.get("components/PosFeaturesLanding.tsx");
   for (const required of [
     "components/PosImageDialog.tsx",
     "components/PosFeatureStory.tsx",
     "components/PosAddOnCard.tsx",
     "components/PosPremiumFeature.tsx",
-    "lib/pos-feature-images.ts",
+    IMAGE_MAP,
   ]) {
-    assert.ok(graph.has(required), `${required} should be inside the feature page's import graph`);
+    assert.ok(featureGraph.has(required), `${required} should be inside the feature page's import graph`);
   }
-  for (const [file, source] of graph) {
-    // 淨係 image map 一個檔可以踩資產；其餘全部要經佢。
-    if (file === "lib/pos-feature-images.ts") continue;
-    assert.doesNotMatch(source, /public\/pos-demo/,
-      `${file}: must not reach past the image map into the asset folder`);
-    assert.deepEqual(localAssetImports(source), [],
-      `${file}: bundling an asset here bypasses the image map — go through POS_FEATURE_IMAGES`);
+
+  for (const [entry, pageGraph] of graphs) {
+    assert.ok(pageGraph.has(IMAGE_MAP),
+      `${entry}: shows demo screenshots, so the image map must be inside its import graph`);
+    for (const [file, source] of pageGraph) {
+      // 淨係 image map 一個檔可以踩資產；其餘全部要經佢。
+      if (file === IMAGE_MAP) continue;
+      assert.doesNotMatch(source, /public\/pos-demo/,
+        `${file}: must not reach past the image map into the asset folder`);
+      assert.deepEqual(localAssetImports(source), [],
+        `${file}: bundling an asset here bypasses the image map — go through POS_FEATURE_IMAGES`);
+    }
   }
 
   // 舊版契約係「source 要出現 18 次字面 POS_FEATURE_IMAGES["<id>"]」。咁樣寫逼住
@@ -454,8 +481,8 @@ test("POS feature page source contract: screenshots resolve only through the sta
   const mapIds = [...imageModule.matchAll(/^\s*"([\w-]+)":\s*\w+,$/gm)].map((match) => match[1]);
   assert.equal(mapIds.length, 18);
 
-  const hardcodedIds = [...landing.matchAll(/^const \w+ImageIds = \[([\s\S]*?)\] as const/gm)]
-    .flatMap((match) => [...match[1].matchAll(/"([\w-]+)"/g)].map((id) => id[1]));
+  const hardcodedIds = [...landing.matchAll(/^const (\w+ImageIds) = \[/gm)]
+    .flatMap((match) => idsInConst(landing, match[1]));
   assert.equal(hardcodedIds.length, 8, "workflow and core each pin four screenshot IDs");
   for (const id of hardcodedIds) {
     assert.ok(mapIds.includes(id), `${id}: named by the page but absent from POS_FEATURE_IMAGES`);
@@ -1033,29 +1060,30 @@ test("all languages keep the approved workflow, trial, and existing-device scope
   }
 });
 
-test("workflow renders the four approved POS demo screenshots in journey order", () => {
+test("source contract: the workflow pins the four approved screenshots in journey order", () => {
   const workflow = readFileSync(
     new URL("../components/PosWorkflow.tsx", import.meta.url),
     "utf8",
   );
+  const landing = readFileSync(
+    new URL("../components/PosFeaturesLanding.tsx", import.meta.url),
+    "utf8",
+  );
 
-  const approvedAssets = [
-    ["orderEntry", "order-entry.webp"],
-    ["kitchenOrder", "kitchen-order.webp"],
-    ["floorProgress", "floor-progress.webp"],
-    ["checkoutReport", "checkout-report.webp"],
-  ];
+  const approvedIds = ["order-entry", "kitchen-order", "floor-progress", "checkout-report"];
 
-  for (const [name, file] of approvedAssets) {
-    assert.match(
-      workflow,
-      new RegExp(`import ${name} from "@/public/pos-demo/${file}";`),
-    );
-  }
-
-  assert.match(workflow, /const WORKFLOW_IMAGES = \[orderEntry, kitchenOrder, floorProgress, checkoutReport\] as const;/);
-  assert.match(workflow, /copy\.steps\.map\(\(step, index\) => \(\s*[\s\S]*?src=\{WORKFLOW_IMAGES\[index\]\}/);
+  assert.match(workflow, /import \{ POS_FEATURE_IMAGES/);
+  const workflowIds = idsInConst(workflow, "WORKFLOW_IMAGE_IDS");
+  assert.deepEqual(workflowIds, approvedIds,
+    "the workflow must show the four approved screenshots in journey order");
+  assert.match(workflow, /copy\.steps\.map\(\(step, index\) => \(\s*[\s\S]*?src=\{POS_FEATURE_IMAGES\[WORKFLOW_IMAGE_IDS\[index\]\]\}/);
   assert.match(workflow, /id="workflow"/);
+
+  // 兩個檔各自釘一次同一組 id：`/pos` 同首頁行 `PosWorkflow`，`/pos/features` 行
+  // 自己嗰個 `workflowImageIds`。經同一個 image map 只保證「攞到嘅係 map 入面
+  // 嗰張」，保證唔到「兩邊講緊同一個故事」—— 一邊重排／換 id，兩頁就會各講各。
+  assert.deepEqual(workflowIds, idsInConst(landing, "workflowImageIds"),
+    "the /pos workflow and the feature page must name the same screenshots in the same order");
 
   const register = readFileSync(
     new URL("../docs/pos-demo-screenshot-register.md", import.meta.url),

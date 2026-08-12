@@ -458,6 +458,26 @@ test("every screenshot actually serves the asset its stable ID names", async () 
   }
 });
 
+test("the /pos and homepage workflow serve the same four screenshots the journey names", async () => {
+  // 呢兩頁行 `PosWorkflow`，唔行 feature 頁嗰套 component。Source contract 只證到
+  // 「經咗 image map」，證明唔到真正流出去嘅係邊四張、乜次序 —— 而呢兩頁係
+  // 換圖之後最容易靜靜留喺舊圖／錯格嘅位。由真 output 落手驗。
+  const journey = ["order-entry", "kitchen-order", "floor-progress", "checkout-report"];
+
+  for (const path of ["/pos", "/"]) {
+    const workflow = sectionById(await render("en", path), "workflow");
+    const sources = [...workflow.matchAll(/<img[^>]*\ssrc="([^"]+)"/g)]
+      .map((match) => decodeURIComponent(decodeAttribute(match[1])));
+
+    assert.equal(sources.length, journey.length,
+      `${path}: the workflow should render one screenshot per stage`);
+    sources.forEach((src, index) => {
+      assert.match(src, new RegExp(`\\b${escapeRegExp(journey[index])}\\.[^/]*webp`),
+        `${path}: stage ${index + 1} renders ${src}, which is not the asset the journey names`);
+    });
+  }
+});
+
 test("two-column story images request half-width desktop sources", async () => {
   const main = await render("en");
   for (const id of ["workflow", "core"]) {
