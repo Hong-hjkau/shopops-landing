@@ -1,5 +1,30 @@
 # /pos/features 覆核 —— 第四～六批 + trivial + 優化 交接（2026-08-11）
 
+> ## ✅ 2026-08-12 收官：8 條入 = 7 條做完 + 1 條剔走，零 gap
+>
+> | # | 狀態 | commit | 逐條 grep 證據（喺 repo root 跑） |
+> |---|---|---|---|
+> | F4 | ✅ | `ea669df` | register 兩個新欄 header ×1、`\| PASS \| PASS \| PASS \|` ×**18** |
+> | F12 | ✅ | `b303262` | `href: "#core"` ×1（nav 次序＝DOM 次序） |
+> | F13 | ✅ | `b303262` | `[a-z,] Profit and loss` ×**0** |
+> | F14 | ✅ | `b303262` | 冇修飾嘅 `a collection code` ×**0**、`driver collection code` ×1 |
+> | F10 | ✅ | `9d4de9a` | hardcode id filter ×**0**、`POS_FEATURE_PRESENTATION` ×1、手寫 premium panel 由 2 變 0（改成 map） |
+> | F11 | ✅ | `a2b0758` | `route renders localized content` ×**0**、`source contract` ×3 |
+> | F17 | ✅ | `a2b0758` | `standardAddOnImages` ×**0** |
+> | F16 | ❌ **冇做** | — | HONG 派工時明確剔走（要重影素材，同 F9／F15 一條線） |
+> | 優化 1 OG 覆蓋 | ✅ | `4ee0cd1` | `tests/og-images.test.mjs` 存在，覆蓋 `/`、`/pos`、`/rota`、`/this-is-you` |
+> | 優化 2 孤立 `·` | ✅ | `4ee0cd1` | 分隔點同 tag 同一個 flex item（`key="dot"` ×1） |
+>
+> 驗證：`npm run verify` exit 0 —— **93 content + 5 Playwright e2e**，content suite **7.9 秒**（改動前 ~10 秒）。
+> Branch `wt/pos-features-fixes` 領先 `origin/main` **5 個 commit，未 push、未 merge**。
+>
+> ### 🆕 途中揪出、**未做**嘅手尾（三條）
+>
+> 1. **`components/PosWorkflow.tsx:2-5` 繞過 image map** —— 直接 `import` 四張 workflow 截圖，渲染喺 `/pos` 同首頁。今日仲係指住同四個檔，但係兩條獨立路徑：改 `lib/pos-feature-images.ts` 只會更新 `/pos/features`，另外兩頁會靜靜留喺舊圖。Codex 同意屬另案（要動兩頁 production code + 重驗）。
+> 2. **首頁語言切換後嘅入口連結冇覆蓋** —— 只發生喺 hydration 之後，`fetch()` harness 結構上驗唔到，要 Playwright。`SiteHeader` 語言切換至今零互動測試。test 入面已寫明唔覆蓋，唔會扮有。
+> 3. **`--test-concurrency=1` 係鈍器** —— 佢按「純 source test 檔數目」線性收費，而唔係按「要 server 嘅檔數目」。而家反而更快，唔急；長遠出路係將 rendered case 收埋喺一個 owner 檔。屬 restructuring 決定，唔應該塞落優化 commit。
+
+
 接住 [2026-08-11-pos-features-remaining-fixes.md](./2026-08-11-pos-features-remaining-fixes.md)。嗰份係完整歷史（19 條 finding 對帳、已完成批次嘅做法同踩過嘅坑）；**呢份只講仲要做嘅嘢**，畀新 session 直接開工。
 
 ## 現況
