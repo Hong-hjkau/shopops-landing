@@ -1,8 +1,6 @@
 import test, { after, before } from "node:test";
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
-import { createServer } from "node:net";
-import { fileURLToPath } from "node:url";
+import { startNextDev } from "./helpers/next-server.mjs";
 import {
   POS_FEATURES_CONTENT,
   getPosFeatureAddOnPriceText,
@@ -10,40 +8,8 @@ import {
 } from "../lib/pos-features-content.ts";
 import { POS_CONTENT } from "../lib/pos-content.ts";
 
-const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-let nextProcess;
+let server;
 let baseUrl;
-let serverOutput = "";
-
-async function reservePort() {
-  const server = createServer();
-  await new Promise((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolve);
-  });
-  const address = server.address();
-  assert.notEqual(typeof address, "string");
-  const port = address.port;
-  await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
-  return port;
-}
-
-async function waitForPage(url) {
-  const deadline = Date.now() + 45_000;
-  while (Date.now() < deadline) {
-    if (nextProcess.exitCode !== null) {
-      throw new Error(`Next dev exited before rendering the page.\n${serverOutput}`);
-    }
-    try {
-      const response = await fetch(url);
-      if (response.ok) return;
-    } catch {
-      // The local server is still starting.
-    }
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
-  throw new Error(`Timed out waiting for rendered page.\n${serverOutput}`);
-}
 
 function visibleMain(html) {
   const main = html.match(/<main\b[\s\S]*?<\/main>/)?.[0];
@@ -189,29 +155,12 @@ function imageDescriptions(content) {
 }
 
 before(async () => {
-  const port = await reservePort();
-  baseUrl = `http://127.0.0.1:${port}`;
-  nextProcess = spawn("node_modules/.bin/next", ["dev", "--hostname", "127.0.0.1", "--port", String(port)], {
-    cwd: projectRoot,
-    env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  const collectOutput = (chunk) => {
-    serverOutput = `${serverOutput}${chunk}`.slice(-20_000);
-  };
-  nextProcess.stdout.on("data", collectOutput);
-  nextProcess.stderr.on("data", collectOutput);
-  await waitForPage(`${baseUrl}/pos/features?lang=en`);
+  server = await startNextDev({ readyPath: "/pos/features?lang=en" });
+  baseUrl = server.baseUrl;
 }, { timeout: 50_000 });
 
 after(async () => {
-  if (!nextProcess || nextProcess.exitCode !== null) return;
-  nextProcess.kill("SIGTERM");
-  await Promise.race([
-    new Promise((resolve) => nextProcess.once("exit", resolve)),
-    new Promise((resolve) => setTimeout(resolve, 5_000)),
-  ]);
-  if (nextProcess.exitCode === null) nextProcess.kill("SIGKILL");
+  await server?.stop();
 });
 
 // 全檔共用同一個 next dev process；`path` 令入口頁（`/`、`/pos`）都可以對住真

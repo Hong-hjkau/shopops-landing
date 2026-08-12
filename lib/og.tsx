@@ -98,11 +98,15 @@ export async function renderOgImage({ eyebrow, title, tags, cta }: OgImageProps)
               flexWrap: "wrap",
             }}
           >
-            {tags.flatMap((tag, i) =>
-              i === 0
-                ? [<span key={tag}>{tag}</span>]
-                : [<span key={`dot-${tag}`}>·</span>, <span key={tag}>{tag}</span>]
-            )}
+            {/* 分隔點同佢後面嗰個 tag 一定要係同一個 flex item：分開兩個 item 嘅話
+                換行時個「·」會單獨留喺行尾（/pos/features 張圖實際出過）。 */}
+            {tags.map((tag, i) => (
+              <div key={tag} style={{ display: "flex", gap: "18px" }}>
+                {i === 0
+                  ? [<span key="tag">{tag}</span>]
+                  : [<span key="dot">·</span>, <span key="tag">{tag}</span>]}
+              </div>
+            ))}
           </div>
           <div style={{ marginTop: "36px", display: "flex" }}>
             <div
