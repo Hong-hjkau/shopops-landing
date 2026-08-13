@@ -1,8 +1,18 @@
 # ShopOps POS Website Screenshot Register — 2026-08-06
 
 - Scope: 18 English demo-interface WebP assets used by the POS feature page.
-- Existing workflow assets: manually re-opened at original size on 2026-08-06 (BST); English demo UI, no visible PII or commercial data, and readable at source size.
-- `order-entry.webp` now uses six original generated food photographs for Happy Meal, Egg Fried Rice, Seafood Spaghetti, Crispy Fried Chicken Wings, Beef Satay Skewers and Caesar Salad; the surrounding product UI remains unchanged.
+- **Workflow assets (2026-08-13, regenerated):** the four `order-entry` / `kitchen-order` / `floor-progress` /
+  `checkout-report` assets are no longer hand-captured from a live Demo restaurant. They now come from the POS
+  screenshot harness (`tools/screenshot-harness`, `workflow` scene group) with fixed fictional fixtures, a fixed
+  clock and no Supabase connection, so they can be regenerated with one command. The harness renders the real POS
+  components; only Core POS (`ordering`) is enabled, which is why no paid add-on entry point appears.
+  Reviewed 2026-08-13 by HONG: all four opened at original size in Preview and confirmed English UI, no PII, no
+  real commercial data, no third-party logo or trademark, and readable text. The three review columns below are
+  ticked on the strength of that review.
+- `order-entry.webp` shows the same six original generated food photographs (Happy Meal, Egg Fried Rice, Seafood
+  Spaghetti, Crispy Fried Chicken Wings, Beef Satay Skewers, Caesar Salad). They were not regenerated: the harness
+  fixture reuses the exact pixels, lifted from the previously approved `order-entry.webp` at the coordinates its
+  tile test records, so the trademark and licence review that cleared them still applies to what ships today.
 - New Core/add-on assets: copied unchanged from the isolated POS screenshot harness handoff. Its 2026-08-06 review opened all 14 files at original size and approved English UI, fictional data, PII/commercial-data safety and readability. `bilingual` intentionally shows fictional Chinese dish names in a labelled translation preview.
 - Hashes and byte counts below are recalculated from the Landing copies, not copied from prose.
 - The last two columns are a **manual approval gate**, not automated detection. A reviewer opens each asset at original size and ticks it only after confirming, with their own eyes, that (a) no third-party logo, wordmark or other trademark is visible and (b) every pixel is ShopOps-owned product UI or ShopOps-generated imagery that we are licensed to publish. `tests/pos-demo-assets.test.mjs` can only check that all 18 rows are ticked — it cannot recognise a trademark. Re-tick the row whenever an asset is recaptured, and note the reason below if a gate is ever set to anything other than `PASS`.
@@ -10,10 +20,10 @@
 
 | Asset | Stable ID | Public path | Language | Dimensions | Bytes | SHA-256 | English / PII / commercial data / readability | No third-party logo or trademark | Asset licence and ownership confirmed |
 |---|---|---|---|---:|---:|---|---|---|---|
-| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 559198 | `7814c59dd64c6043a413ec5fad6eb71b4568e9008270cfff2c9ed6151e5d33ff` | PASS | PASS | PASS |
-| `kitchen-order.webp` | `kitchen-order` | `public/pos-demo/kitchen-order.webp` | EN | 1045 × 735 | 17934 | `63153dcdc7feb8adf68e72664e6ea9328984304474a8f918cc82f2b0195105a8` | PASS | PASS | PASS |
-| `floor-progress.webp` | `floor-progress` | `public/pos-demo/floor-progress.webp` | EN | 1045 × 735 | 16828 | `819cf6a32ce25d89604fcdde1f7cdef379bdeca285cabcb811ffa79123747966` | PASS | PASS | PASS |
-| `checkout-report.webp` | `checkout-report` | `public/pos-demo/checkout-report.webp` | EN | 1280 × 900 | 40918 | `6fb2dcb739f0d7ad5878d4b378b905dc57adb127eb2565a23776a9e22ba93297` | PASS | PASS | PASS |
+| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 84910 | `ecb2fb95f08689e8962914816c9c282681ada5ad7b9180bf152b12d41b607712` | PASS | PASS | PASS |
+| `kitchen-order.webp` | `kitchen-order` | `public/pos-demo/kitchen-order.webp` | EN | 1280 × 900 | 43656 | `6eaf35e4bf5a96d1215f2dc32744ca93a6f9b579fe40dd0fb83259fca65c18df` | PASS | PASS | PASS |
+| `floor-progress.webp` | `floor-progress` | `public/pos-demo/floor-progress.webp` | EN | 1280 × 900 | 50286 | `e82d39e0f7a9d0f6f8cfc8de0df59c613edb5f65ccc618368c916dca4817fce4` | PASS | PASS | PASS |
+| `checkout-report.webp` | `checkout-report` | `public/pos-demo/checkout-report.webp` | EN | 1280 × 900 | 56560 | `249d41b32dd9b325665bf7458553e166ac6882ad77c3e6a11620233f378e0602` | PASS | PASS | PASS |
 | `bilingual.webp` | `bilingual` | `public/pos-demo/core/bilingual.webp` | EN | 1280 × 900 | 23570 | `1dc82c8e606df2ed591fdfef97f7bfd46d4545b3c990242fff9bb201733426ab` | PASS | PASS | PASS |
 | `offline_backup.webp` | `offline_backup` | `public/pos-demo/core/offline_backup.webp` | EN | 1280 × 900 | 20822 | `584e739c609bb03d2e8308299402e249c78362ea25b2b122dd28e1774de479b1` | PASS | PASS | PASS |
 | `menu_management.webp` | `menu_management` | `public/pos-demo/core/menu_management.webp` | EN | 1280 × 900 | 17232 | `2379cae92217af7e1e156aace7ffc9083bc45374676a083a6b986cd14fca9ee7` | PASS | PASS | PASS |
@@ -32,6 +42,16 @@
 Reconciliation: 18 approved feature items = 18 stable IDs = 18 unique WebP files = 18 map entries = 18 register rows. Zero missing, extra or duplicate path.
 
 4 source stages = 4 English assets, zero gap.
+
+## Workflow asset provenance
+
+Regenerated 2026-08-13 by `npm run capture` in `POS/tools/screenshot-harness`. Fixed viewport 1280×900,
+`en-GB`, `Europe/London`, clock pinned to 2026-08-06 11:30 BST, local-only `127.0.0.1:3419`, external requests
+blocked. All four render one fictional order at table 7 so the journey reads as a single story. Capture refuses
+any scene whose rendered text contains an absolute date, which is why no date picker value appears.
+
+<details>
+<summary>Superseded: the 2026-08-01 hand-capture provenance</summary>
 
 ## Existing four-stage workflow provenance
 
@@ -81,3 +101,5 @@ confirmed `Not open` afterwards.
   visible.
 - Screenshots contain product UI only. Browser chrome, password-manager prompts,
   notifications, bookmarks and unrelated tabs are absent.
+
+</details>
