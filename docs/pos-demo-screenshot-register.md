@@ -6,8 +6,9 @@
   screenshot harness (`tools/screenshot-harness`, `workflow` scene group) with fixed fictional fixtures, a fixed
   clock and no Supabase connection, so they can be regenerated with one command. The harness renders the real POS
   components; only Core POS (`ordering`) is enabled, which is why no paid add-on entry point appears.
-  ⚠️ **Their three review columns below read `PENDING`: the assets changed and the manual review has not been
-  redone yet.** `tests/pos-demo-assets.test.mjs` fails until a reviewer opens all four at original size and ticks them.
+  Reviewed 2026-08-13 by HONG: all four opened at original size in Preview and confirmed English UI, no PII, no
+  real commercial data, no third-party logo or trademark, and readable text. The three review columns below are
+  ticked on the strength of that review.
 - `order-entry.webp` shows the same six original generated food photographs (Happy Meal, Egg Fried Rice, Seafood
   Spaghetti, Crispy Fried Chicken Wings, Beef Satay Skewers, Caesar Salad). They were not regenerated: the harness
   fixture reuses the exact pixels, lifted from the previously approved `order-entry.webp` at the coordinates its
@@ -19,10 +20,10 @@
 
 | Asset | Stable ID | Public path | Language | Dimensions | Bytes | SHA-256 | English / PII / commercial data / readability | No third-party logo or trademark | Asset licence and ownership confirmed |
 |---|---|---|---|---:|---:|---|---|---|---|
-| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 84910 | `ecb2fb95f08689e8962914816c9c282681ada5ad7b9180bf152b12d41b607712` | PENDING | PENDING | PENDING |
-| `kitchen-order.webp` | `kitchen-order` | `public/pos-demo/kitchen-order.webp` | EN | 1280 × 900 | 43656 | `6eaf35e4bf5a96d1215f2dc32744ca93a6f9b579fe40dd0fb83259fca65c18df` | PENDING | PENDING | PENDING |
-| `floor-progress.webp` | `floor-progress` | `public/pos-demo/floor-progress.webp` | EN | 1280 × 900 | 50286 | `e82d39e0f7a9d0f6f8cfc8de0df59c613edb5f65ccc618368c916dca4817fce4` | PENDING | PENDING | PENDING |
-| `checkout-report.webp` | `checkout-report` | `public/pos-demo/checkout-report.webp` | EN | 1280 × 900 | 56560 | `249d41b32dd9b325665bf7458553e166ac6882ad77c3e6a11620233f378e0602` | PENDING | PENDING | PENDING |
+| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 84910 | `ecb2fb95f08689e8962914816c9c282681ada5ad7b9180bf152b12d41b607712` | PASS | PASS | PASS |
+| `kitchen-order.webp` | `kitchen-order` | `public/pos-demo/kitchen-order.webp` | EN | 1280 × 900 | 43656 | `6eaf35e4bf5a96d1215f2dc32744ca93a6f9b579fe40dd0fb83259fca65c18df` | PASS | PASS | PASS |
+| `floor-progress.webp` | `floor-progress` | `public/pos-demo/floor-progress.webp` | EN | 1280 × 900 | 50286 | `e82d39e0f7a9d0f6f8cfc8de0df59c613edb5f65ccc618368c916dca4817fce4` | PASS | PASS | PASS |
+| `checkout-report.webp` | `checkout-report` | `public/pos-demo/checkout-report.webp` | EN | 1280 × 900 | 56560 | `249d41b32dd9b325665bf7458553e166ac6882ad77c3e6a11620233f378e0602` | PASS | PASS | PASS |
 | `bilingual.webp` | `bilingual` | `public/pos-demo/core/bilingual.webp` | EN | 1280 × 900 | 23570 | `1dc82c8e606df2ed591fdfef97f7bfd46d4545b3c990242fff9bb201733426ab` | PASS | PASS | PASS |
 | `offline_backup.webp` | `offline_backup` | `public/pos-demo/core/offline_backup.webp` | EN | 1280 × 900 | 20822 | `584e739c609bb03d2e8308299402e249c78362ea25b2b122dd28e1774de479b1` | PASS | PASS | PASS |
 | `menu_management.webp` | `menu_management` | `public/pos-demo/core/menu_management.webp` | EN | 1280 × 900 | 17232 | `2379cae92217af7e1e156aace7ffc9083bc45374676a083a6b986cd14fca9ee7` | PASS | PASS | PASS |
