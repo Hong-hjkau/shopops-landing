@@ -52,6 +52,7 @@ export type PosSharedContent = {
     perItemLabel: string;
     core: {
       name: string;
+      originalMonthlyPrice: 29;
       monthlyPrice: 19;
       included: readonly [string, string, string];
     };
@@ -60,6 +61,7 @@ export type PosSharedContent = {
     addOnsBillingNote: string;
     addOnGroups: readonly [
       {
+        originalMonthlyPrice: 19;
         monthlyPrice: 9;
         items: readonly [
           PosAddOnItem, PosAddOnItem, PosAddOnItem, PosAddOnItem,
@@ -67,6 +69,7 @@ export type PosSharedContent = {
         ];
       },
       {
+        originalMonthlyPrice: 29;
         monthlyPrice: 19;
         items: readonly [PosAddOnItem, PosAddOnItem];
       },
@@ -140,6 +143,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       perItemLabel: "Each add-on",
       core: {
         name: "Core POS",
+        originalMonthlyPrice: 29,
         monthlyPrice: 19,
         included: ["Ordering POS", "Front-of-house and kitchen translation", "Discounts"],
       },
@@ -148,6 +152,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnsBillingNote: "Choose any add-on individually. Each item is charged separately.",
       addOnGroups: [
         {
+          originalMonthlyPrice: 19,
           monthlyPrice: 9,
           items: [
             { id: "scheduling", label: "Rota and clock-in" },
@@ -161,6 +166,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
           ],
         },
         {
+          originalMonthlyPrice: 29,
           monthlyPrice: 19,
           items: [
             { id: "delivery", label: "Online delivery orders" },
@@ -227,6 +233,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       perItemLabel: "每項功能",
       core: {
         name: "核心 POS",
+        originalMonthlyPrice: 29,
         monthlyPrice: 19,
         included: ["落單 POS", "店房翻譯", "優惠折扣"],
       },
@@ -235,6 +242,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnsBillingNote: "各項獨立收費，可任選一項或多項。",
       addOnGroups: [
         {
+          originalMonthlyPrice: 19,
           monthlyPrice: 9,
           items: [
             { id: "scheduling", label: "排班打卡" },
@@ -248,6 +256,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
           ],
         },
         {
+          originalMonthlyPrice: 29,
           monthlyPrice: 19,
           items: [
             { id: "delivery", label: "網上送貨訂單" },
@@ -314,6 +323,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       perItemLabel: "每项功能",
       core: {
         name: "核心 POS",
+        originalMonthlyPrice: 29,
         monthlyPrice: 19,
         included: ["点餐 POS", "前厅与厨房翻译", "优惠折扣"],
       },
@@ -322,6 +332,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnsBillingNote: "各项独立收费，可任选一项或多项。",
       addOnGroups: [
         {
+          originalMonthlyPrice: 19,
           monthlyPrice: 9,
           items: [
             { id: "scheduling", label: "排班打卡" },
@@ -335,6 +346,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
           ],
         },
         {
+          originalMonthlyPrice: 29,
           monthlyPrice: 19,
           items: [
             { id: "delivery", label: "网上送货订单" },

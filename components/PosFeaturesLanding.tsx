@@ -2,11 +2,13 @@ import PosAddOnCard from "@/components/PosAddOnCard";
 import PosFeatureStory from "@/components/PosFeatureStory";
 import type { PosImageDialogProps } from "@/components/PosImageDialog";
 import PosPremiumFeature from "@/components/PosPremiumFeature";
+import PosSalePrice from "@/components/PosSalePrice";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import {
   POS_FEATURES_CONTENT,
   getPosFeatureAddOn,
   getPosFeatureAddOnPriceText,
+  getPosFeatureAddOnOriginalPriceText,
   getPosFeaturePricing,
   getPosFeatureBundleExamples,
   getPremiumPosFeatureAddOns,
@@ -99,7 +101,14 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <div className="mx-auto mt-9 grid max-w-3xl gap-3">
             <div data-pos-price-tier="core" className="col-span-full rounded-2xl border border-hero-border bg-white/5 p-5">
               <p className="text-sm text-hero-text-secondary">{copy.hero.corePriceLabel}</p>
-              <p className="mt-2 text-3xl font-bold">£{pricing.core.monthlyPrice}<span className="text-base">{pricing.monthlyUnit}</span></p>
+              <p className="mt-2 text-3xl font-bold">
+                <PosSalePrice
+                  originalPrice={`£${pricing.core.originalMonthlyPrice}`}
+                  currentPrice={`£${pricing.core.monthlyPrice}`}
+                  monthlyUnit={pricing.monthlyUnit}
+                  mutedTextClass="text-hero-text-secondary"
+                />
+              </p>
             </div>
             <div data-pos-price-add-ons className="grid gap-3 sm:grid-cols-2">
               {/* 兩格都講成層加購，所以出成層嘅價：同層一個價出單價，唔一致出區間。
@@ -107,11 +116,25 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                   加購就會靜靜講錯數。 */}
               <div data-pos-price-tier="advanced-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
                 <p className="text-sm text-hero-text-secondary">{copy.hero.premiumAddOnPriceLabel}</p>
-                <p className="mt-2 text-3xl font-bold">{getPosFeatureAddOnPriceText(lang, "premium")}<span className="text-base">{pricing.monthlyUnit}</span></p>
+                <p className="mt-2 text-3xl font-bold">
+                  <PosSalePrice
+                    originalPrice={getPosFeatureAddOnOriginalPriceText(lang, "premium")}
+                    currentPrice={getPosFeatureAddOnPriceText(lang, "premium")}
+                    monthlyUnit={pricing.monthlyUnit}
+                    mutedTextClass="text-hero-text-secondary"
+                  />
+                </p>
               </div>
               <div data-pos-price-tier="standard-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
                 <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
-                <p className="mt-2 text-3xl font-bold">{getPosFeatureAddOnPriceText(lang, "card")}<span className="text-base">{pricing.monthlyUnit}</span></p>
+                <p className="mt-2 text-3xl font-bold">
+                  <PosSalePrice
+                    originalPrice={getPosFeatureAddOnOriginalPriceText(lang, "card")}
+                    currentPrice={getPosFeatureAddOnPriceText(lang, "card")}
+                    monthlyUnit={pricing.monthlyUnit}
+                    mutedTextClass="text-hero-text-secondary"
+                  />
+                </p>
               </div>
             </div>
           </div>
@@ -182,7 +205,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.premiumTitle}</h2>
           {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
-            {premiumAddOns.map(({ id, label, monthlyPrice }) => {
+            {premiumAddOns.map(({ id, label, originalMonthlyPrice, monthlyPrice }) => {
               const panel = copy.premium[id];
               return (
                 <PosPremiumFeature
@@ -191,6 +214,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                   eyebrow={panel.eyebrow}
                   title={label}
                   body={panel.body}
+                  originalMonthlyPrice={originalMonthlyPrice}
                   monthlyPrice={monthlyPrice}
                   monthlyUnit={pricing.monthlyUnit}
                   benefits={panel.benefits}
@@ -218,6 +242,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 label={item.label}
                 outcome={copy.addOns[item.id].outcome}
                 detail={copy.addOns[item.id].body}
+                originalMonthlyPrice={item.originalMonthlyPrice}
                 monthlyPrice={item.monthlyPrice}
                 monthlyUnit={pricing.monthlyUnit}
                 image={buildDemoImage(copy, item.id)}

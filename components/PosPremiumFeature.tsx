@@ -1,10 +1,12 @@
 import PosImageDialog, { type PosImageDialogProps } from "@/components/PosImageDialog";
+import PosSalePrice from "@/components/PosSalePrice";
 
 export default function PosPremiumFeature({
   id,
   eyebrow,
   title,
   body,
+  originalMonthlyPrice,
   monthlyPrice,
   monthlyUnit,
   benefits,
@@ -16,6 +18,7 @@ export default function PosPremiumFeature({
   eyebrow: string;
   title: string;
   body: string;
+  originalMonthlyPrice: number;
   monthlyPrice: number;
   monthlyUnit: string;
   benefits: readonly string[];
@@ -32,7 +35,12 @@ export default function PosPremiumFeature({
           <h3 className="mt-3 text-2xl font-bold text-text">{title}</h3>
         </div>
         <span className="rounded-full bg-accent px-3 py-1 text-sm font-bold text-on-accent">
-          +£{monthlyPrice}{monthlyUnit}
+          <PosSalePrice
+            originalPrice={`+£${originalMonthlyPrice}`}
+            currentPrice={`+£${monthlyPrice}`}
+            monthlyUnit={monthlyUnit}
+            mutedTextClass="text-on-accent"
+          />
         </span>
       </div>
       <p className="mt-4 leading-7 text-text-secondary">{body}</p>

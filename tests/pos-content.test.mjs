@@ -354,13 +354,13 @@ test("POS feature pricing derives approved bundle examples from canonical pricin
 test("POS feature add-on helper returns canonical labels by stable ID", () => {
   assert.equal(typeof getPosFeatureAddOn, "function");
   assert.deepEqual(getPosFeatureAddOn("en", "delivery"), {
-    id: "delivery", label: "Online delivery orders", monthlyPrice: 19,
+    id: "delivery", label: "Online delivery orders", originalMonthlyPrice: 29, monthlyPrice: 19,
   });
   assert.deepEqual(getPosFeatureAddOn("zh-Hant", "delivery"), {
-    id: "delivery", label: "網上送貨訂單", monthlyPrice: 19,
+    id: "delivery", label: "網上送貨訂單", originalMonthlyPrice: 29, monthlyPrice: 19,
   });
   assert.deepEqual(getPosFeatureAddOn("zh-Hans", "delivery"), {
-    id: "delivery", label: "网上送货订单", monthlyPrice: 19,
+    id: "delivery", label: "网上送货订单", originalMonthlyPrice: 29, monthlyPrice: 19,
   });
 });
 
@@ -782,8 +782,10 @@ test("POS card-payment wording keeps the restaurant terminal fee boundary in eve
 test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
   for (const lang of languages) {
     const pricing = POS_CONTENT[lang].pricing;
+    assert.equal(pricing.core.originalMonthlyPrice, 29);
     assert.equal(pricing.core.monthlyPrice, 19);
     assert.equal(pricing.core.included.length, 3);
+    assert.deepEqual(pricing.addOnGroups.map((group) => group.originalMonthlyPrice), [19, 29]);
     assert.deepEqual(pricing.addOnGroups.map((group) => group.monthlyPrice), [9, 19]);
     assert.equal(pricing.addOnGroups[0].items.length, 8);
     assert.equal(pricing.addOnGroups[1].items.length, 2);
@@ -880,7 +882,7 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   assert.match(section, /copy\.addOnGroups\.map/);
   assert.match(section, /copy\.perItemLabel/);
   assert.match(section, /copy\.addOnsBillingNote/);
-  assert.match(section, /£\{group\.monthlyPrice\}/);
+  assert.match(section, /currentPrice=\{`£\$\{group\.monthlyPrice\}`\}/);
   assert.match(section, /shrink-0/);
   assert.match(section, /group\.items\.map/);
   assert.match(section, /key=\{item\.id\}/);
@@ -890,7 +892,7 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   assert.ok(addOnRow, "each add-on group should render a list-item template");
   assert.match(
     addOnRow[1],
-    /<span className="flex min-w-0 items-start gap-3">[\s\S]*?<span>\{item\.label\}<\/span>[\s\S]*?<\/span>\s*<span className="shrink-0 font-semibold text-text">\s*£\{group\.monthlyPrice\}\s*<span className="font-medium text-text-secondary">\{copy\.monthlyUnit\}<\/span>/,
+    /<span className="flex min-w-0 items-start gap-3">[\s\S]*?<span>\{item\.label\}<\/span>[\s\S]*?<\/span>\s*<span className="shrink-0 font-semibold text-text">\s*<PosSalePrice[\s\S]*?currentPrice=\{`£\$\{group\.monthlyPrice\}`\}/,
   );
   assert.match(section, /\{trial\}/);
   assert.match(section, /href="#contact"/);

@@ -385,10 +385,14 @@ export const POS_FEATURES_CONTENT: Record<Lang, PosFeaturesContent> = {
 export function getPosFeatureAddOn(
   lang: Lang,
   id: PosAddOnId,
-): PosAddOnItem & { monthlyPrice: number } {
+): PosAddOnItem & { originalMonthlyPrice: number; monthlyPrice: number } {
   for (const group of POS_CONTENT[lang].pricing.addOnGroups) {
     const item = group.items.find((candidate) => candidate.id === id);
-    if (item) return { ...item, monthlyPrice: group.monthlyPrice };
+    if (item) return {
+      ...item,
+      originalMonthlyPrice: group.originalMonthlyPrice,
+      monthlyPrice: group.monthlyPrice,
+    };
   }
   throw new Error(`Missing POS add-on pricing ID: ${id}`);
 }
@@ -396,11 +400,15 @@ export function getPosFeatureAddOn(
 function getPosFeatureAddOnsByLayout(
   lang: Lang,
   layout: PosFeatureLayout,
-): Array<PosAddOnItem & { monthlyPrice: number }> {
+): Array<PosAddOnItem & { originalMonthlyPrice: number; monthlyPrice: number }> {
   return POS_CONTENT[lang].pricing.addOnGroups.flatMap((group) =>
     group.items
       .filter((item) => POS_FEATURE_PRESENTATION[item.id].layout === layout)
-      .map((item) => ({ ...item, monthlyPrice: group.monthlyPrice })),
+      .map((item) => ({
+        ...item,
+        originalMonthlyPrice: group.originalMonthlyPrice,
+        monthlyPrice: group.monthlyPrice,
+      })),
   );
 }
 
@@ -418,7 +426,11 @@ export function getPremiumPosFeatureAddOns(lang: Lang) {
   return POS_CONTENT[lang].pricing.addOnGroups.flatMap((group) =>
     group.items
       .filter(isPremiumAddOn)
-      .map((item) => ({ ...item, monthlyPrice: group.monthlyPrice })),
+      .map((item) => ({
+        ...item,
+        originalMonthlyPrice: group.originalMonthlyPrice,
+        monthlyPrice: group.monthlyPrice,
+      })),
   );
 }
 
@@ -426,6 +438,14 @@ export function getPremiumPosFeatureAddOns(lang: Lang) {
 // 進階格攞 delivery —— 同層有第二個價就即刻講錯數）。同層一個價就出單價，唔一致出區間。
 export function getPosFeatureAddOnPriceText(lang: Lang, layout: PosFeatureLayout) {
   const prices = getPosFeatureAddOnsByLayout(lang, layout).map((item) => item.monthlyPrice);
+  if (prices.length === 0) throw new Error(`No POS add-on uses the ${layout} layout`);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  return min === max ? `+£${min}` : `+£${min}–£${max}`;
+}
+
+export function getPosFeatureAddOnOriginalPriceText(lang: Lang, layout: PosFeatureLayout) {
+  const prices = getPosFeatureAddOnsByLayout(lang, layout).map((item) => item.originalMonthlyPrice);
   if (prices.length === 0) throw new Error(`No POS add-on uses the ${layout} layout`);
   const min = Math.min(...prices);
   const max = Math.max(...prices);

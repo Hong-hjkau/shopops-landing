@@ -1,4 +1,5 @@
 import type { PosSharedContent } from "@/lib/pos-content";
+import PosSalePrice from "@/components/PosSalePrice";
 
 type PosPricingCopy = PosSharedContent["pricing"];
 
@@ -34,11 +35,12 @@ export default function PosPricingSection({
               {trial}
             </span>
             <h3 className="mt-5 text-xl font-bold text-text">{copy.core.name}</h3>
-            <div className="mt-2 flex items-baseline justify-center gap-1">
-              <span className="text-4xl font-bold text-text">£{copy.core.monthlyPrice}</span>
-              <span className="text-lg font-semibold text-text-secondary">
-                {copy.monthlyUnit}
-              </span>
+            <div className="mt-2 text-4xl font-bold text-text">
+              <PosSalePrice
+                originalPrice={`£${copy.core.originalMonthlyPrice}`}
+                currentPrice={`£${copy.core.monthlyPrice}`}
+                monthlyUnit={copy.monthlyUnit}
+              />
             </div>
           </div>
 
@@ -76,10 +78,11 @@ export default function PosPricingSection({
                   {copy.perItemLabel}
                 </p>
                 <p className="text-2xl font-bold text-text">
-                  £{group.monthlyPrice}
-                  <span className="text-base font-semibold text-text-secondary">
-                    {copy.monthlyUnit}
-                  </span>
+                  <PosSalePrice
+                    originalPrice={`£${group.originalMonthlyPrice}`}
+                    currentPrice={`£${group.monthlyPrice}`}
+                    monthlyUnit={copy.monthlyUnit}
+                  />
                 </p>
                 <ul className="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-1">
                   {group.items.map((item) => (
@@ -89,8 +92,11 @@ export default function PosPricingSection({
                         <span>{item.label}</span>
                       </span>
                       <span className="shrink-0 font-semibold text-text">
-                        £{group.monthlyPrice}
-                        <span className="font-medium text-text-secondary">{copy.monthlyUnit}</span>
+                        <PosSalePrice
+                          originalPrice={`£${group.originalMonthlyPrice}`}
+                          currentPrice={`£${group.monthlyPrice}`}
+                          monthlyUnit={copy.monthlyUnit}
+                        />
                       </span>
                     </li>
                   ))}

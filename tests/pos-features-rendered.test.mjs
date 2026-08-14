@@ -269,6 +269,51 @@ test("hero renders both add-on price bands, the demo CTA, and canonical trial te
   assert.match(text, /3-day free trial · No card needed for the trial · We set up your menu for you/);
 });
 
+test("both POS pages show the crossed-out original price before the current monthly price", async () => {
+  for (const language of ["en", "zh-Hant", "zh-Hans"]) {
+    for (const path of ["/pos", "/pos/features"]) {
+      const main = await render(language, path);
+      const salePrices = [...main.matchAll(/<span[^>]*data-pos-sale-price[^>]*>[\s\S]*?<\/span>/g)]
+        .map((match) => match[0]);
+
+      assert.equal(salePrices.length, 13, `${path}?lang=${language} should render all 13 POS sale prices`);
+      for (const salePrice of salePrices) {
+        const text = visibleText(salePrice).replace(/\s+/g, "");
+        const originalPrice = Number(salePrice.match(/<del[^>]*>\+?£(\d+)<\/del>/)?.[1]);
+        const currentPrice = Number(text.match(/\+?£(\d+)/g)?.at(-1)?.match(/\d+/)?.[0]);
+
+        assert.ok(
+          (originalPrice === 29 && currentPrice === 19)
+            || (originalPrice === 19 && currentPrice === 9),
+          `${path}?lang=${language} should show original price first, then its current price: ${text}`,
+        );
+      }
+    }
+  }
+});
+
+test("sale-price secondary text uses a readable colour for each background", async () => {
+  const pos = sectionById(await render("en", "/pos"), "pricing");
+  const features = await render("en");
+  const hero = sectionById(features, "hero");
+  const badges = [
+    sectionById(features, "advanced-operations"),
+    sectionById(features, "add-ons"),
+  ].join("");
+
+  assert.equal(countMatches(pos, /data-pos-sale-price/g), 13);
+  assert.equal(countMatches(pos, /data-pos-sale-original[^>]*class="[^"]*text-text-secondary/g), 13);
+  assert.equal(countMatches(pos, /data-pos-sale-unit[^>]*class="[^"]*text-text-secondary/g), 13);
+  assert.equal(countMatches(hero, /data-pos-sale-price/g), 3);
+  assert.equal(countMatches(hero, /data-pos-sale-original[^>]*class="[^"]*text-hero-text-secondary/g), 3);
+  assert.equal(countMatches(hero, /data-pos-sale-unit[^>]*class="[^"]*text-hero-text-secondary/g), 3,
+    "each hero sale price should colour both its original price and monthly unit for the dark background");
+  assert.equal(countMatches(badges, /data-pos-sale-price/g), 10);
+  assert.equal(countMatches(badges, /data-pos-sale-original[^>]*class="[^"]*text-on-accent/g), 10);
+  assert.equal(countMatches(badges, /data-pos-sale-unit[^>]*class="[^"]*text-on-accent/g), 10,
+    "each orange badge should colour both its original price and monthly unit with the on-accent token");
+});
+
 test("each hero add-on tier prices its whole layer instead of borrowing one add-on's price", async () => {
   for (const language of ["en", "zh-Hant", "zh-Hans"]) {
     const hero = sectionById(await render(language), "hero");
@@ -278,7 +323,8 @@ test("each hero add-on tier prices its whole layer instead of borrowing one add-
       const tile = hero.match(new RegExp(`<div[^>]*data-pos-price-tier="${tier}"[\\s\\S]*?</div>`))?.[0];
       assert.ok(tile, `${language}: hero should render the ${tier} tier`);
       // visibleText 會喺 tag 之間補空格，價錢同單位本身係貼住嘅，所以剝走空白先比。
-      const price = visibleText(tile.match(/<p class="mt-2[\s\S]*?<\/p>/)?.[0] ?? "").replace(/\s+/g, "");
+      const priceElement = tile.match(/<p class="mt-2[\s\S]*?<\/p>/)?.[0] ?? "";
+      const price = visibleText(priceElement.replace(/<del[^>]*>[\s\S]*?<\/del>/, "")).replace(/\s+/g, "");
       assert.equal(price, `${getPosFeatureAddOnPriceText(language, layout)}${unit}`.replace(/\s+/g, ""),
         `${language}: the ${tier} tile should price the whole ${layout} layer`);
     }
