@@ -31,6 +31,7 @@ export default function PosAddOnCard({
             currentPrice={`+£${monthlyPrice}`}
             monthlyUnit={monthlyUnit}
             mutedTextClass="text-on-accent"
+            prominentStrike
           />
         </span>
       </div>

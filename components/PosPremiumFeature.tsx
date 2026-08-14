@@ -40,6 +40,7 @@ export default function PosPremiumFeature({
             currentPrice={`+£${monthlyPrice}`}
             monthlyUnit={monthlyUnit}
             mutedTextClass="text-on-accent"
+            prominentStrike
           />
         </span>
       </div>
