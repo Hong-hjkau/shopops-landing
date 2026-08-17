@@ -41,6 +41,6 @@ export const COPY = {
 /** 對外聯絡及社交平台連結。 */
 export const SOCIAL_LINKS = {
   email: "mailto:hello@shopops.co.uk",
-  facebook: "https://www.facebook.com/ShopOps",
+  facebook: "https://www.facebook.com/ShopOpsUK/",
   instagram: "https://www.instagram.com/shopopsuk",
 } as const;
