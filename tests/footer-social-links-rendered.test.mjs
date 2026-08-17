@@ -67,7 +67,7 @@ for (const path of ["/", "/pos", "/rota", "/blog", "/this-is-you"]) {
     assert.match(email, /href="mailto:hello@shopops\.co\.uk"/);
     assert.doesNotMatch(email, /target=/);
 
-    assert.match(facebook, /href="https:\/\/www\.facebook\.com\/profile\.php\?id=61591337769113"/);
+    assert.match(facebook, /href="https:\/\/www\.facebook\.com\/ShopOpsUK\/"/);
     assert.match(instagram, /href="https:\/\/www\.instagram\.com\/shopopsuk"/);
 
     for (const social of [facebook, instagram]) {
