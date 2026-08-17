@@ -28,6 +28,7 @@ export default function BlogLayout({
             </span>
           </Link>
           <nav className="flex items-center gap-5 text-sm text-text-secondary">
+            <SocialLinks compact />
             <Link href="/blog" className="hover:text-text transition">
               Blog
             </Link>
@@ -44,15 +45,10 @@ export default function BlogLayout({
       <main className="flex-1">{children}</main>
 
       <footer className="px-4 sm:px-6 py-8 border-t border-border text-center text-sm text-text-secondary">
-        <div className="flex flex-col items-center gap-4">
-          <SocialLinks />
-          <span>
-            © 2026 ShopOps · Edinburgh ·{" "}
-            <Link href="/" className="underline hover:text-text">
-              Home
-            </Link>
-          </span>
-        </div>
+        © 2026 ShopOps · Edinburgh ·{" "}
+        <Link href="/" className="underline hover:text-text">
+          Home
+        </Link>
       </footer>
     </div>
   );

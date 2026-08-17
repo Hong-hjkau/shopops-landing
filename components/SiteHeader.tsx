@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/components/LangProvider";
+import SocialLinks from "@/components/SocialLinks";
 import type { Lang } from "@/lib/i18n";
 
 export type NavLink = { href: string; label: string };
@@ -26,13 +27,16 @@ export default function SiteHeader({
 
   return (
     <header className="sticky top-0 z-20 border-b border-hero-border bg-hero-bg/95 backdrop-blur">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         <Link
           href="/"
+          aria-label="ShopOps home"
           className="flex items-center gap-2 rounded focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-hero-bg"
         >
           <Image src="/logo-icon.png" alt="" width={512} height={496} className="h-8 w-auto" />
-          <span className="text-lg font-bold tracking-tight text-hero-text">ShopOps</span>
+          <span className="hidden text-lg font-bold tracking-tight text-hero-text sm:inline">
+            ShopOps
+          </span>
         </Link>
         <nav className="hidden lg:flex items-center gap-6 text-sm text-hero-text-secondary lg:gap-3 lg:text-xs xl:gap-6 xl:text-sm">
           {navLinks.map((l) => (
@@ -46,6 +50,7 @@ export default function SiteHeader({
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <SocialLinks dark compact />
           <div className="flex items-center rounded-full bg-white/10 p-0.5 text-xs font-medium ring-1 ring-white/10">
             {LANGS.map((l) => (
               languageHrefs ? (
