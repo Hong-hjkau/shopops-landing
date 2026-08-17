@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import SocialLinks from "@/components/SocialLinks";
 
 // Blog 區共用外殼：ShopOps 頂部 nav（logo 連返首頁）+ footer。
 // 對齊首頁 page.tsx 嘅 sticky 白 nav / orange CTA / footer 風格。
@@ -43,10 +44,15 @@ export default function BlogLayout({
       <main className="flex-1">{children}</main>
 
       <footer className="px-4 sm:px-6 py-8 border-t border-border text-center text-sm text-text-secondary">
-        © 2026 ShopOps · Edinburgh ·{" "}
-        <Link href="/" className="underline hover:text-text">
-          Home
-        </Link>
+        <div className="flex flex-col items-center gap-4">
+          <SocialLinks />
+          <span>
+            © 2026 ShopOps · Edinburgh ·{" "}
+            <Link href="/" className="underline hover:text-text">
+              Home
+            </Link>
+          </span>
+        </div>
       </footer>
     </div>
   );
