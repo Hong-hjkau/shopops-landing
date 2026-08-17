@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { POS_CONTENT } from "@/lib/pos-content";
 import type { Lang } from "@/lib/i18n";
+import SocialLinks from "@/components/SocialLinks";
 
 const L: Record<Lang, { label: string; img: string; alt: string; w: number; h: number; cta: string; sub: string; foot: string }> = {
   "zh-Hant": {
@@ -84,7 +85,10 @@ export default function ComicAd({ initialLang }: { initialLang: Lang }) {
           {t.cta}
         </Link>
         <p className="mt-3.5 text-sm text-gray-400">{t.sub}</p>
-        <footer className="mt-7 text-xs text-gray-500">{t.foot}</footer>
+        <footer className="mt-7 flex flex-col items-center gap-4 text-xs text-gray-400">
+          <SocialLinks dark />
+          <span>{t.foot}</span>
+        </footer>
       </div>
     </main>
   );
