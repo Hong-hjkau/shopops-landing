@@ -52,6 +52,9 @@ export default function ComicAd({ initialLang }: { initialLang: Lang }) {
       style={{ backgroundImage: "radial-gradient(120% 60% at 50% 0%, #2a1402 0%, #000 55%)" }}
     >
       <div className="w-full max-w-lg flex flex-col items-center">
+        <div className="mb-4">
+          <SocialLinks dark />
+        </div>
         {/* 語言切換 */}
         <div className="flex gap-1 bg-white/10 rounded-full p-1 mb-4" role="group" aria-label="language">
           {ORDER.map((k) => (
@@ -85,10 +88,7 @@ export default function ComicAd({ initialLang }: { initialLang: Lang }) {
           {t.cta}
         </Link>
         <p className="mt-3.5 text-sm text-gray-400">{t.sub}</p>
-        <footer className="mt-7 flex flex-col items-center gap-4 text-xs text-gray-400">
-          <SocialLinks dark />
-          <span>{t.foot}</span>
-        </footer>
+        <footer className="mt-7 text-xs text-gray-400">{t.foot}</footer>
       </div>
     </main>
   );
