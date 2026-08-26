@@ -80,7 +80,7 @@ export default function PosPricingSection({
                 <p className="text-2xl font-bold text-text">
                   <PosSalePrice
                     originalPrice={`£${group.originalMonthlyPrice}`}
-                    currentPrice={`£${group.monthlyPrice}`}
+                    currentPrice={`+£${group.monthlyPrice}`}
                     monthlyUnit={copy.monthlyUnit}
                   />
                 </p>
@@ -94,7 +94,7 @@ export default function PosPricingSection({
                       <span className="shrink-0 font-semibold text-text">
                         <PosSalePrice
                           originalPrice={`£${group.originalMonthlyPrice}`}
-                          currentPrice={`£${group.monthlyPrice}`}
+                          currentPrice={`+£${group.monthlyPrice}`}
                           monthlyUnit={copy.monthlyUnit}
                         />
                       </span>
