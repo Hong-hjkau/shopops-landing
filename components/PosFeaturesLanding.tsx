@@ -2,13 +2,12 @@ import PosAddOnCard from "@/components/PosAddOnCard";
 import PosFeatureStory from "@/components/PosFeatureStory";
 import type { PosImageDialogProps } from "@/components/PosImageDialog";
 import PosPremiumFeature from "@/components/PosPremiumFeature";
-import PosSalePrice from "@/components/PosSalePrice";
+import PosCurrentPrice from "@/components/PosCurrentPrice";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import {
   POS_FEATURES_CONTENT,
   getPosFeatureAddOn,
   getPosFeatureAddOnPriceText,
-  getPosFeatureAddOnOriginalPriceText,
   getPosFeaturePricing,
   getPosFeatureBundleExamples,
   getPremiumPosFeatureAddOns,
@@ -102,8 +101,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
             <div data-pos-price-tier="core" className="col-span-full rounded-2xl border border-hero-border bg-white/5 p-5">
               <p className="text-sm text-hero-text-secondary">{copy.hero.corePriceLabel}</p>
               <p className="mt-2 text-3xl font-bold">
-                <PosSalePrice
-                  originalPrice={`£${pricing.core.originalMonthlyPrice}`}
+                <PosCurrentPrice
                   currentPrice={`£${pricing.core.monthlyPrice}`}
                   monthlyUnit={pricing.monthlyUnit}
                   mutedTextClass="text-hero-text-secondary"
@@ -117,8 +115,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               <div data-pos-price-tier="advanced-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
                 <p className="text-sm text-hero-text-secondary">{copy.hero.premiumAddOnPriceLabel}</p>
                 <p className="mt-2 text-3xl font-bold">
-                  <PosSalePrice
-                    originalPrice={getPosFeatureAddOnOriginalPriceText(lang, "premium")}
+                  <PosCurrentPrice
                     currentPrice={getPosFeatureAddOnPriceText(lang, "premium")}
                     monthlyUnit={pricing.monthlyUnit}
                     mutedTextClass="text-hero-text-secondary"
@@ -128,8 +125,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
               <div data-pos-price-tier="standard-add-ons" className="rounded-2xl border border-hero-border bg-white/5 p-5">
                 <p className="text-sm text-hero-text-secondary">{copy.hero.standardAddOnPriceLabel}</p>
                 <p className="mt-2 text-3xl font-bold">
-                  <PosSalePrice
-                    originalPrice={getPosFeatureAddOnOriginalPriceText(lang, "card")}
+                  <PosCurrentPrice
                     currentPrice={getPosFeatureAddOnPriceText(lang, "card")}
                     monthlyUnit={pricing.monthlyUnit}
                     mutedTextClass="text-hero-text-secondary"
@@ -205,7 +201,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.premiumTitle}</h2>
           {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
-            {premiumAddOns.map(({ id, label, originalMonthlyPrice, monthlyPrice }) => {
+            {premiumAddOns.map(({ id, label, monthlyPrice }) => {
               const panel = copy.premium[id];
               return (
                 <PosPremiumFeature
@@ -214,7 +210,6 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                   eyebrow={panel.eyebrow}
                   title={label}
                   body={panel.body}
-                  originalMonthlyPrice={originalMonthlyPrice}
                   monthlyPrice={monthlyPrice}
                   monthlyUnit={pricing.monthlyUnit}
                   benefits={panel.benefits}
@@ -242,7 +237,6 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                 label={item.label}
                 outcome={copy.addOns[item.id].outcome}
                 detail={copy.addOns[item.id].body}
-                originalMonthlyPrice={item.originalMonthlyPrice}
                 monthlyPrice={item.monthlyPrice}
                 monthlyUnit={pricing.monthlyUnit}
                 image={buildDemoImage(copy, item.id)}

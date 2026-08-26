@@ -444,14 +444,6 @@ export function getPosFeatureAddOnPriceText(lang: Lang, layout: PosFeatureLayout
   return min === max ? `+£${min}` : `+£${min}–£${max}`;
 }
 
-export function getPosFeatureAddOnOriginalPriceText(lang: Lang, layout: PosFeatureLayout) {
-  const prices = getPosFeatureAddOnsByLayout(lang, layout).map((item) => item.originalMonthlyPrice);
-  if (prices.length === 0) throw new Error(`No POS add-on uses the ${layout} layout`);
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  return min === max ? `+£${min}` : `+£${min}–£${max}`;
-}
-
 // Premium panel 嘅「核心 + X」例子。ID 由 presentation 契約嚟，價錢同 label 由
 // canonical 來源查，所以改價或者改 label 都唔會留低一句過時嘅例子。
 export function getPosFeatureBundleExamples(lang: Lang, id: PosPremiumFeatureId) {

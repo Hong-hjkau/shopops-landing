@@ -1,12 +1,11 @@
 import PosImageDialog, { type PosImageDialogProps } from "@/components/PosImageDialog";
-import PosSalePrice from "@/components/PosSalePrice";
+import PosCurrentPrice from "@/components/PosCurrentPrice";
 
 export default function PosAddOnCard({
   id,
   label,
   outcome,
   detail,
-  originalMonthlyPrice,
   monthlyPrice,
   monthlyUnit,
   image,
@@ -15,7 +14,6 @@ export default function PosAddOnCard({
   label: string;
   outcome: string;
   detail: string;
-  originalMonthlyPrice: number;
   monthlyPrice: number;
   monthlyUnit: string;
   image?: PosImageDialogProps;
@@ -26,12 +24,10 @@ export default function PosAddOnCard({
       <div className="flex items-start justify-between gap-4">
         <h3 className="text-xl font-bold text-text">{label}</h3>
         <span className="shrink-0 rounded-full bg-accent px-3 py-1 text-sm font-bold text-on-accent">
-          <PosSalePrice
-            originalPrice={`+£${originalMonthlyPrice}`}
+          <PosCurrentPrice
             currentPrice={`+£${monthlyPrice}`}
             monthlyUnit={monthlyUnit}
             mutedTextClass="text-on-accent"
-            prominentStrike
           />
         </span>
       </div>

@@ -273,14 +273,14 @@ test("both POS pages show only the current monthly price", async () => {
   for (const language of ["en", "zh-Hant", "zh-Hans"]) {
     for (const path of ["/pos", "/pos/features"]) {
       const main = await render(language, path);
-      const salePrices = [...main.matchAll(/<span[^>]*data-pos-sale-price[^>]*>[\s\S]*?<\/span>/g)]
+      const currentPricesHtml = [...main.matchAll(/<span[^>]*data-pos-current-price[^>]*>[\s\S]*?<\/span>/g)]
         .map((match) => match[0]);
 
-      assert.equal(salePrices.length, 13, `${path}?lang=${language} should render all 13 POS sale prices`);
+      assert.equal(currentPricesHtml.length, 13, `${path}?lang=${language} should render all 13 POS current prices`);
       const currentPrices = [];
-      for (const salePrice of salePrices) {
-        const text = visibleText(salePrice).replace(/\s+/g, "");
-        assert.doesNotMatch(salePrice, /<del\b/, `${path}?lang=${language} should not show an original price`);
+      for (const currentPriceHtml of currentPricesHtml) {
+        const text = visibleText(currentPriceHtml).replace(/\s+/g, "");
+        assert.doesNotMatch(currentPriceHtml, /<del\b/, `${path}?lang=${language} should not show an original price`);
         currentPrices.push(text);
       }
       assert.equal(currentPrices[0], "£19", `${path}?lang=${language} should show £19 for Core`);
@@ -293,7 +293,7 @@ test("both POS pages show only the current monthly price", async () => {
   }
 });
 
-test("sale-price secondary text uses a readable colour for each background", async () => {
+test("current-price monthly units use a readable colour for each background", async () => {
   const pos = sectionById(await render("en", "/pos"), "pricing");
   const features = await render("en");
   const hero = sectionById(features, "hero");
@@ -302,16 +302,13 @@ test("sale-price secondary text uses a readable colour for each background", asy
     sectionById(features, "add-ons"),
   ].join("");
 
-  assert.equal(countMatches(pos, /data-pos-sale-price/g), 13);
-  assert.equal(countMatches(pos, /data-pos-sale-original/g), 0);
-  assert.equal(countMatches(pos, /data-pos-sale-unit[^>]*class="[^"]*text-text-secondary/g), 13);
-  assert.equal(countMatches(hero, /data-pos-sale-price/g), 3);
-  assert.equal(countMatches(hero, /data-pos-sale-original/g), 0);
-  assert.equal(countMatches(hero, /data-pos-sale-unit[^>]*class="[^"]*text-hero-text-secondary/g), 3,
+  assert.equal(countMatches(pos, /data-pos-current-price/g), 13);
+  assert.equal(countMatches(pos, /data-pos-current-unit[^>]*class="[^"]*text-text-secondary/g), 13);
+  assert.equal(countMatches(hero, /data-pos-current-price/g), 3);
+  assert.equal(countMatches(hero, /data-pos-current-unit[^>]*class="[^"]*text-hero-text-secondary/g), 3,
     "each hero current price should colour its monthly unit for the dark background");
-  assert.equal(countMatches(badges, /data-pos-sale-price/g), 10);
-  assert.equal(countMatches(badges, /data-pos-sale-original/g), 0);
-  assert.equal(countMatches(badges, /data-pos-sale-unit[^>]*class="[^"]*text-on-accent/g), 10,
+  assert.equal(countMatches(badges, /data-pos-current-price/g), 10);
+  assert.equal(countMatches(badges, /data-pos-current-unit[^>]*class="[^"]*text-on-accent/g), 10,
     "each orange badge should colour its monthly unit with the on-accent token");
 });
 

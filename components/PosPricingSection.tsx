@@ -1,5 +1,5 @@
 import type { PosSharedContent } from "@/lib/pos-content";
-import PosSalePrice from "@/components/PosSalePrice";
+import PosCurrentPrice from "@/components/PosCurrentPrice";
 
 type PosPricingCopy = PosSharedContent["pricing"];
 
@@ -36,8 +36,7 @@ export default function PosPricingSection({
             </span>
             <h3 className="mt-5 text-xl font-bold text-text">{copy.core.name}</h3>
             <div className="mt-2 text-4xl font-bold text-text">
-              <PosSalePrice
-                originalPrice={`£${copy.core.originalMonthlyPrice}`}
+              <PosCurrentPrice
                 currentPrice={`£${copy.core.monthlyPrice}`}
                 monthlyUnit={copy.monthlyUnit}
               />
@@ -78,8 +77,7 @@ export default function PosPricingSection({
                   {copy.perItemLabel}
                 </p>
                 <p className="text-2xl font-bold text-text">
-                  <PosSalePrice
-                    originalPrice={`£${group.originalMonthlyPrice}`}
+                  <PosCurrentPrice
                     currentPrice={`+£${group.monthlyPrice}`}
                     monthlyUnit={copy.monthlyUnit}
                   />
@@ -92,8 +90,7 @@ export default function PosPricingSection({
                         <span>{item.label}</span>
                       </span>
                       <span className="shrink-0 font-semibold text-text">
-                        <PosSalePrice
-                          originalPrice={`£${group.originalMonthlyPrice}`}
+                        <PosCurrentPrice
                           currentPrice={`+£${group.monthlyPrice}`}
                           monthlyUnit={copy.monthlyUnit}
                         />
