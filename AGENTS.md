@@ -24,9 +24,19 @@ ShopOps 嘅 marketing site（Next.js 16 App Router + React 19 + TypeScript + Tai
 4. **文字對比要過 WCAG**：dual-theme 橙色分兩隻（light/dark 各一），有 prebuild 對比閘；新 CTA / badge 顏色唔好裸寫一隻橙走天涯。
 5. **Vercel Hobby plan 限制**：cron 一日一次、env 條數有限、商業條款限制——唔好提案加超出 Hobby 嘅 webhook / cron / 功能而唔標明要升 plan。
 
+## 使用者行先（易用 / 易明 — 呢類**唔算** style nit，見到要報）
+
+用家係**未用過 ShopOps 嘅餐廳老闆**，多數喺手機上面第一次見到呢個網。全域準則 `~/.claude/CLAUDE.md` #15。
+
+- **睇唔睇得明行先**：功能講法要用餐廳老闆嘅語言（「客人掃 QR 自己落單」好過「self-service ordering flow」）；每個 section 要有一句「呢樣嘢幫你慳咩／賺咩」，唔好齋列 feature 名。
+- **價格 / 數字要一眼睇到**：金額、月費、試用日數用大字直接寫，唔好埋喺長段落。跨頁重複嘅數字（月費、試用日數）唔可以各頁各寫一份，會分岔。
+- **CTA 要講到「跟住點做」**：掣文字寫實際動作（「預約 15 分鐘 demo」），唔好寫「Learn more」。表單失敗（env 缺失走 mailto fallback）要喺畫面睇得明，唔可以撳完冇反應。
+- **如果加圖表 / 對比表**：唔係樣樣都畫圖（單一數字用大字、要精確比較用表格）；大忌＝雙 Y 軸／3D pie·bar／pie >5 片／彩虹色做 sequential／>5 條線／bar 冇排序／≥2 series 冇 legend。顏色按語意（🟢 = 對老闆有利、🔴 = 不利），唔好齋用 🔺🔻。
+- **對比度同窄屏**：跟鐵則 4（WCAG 閘）；表格同固定寬度排版喺手機唔可以爆出去。
+
 ## Review 輸出要求
 
-- 每個 finding 要 `file:line` + 具體 failure scenario；唔收純 style / naming nit。
+- 每個 finding 要 `file:line` + 具體 failure scenario；唔收純 style / naming nit（**上面「使用者行先」嗰幾條唔當 nit，照報**）。
 - Focus：SEO 正確性、form / rate-limit 安全、env 缺失 fallback、對比度 / 可讀性。
 - 驗證基準：`npm run verify` 過到先算 clean（= content tests → ESLint → typegen → tsc → WCAG 對比閘 → production build → Playwright 互動測試）。
 
