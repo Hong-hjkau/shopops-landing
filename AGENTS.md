@@ -36,6 +36,11 @@ ShopOps 嘅 marketing site（Next.js 16 App Router + React 19 + TypeScript + Tai
 
 ## Review 輸出要求
 
+- **Finding 分兩類報**（2026-09-13 HONG 拍板）：先講清楚今次個改動**防嘅係乜**，再分——
+  **A 類**：正常用法／常見寫法會真係中嘅漏擋、誤擋、bug（照下面要 `file:line`＋failure scenario＋點驗）；
+  **B 類**：要刻意寫先中嘅繞法（例如刻意清走 env、自己砌 raw socket、還原已 patch 嘅函數），**一句列出就得**，唔使逐條詳述。
+  淨係 A 類要修；B 類由實作者寫入註解做「已知限制」。冇 A 類就明講「冇 A 類」＝ 清零。
+  （點解：唔分類嘅話每輪都揾到更偏門嘅寫法，變鐘擺 —— 2026-09-13 hk-dashboard-web 一道閘連審九輪先收斂。）
 - 每個 finding 要 `file:line` + 具體 failure scenario；唔收純 style / naming nit（**上面「使用者行先」嗰幾條唔當 nit，照報**）。
 - Focus：SEO 正確性、form / rate-limit 安全、env 缺失 fallback、對比度 / 可讀性。
 - 驗證基準：`npm run verify` 過到先算 clean（= content tests → ESLint → typegen → tsc → WCAG 對比閘 → production build → Playwright 互動測試）。
