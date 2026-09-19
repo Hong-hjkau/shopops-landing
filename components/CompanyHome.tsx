@@ -230,7 +230,7 @@ export default function CompanyHome() {
   const contact: ContactCopy = { ...t.contact, reassure: pos.hero.reassurance };
   const faqItems = [
     { q: t.faq.questions.trial, a: pos.trial.steps[3].detail },
-    { q: t.faq.questions.afterTrial, a: `${pos.trial.steps[4].detail} ${pos.trial.steps[5].detail}` },
+    { q: t.faq.questions.afterTrial, a: `${pos.trial.steps[4].detail} ${pos.trial.steps[5].detail} ${pos.pricing.promoNote}` },
     { q: t.faq.questions.hardware, a: `${pos.hardware.existingDeviceCopy} ${pos.hardware.readyHardwareCopy}` },
     { q: t.faq.questions.area, a: t.faq.areaAnswer },
     { q: t.faq.questions.menu, a: `${pos.trial.steps[1].detail} ${pos.trial.steps[2].detail}` },
@@ -288,7 +288,7 @@ export default function CompanyHome() {
       </section>
 
       <HardwareOptions copy={pos.hardware} />
-      <TrialJourney copy={pos.trial} />
+      <TrialJourney copy={pos.trial} promoNote={pos.pricing.promoNote} />
 
       <section className="bg-surface px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-4xl rounded-2xl border border-border bg-bg p-8 text-center sm:p-12">

@@ -112,8 +112,8 @@ export default function PosLanding() {
   const { lang } = useLang();
   const t = dict[lang];
   const pos = POS_CONTENT[lang];
-  const trialAnswer = pos.trial.steps.map((step) => step.detail).join(" ");
-  const englishTrialAnswer = POS_CONTENT.en.trial.steps.map((step) => step.detail).join(" ");
+  const trialAnswer = `${pos.trial.steps.map((step) => step.detail).join(" ")} ${pos.pricing.promoNote}`;
+  const englishTrialAnswer = `${POS_CONTENT.en.trial.steps.map((step) => step.detail).join(" ")} ${POS_CONTENT.en.pricing.promoNote}`;
   const faqItems = [
     { q: t.faq.hardwareQ, a: `${t.faq.hardwareA} ${pos.hardware.readyHardwareCopy}` },
     { q: t.faq.trialQ, a: trialAnswer },

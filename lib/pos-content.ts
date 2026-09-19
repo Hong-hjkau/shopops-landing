@@ -17,9 +17,25 @@ export type PosAddOnId =
 export type PosAddOnItem = { id: PosAddOnId; label: string };
 
 export type PosSharedContent = {
-  trialDays: 3;
+  trialDays: 30;
   trialNeedsCard: false;
   trialAutoCharges: false;
+  // 正式確認啟用之後嘅免費期。刻意用「月」唔用「日」：2026-08-02 嘅措辭決定
+  // （docs/superpowers/specs/2026-08-02-pos-first-payment-wording-design.md）查明
+  // 用日數講「第 N 天收費」同「按月收費」永遠對唔齊（2 月得 28 日、7 月得 31 日）。
+  // ⚠️ 呢度**唔可以**逐字引用被禁嗰幾句：tests/pos-content.test.mjs 個 guard 係
+  // grep 成個檔案，寫喺註解一樣會中招（2026-09-19 實撞）。
+  // 免費期跟月結日行，首期月費 = 啟用日 + freeMonthsAfterActivation 個月。
+  freeMonthsAfterActivation: 2;
+  // 推廣截止日（`YYYY-MM-DD`，UK 日期）。「限時優惠」喺英國要有真實截止日先講得，
+  // 所以呢個值要出現喺對外文案，唔可以淨係寫「限時」。
+  //
+  // ⚠️ 型別刻意係 `string` 唔係 literal：**續期／收檔係正常操作，要改一行就得**。
+  // 釘死做 literal 嘅話，改 `OFFER_TERMS.promoEndsOn` 會連爆三個 TS2322，
+  // 而個錯誤訊息一個字都唔會提推廣 —— 到期閘就變成清唔走嘅永久紅，
+  // 下一個人只會學識繞閘。格式由 test 驗。
+  promoEndsOn: string;
+  quoteValidityDays: number;
   hero: {
     eyebrow: string;
     title: string;
@@ -52,8 +68,11 @@ export type PosSharedContent = {
     perItemLabel: string;
     core: {
       name: string;
-      originalMonthlyPrice: 29;
-      monthlyPrice: 19;
+      // 推廣前嘅實收標價（= POS `module_prices` 推廣前嘅值），一季後回復標價要靠佢。
+      // 舊值 29 係更早期嘅牌價、唔係推廣前實收價，2026-09-19 改價時一併更正。
+      // ⚠️ 目前冇任何 component render 呢個值（對外只出現價）——要做劃線對比就要新做 UI。
+      originalMonthlyPrice: 19;
+      monthlyPrice: 8;
       included: readonly [string, string, string];
     };
     addOnsTitle: string;
@@ -61,31 +80,97 @@ export type PosSharedContent = {
     addOnsBillingNote: string;
     addOnGroups: readonly [
       {
-        originalMonthlyPrice: 19;
-        monthlyPrice: 9;
+        originalMonthlyPrice: 9;
+        monthlyPrice: 4;
         items: readonly [
           PosAddOnItem, PosAddOnItem, PosAddOnItem, PosAddOnItem,
           PosAddOnItem, PosAddOnItem, PosAddOnItem, PosAddOnItem,
         ];
       },
       {
-        originalMonthlyPrice: 29;
-        monthlyPrice: 19;
+        originalMonthlyPrice: 19;
+        monthlyPrice: 8;
         items: readonly [PosAddOnItem, PosAddOnItem];
       },
     ];
     cta: string;
     vatNote: string;
+    // 推廣資格同截止日。刻意同 `body`（section 開場白）分開：呢句要喺**每一個**顯示
+    // 優惠價嘅地方出現（`/pos` 同 `/pos/features` 都有各自嘅入口），語意上同
+    // `vatNote` 平行 —— 都係「睇住個價嗰陣必須同場睇到」嘅聲明。
+    promoNote: string;
+    // 短版，畀「同一頁第二、第三⋯⋯個顯示價錢嘅 section」用：佢做 `<details>` 個
+    // summary，撳開喺原位見全文（唔會跳走）。全文喺一頁出三四次喺手機上好嘈，
+    // 但深連結直入嗰啲人又必須摸得到條件 —— inline 展開兩樣都兼顧到。
+    promoNoteShort: string;
     feeNote: string;
   };
   commission: { title: string; body: string; disclaimer: string };
 };
 
 const OFFER_TERMS = {
-  trialDays: 3,
+  trialDays: 30,
   trialNeedsCard: false,
   trialAutoCharges: false,
+  freeMonthsAfterActivation: 2,
+  promoEndsOn: "2026-12-31",
+  // 報價有效期（日）。對外一定要寫明呢個數 —— 「報價有效期內啟用一樣適用」
+  // 呢句存在嘅唯一目的就係答「我夠唔夠資格」，唔講幾多日等於冇答。
+  // 同 POS `platform_settings.quote_validity_days`（prod 實際值 30）對齊；
+  // 嗰邊改咗呢度要跟，兩個系統唔可以各講一個數。
+  quoteValidityDays: 30,
 } as const;
+
+const MONTHS_EN = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+] as const;
+
+/**
+ * 推廣截止日嘅對外寫法。
+ *
+ * 由 `OFFER_TERMS.promoEndsOn` 即場計，**唔喺三語各寫一份日期** —— 呢個數字
+ * 決定客人夠唔夠資格攞優惠價，三語寫三份就一定有日會分岔。
+ * ISO 格式（`2026-12-31`）對英國餐廳老闆嚟講唔係慣用寫法，所以對外唔出 ISO。
+ */
+/**
+ * 首期付款嘅例子月份。由 `freeMonthsAfterActivation` 計 —— 之前月數係內插
+ * 但例子寫死「3 月 1 日 → 5 月 1 日」，改成 3 個月就會出
+ * 「3 個月後……3 月 1 日啟用，5 月 1 日繳付」自相矛盾。
+ */
+const EXAMPLE_START_MONTH = 3;
+const EXAMPLE_DUE_MONTH = EXAMPLE_START_MONTH + OFFER_TERMS.freeMonthsAfterActivation;
+if (EXAMPLE_DUE_MONTH > 12) {
+  // 唔 wrap 落下一年：wrap 咗個例子會變「3 月 1 日啟用，1 月 1 日繳付」，
+  // 冇講明係第二年，比出 `undefined` 更誤導。同 `formatPromoEnd` 一致，
+  // config 打錯就喺 build 大聲炸，唔好靜靜出一句錯嘅例子。
+  throw new Error(
+    `首期付款例子跨咗年（${EXAMPLE_START_MONTH} 月 + ${OFFER_TERMS.freeMonthsAfterActivation} 個月）。` +
+      "改細 EXAMPLE_START_MONTH，或者改寫三語例子講明年份。",
+  );
+}
+
+function formatPromoEnd(lang: Lang): string {
+  const [year, month, day] = OFFER_TERMS.promoEndsOn.split("-").map(Number);
+  // ⚠️ 一定要喺呢度驗，唔可以留返畀 test：兩邊嘅 test 都係抄同一份計法去砌
+  // expected，所以一個打錯咗嘅日期（`2027-13-31` → 英文出「31 undefined 2027」）
+  // 兩邊會夾得返、`verify` 全綠 —— 即係「驗嗰陣攞自己做證據」。
+  // 續期打錯數係真會發生嘅事，所以寧願喺 build 就大聲炸。
+  const parsed = new Date(`${OFFER_TERMS.promoEndsOn}T00:00:00Z`);
+  const roundTrips =
+    !Number.isNaN(parsed.getTime()) &&
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() + 1 === month &&
+    parsed.getUTCDate() === day;
+  if (!roundTrips) {
+    throw new Error(
+      `OFFER_TERMS.promoEndsOn 唔係一個真實日期：${OFFER_TERMS.promoEndsOn}（要 YYYY-MM-DD）`,
+    );
+  }
+  return lang === "en"
+    ? `${day} ${MONTHS_EN[month - 1]} ${year}`
+    : `${year} 年 ${month} 月 ${day} 日`;
+}
 
 export const POS_CONTENT: Record<Lang, PosSharedContent> = {
   en: {
@@ -131,7 +216,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         { title: "We set up your menu", detail: "ShopOps enters your menu and configures the system with you." },
         { title: `Try it for ${OFFER_TERMS.trialDays} days`, detail: "The free trial needs no card and has no automatic charge." },
         { title: "Choose whether to continue", detail: "Only then do you provide full restaurant, contact and payment details." },
-        { title: "One monthly payment covers your first two months", detail: "Your first monthly payment is charged on the day you activate; this single payment covers your first two months, after which billing continues monthly." },
+        { title: `Your first ${OFFER_TERMS.freeMonthsAfterActivation} months are free`, detail: `New restaurants pay nothing on activation. Your first monthly payment falls on the same date ${OFFER_TERMS.freeMonthsAfterActivation} months after you activate — activate on 1 ${MONTHS_EN[EXAMPLE_START_MONTH - 1]} and your first payment is due on 1 ${MONTHS_EN[EXAMPLE_DUE_MONTH - 1]}. Where that date does not exist in a month, payment falls on the last day of that month and returns to your usual date afterwards. Billing then continues monthly.` },
       ],
     },
     pricing: {
@@ -143,8 +228,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       perItemLabel: "Each add-on",
       core: {
         name: "Core POS",
-        originalMonthlyPrice: 29,
-        monthlyPrice: 19,
+        originalMonthlyPrice: 19,
+        monthlyPrice: 8,
         included: ["Ordering POS", "Front-of-house and kitchen translation", "Discounts"],
       },
       addOnsTitle: "Optional add-ons",
@@ -152,8 +237,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnsBillingNote: "Choose any add-on individually. Each item is charged separately.",
       addOnGroups: [
         {
-          originalMonthlyPrice: 19,
-          monthlyPrice: 9,
+          originalMonthlyPrice: 9,
+          monthlyPrice: 4,
           items: [
             { id: "scheduling", label: "Rota and clock-in" },
             { id: "reservations", label: "Reservations" },
@@ -166,8 +251,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
           ],
         },
         {
-          originalMonthlyPrice: 29,
-          monthlyPrice: 19,
+          originalMonthlyPrice: 19,
+          monthlyPrice: 8,
           items: [
             { id: "delivery", label: "Online delivery orders" },
             { id: "finance_inventory", label: "Finance and inventory" },
@@ -176,6 +261,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
       cta: "Book a demo & free trial setup",
       vatNote: "No VAT added. ShopOps is not currently VAT registered, so the price shown is the total monthly subscription price.",
+      promoNoteShort: "Promotional pricing — who qualifies and when it ends",
+      promoNote: `This promotional pricing and the first ${OFFER_TERMS.freeMonthsAfterActivation} free months are for new restaurants that activate on or before ${formatPromoEnd("en")}. Get a quote during the promotion and it still applies when you activate within the quote's ${OFFER_TERMS.quoteValidityDays}-day validity period. After the promotion, standard pricing applies to new restaurants.`,
       feeNote: "ShopOps can record card payments. Take payment on your own card terminal; your terminal provider's fees remain separate.",
     },
     commission: {
@@ -221,7 +308,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         { title: "輸入餐牌及設定", detail: "ShopOps 為你輸入餐牌，並一同完成系統設定。" },
         { title: `免費試用 ${OFFER_TERMS.trialDays} 天`, detail: "試用毋須信用卡，亦不會自動收費。" },
         { title: "決定是否繼續", detail: "只有決定正式使用時，才提交完整餐廳、聯絡及付款資料。" },
-        { title: "首期只收 1 個月費用，可使用首 2 個月", detail: "正式啟用當日收取首期月費；首期只收 1 個月費用，即可使用首 2 個月，其後按月收費。" },
+        { title: `首 ${OFFER_TERMS.freeMonthsAfterActivation} 個月免費`, detail: `新餐廳正式啟用時毋須付款。首期月費於啟用日起 ${OFFER_TERMS.freeMonthsAfterActivation} 個月後的同一日繳付 —— 例如 ${EXAMPLE_START_MONTH} 月 1 日啟用，首期月費於 ${EXAMPLE_DUE_MONTH} 月 1 日繳付。若該月份沒有相同日期，則以該月最後一日為準，其後恢復原本月結日。之後按月收費。` },
       ],
     },
     pricing: {
@@ -233,8 +320,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       perItemLabel: "每項功能",
       core: {
         name: "核心 POS",
-        originalMonthlyPrice: 29,
-        monthlyPrice: 19,
+        originalMonthlyPrice: 19,
+        monthlyPrice: 8,
         included: ["落單 POS", "店房翻譯", "優惠折扣"],
       },
       addOnsTitle: "加購功能",
@@ -242,8 +329,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnsBillingNote: "各項獨立收費，可任選一項或多項。",
       addOnGroups: [
         {
-          originalMonthlyPrice: 19,
-          monthlyPrice: 9,
+          originalMonthlyPrice: 9,
+          monthlyPrice: 4,
           items: [
             { id: "scheduling", label: "排班打卡" },
             { id: "reservations", label: "訂位" },
@@ -256,8 +343,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
           ],
         },
         {
-          originalMonthlyPrice: 29,
-          monthlyPrice: 19,
+          originalMonthlyPrice: 19,
+          monthlyPrice: 8,
           items: [
             { id: "delivery", label: "網上送貨訂單" },
             { id: "finance_inventory", label: "財務及庫存" },
@@ -266,6 +353,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
       cta: "預約示範及免費試用設定",
       vatNote: "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。",
+      promoNoteShort: "優惠價 —— 適用資格及截止日",
+      promoNote: `優惠價及首 ${OFFER_TERMS.freeMonthsAfterActivation} 個月免費，適用於 ${formatPromoEnd("zh-Hant")} 或之前正式啟用的新餐廳；在推廣期內取得報價的話，只要在報價有效期（${OFFER_TERMS.quoteValidityDays} 天）內啟用，同樣適用。推廣期結束後，新餐廳按標準價收費。`,
       feeNote: "ShopOps 可記錄信用卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。",
     },
     commission: {
@@ -311,7 +400,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
         { title: "录入菜单及设置", detail: "ShopOps 为你录入菜单，并一同完成系统设置。" },
         { title: `免费试用 ${OFFER_TERMS.trialDays} 天`, detail: "试用无需信用卡，也不会自动收费。" },
         { title: "决定是否继续", detail: "只有决定正式使用时，才提交完整餐厅、联系及付款资料。" },
-        { title: "首期只收 1 个月费用，可使用前 2 个月", detail: "正式启用当日收取首期月费；首期只收 1 个月费用，即可使用前 2 个月，之后按月收费。" },
+        { title: `前 ${OFFER_TERMS.freeMonthsAfterActivation} 个月免费`, detail: `新餐厅正式启用时无需付款。首期月费于启用日起 ${OFFER_TERMS.freeMonthsAfterActivation} 个月后的同一日缴付 —— 例如 ${EXAMPLE_START_MONTH} 月 1 日启用，首期月费于 ${EXAMPLE_DUE_MONTH} 月 1 日缴付。若该月份没有相同日期，则以该月最后一日为准，之后恢复原本月结日。之后按月收费。` },
       ],
     },
     pricing: {
@@ -323,8 +412,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       perItemLabel: "每项功能",
       core: {
         name: "核心 POS",
-        originalMonthlyPrice: 29,
-        monthlyPrice: 19,
+        originalMonthlyPrice: 19,
+        monthlyPrice: 8,
         included: ["点餐 POS", "前厅与厨房翻译", "优惠折扣"],
       },
       addOnsTitle: "加购功能",
@@ -332,8 +421,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       addOnsBillingNote: "各项独立收费，可任选一项或多项。",
       addOnGroups: [
         {
-          originalMonthlyPrice: 19,
-          monthlyPrice: 9,
+          originalMonthlyPrice: 9,
+          monthlyPrice: 4,
           items: [
             { id: "scheduling", label: "排班打卡" },
             { id: "reservations", label: "订位" },
@@ -346,8 +435,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
           ],
         },
         {
-          originalMonthlyPrice: 29,
-          monthlyPrice: 19,
+          originalMonthlyPrice: 19,
+          monthlyPrice: 8,
           items: [
             { id: "delivery", label: "网上送货订单" },
             { id: "finance_inventory", label: "财务及库存" },
@@ -356,6 +445,8 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       ],
       cta: "预约演示及免费试用设置",
       vatNote: "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。",
+      promoNoteShort: "优惠价 —— 适用资格及截止日",
+      promoNote: `优惠价及前 ${OFFER_TERMS.freeMonthsAfterActivation} 个月免费，适用于 ${formatPromoEnd("zh-Hans")} 或之前正式启用的新餐厅；在推广期内取得报价的话，只要在报价有效期（${OFFER_TERMS.quoteValidityDays} 天）内启用，同样适用。推广期结束后，新餐厅按标准价收费。`,
       feeNote: "ShopOps 可记录银行卡付款；实际收款使用餐厅自己的刷卡机，刷卡机供应商费用另计。",
     },
     commission: {

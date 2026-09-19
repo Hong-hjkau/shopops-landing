@@ -117,6 +117,7 @@ export default function PosPricingSection({
             {copy.cta}
           </a>
           <p className="mt-5 text-sm leading-relaxed text-text-secondary">{copy.vatNote}</p>
+          <p data-pos-promo-note className="mt-2 text-sm leading-relaxed text-text-secondary">{copy.promoNote}</p>
           <p className="mt-2 text-xs leading-relaxed text-text-secondary">{copy.feeNote}</p>
         </div>
       </div>

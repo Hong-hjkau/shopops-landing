@@ -2,8 +2,20 @@ import type { PosSharedContent } from "@/lib/pos-content";
 
 export default function TrialJourney({
   copy,
+  promoNote,
 }: {
   copy: PosSharedContent["trial"];
+  /**
+   * 推廣資格聲明。呢個 component 講「免費試用 + 首 N 個月免費」，而嗰個免費期
+   * 本身係限時推廣，所以顯示佢嘅頁面一定要有呢段條件 —— 首頁（`CompanyHome`）
+   * 一度就係咁漏咗：顯示免費期、客人可以直接落查詢，但成頁冇截止日冇資格說明。
+   *
+   * ⚠️ **同頁已經有 pricing section 嘅話就唔好再傳**（`/pos` 就係：呢個 section
+   * 同 pricing section 貼住，兩邊都出全文就變咗連續讀兩次同一段）。所以而家
+   * 只有首頁傳佢。唔傳唔會靜靜漏 —— `tests/pos-features-rendered.test.mjs`
+   * 對每一頁驗至少一段推廣聲明，仲會逐個「顯示緊價錢嘅 section」點名驗。
+   */
+  promoNote?: string;
 }) {
   return (
     <section id="trial" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
@@ -22,6 +34,11 @@ export default function TrialJourney({
             </li>
           ))}
         </ol>
+        {promoNote ? (
+          <p data-pos-promo-note className="mt-8 text-sm leading-6 text-text-secondary">
+            {promoNote}
+          </p>
+        ) : null}
       </div>
     </section>
   );

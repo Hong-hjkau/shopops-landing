@@ -345,48 +345,51 @@ test("public POS feature copy rejects affirmative online-payment and card-delive
 test("POS feature pricing derives approved bundle examples from canonical pricing IDs", () => {
   for (const lang of languages) {
     const prices = getPosFeaturePricing(lang);
-    assert.equal(prices.corePlusDelivery, 38);
-    assert.equal(prices.corePlusFinance, 38);
-    assert.equal(prices.corePlusFinanceAndRecipe, 47);
+    // 核心 8 + 進階加購 8 = 16；再加一個標準加購 4 = 20。
+    assert.equal(prices.corePlusDelivery, 16);
+    assert.equal(prices.corePlusFinance, 16);
+    assert.equal(prices.corePlusFinanceAndRecipe, 20);
   }
 });
 
 test("POS feature add-on helper returns canonical labels by stable ID", () => {
   assert.equal(typeof getPosFeatureAddOn, "function");
   assert.deepEqual(getPosFeatureAddOn("en", "delivery"), {
-    id: "delivery", label: "Online delivery orders", originalMonthlyPrice: 29, monthlyPrice: 19,
+    id: "delivery", label: "Online delivery orders", originalMonthlyPrice: 19, monthlyPrice: 8,
   });
   assert.deepEqual(getPosFeatureAddOn("zh-Hant", "delivery"), {
-    id: "delivery", label: "網上送貨訂單", originalMonthlyPrice: 29, monthlyPrice: 19,
+    id: "delivery", label: "網上送貨訂單", originalMonthlyPrice: 19, monthlyPrice: 8,
   });
   assert.deepEqual(getPosFeatureAddOn("zh-Hans", "delivery"), {
-    id: "delivery", label: "网上送货订单", originalMonthlyPrice: 29, monthlyPrice: 19,
+    id: "delivery", label: "网上送货订单", originalMonthlyPrice: 19, monthlyPrice: 8,
   });
 });
 
 test("POS feature pricing looks up delivery, finance, and recipe prices by their own stable IDs", () => {
   const pricing = POS_CONTENT.en.pricing;
   const originalGroups = pricing.addOnGroups;
-  const [ninePoundGroup, nineteenPoundGroup] = originalGroups;
-  const delivery = nineteenPoundGroup.items.find((item) => item.id === "delivery");
-  const finance = nineteenPoundGroup.items.find((item) => item.id === "finance_inventory");
+  // 用 standard / premium 而唔係用價錢做名：價錢會隨推廣改動，名唔應該跟住過時。
+  const [standardGroup, premiumGroup] = originalGroups;
+  const delivery = premiumGroup.items.find((item) => item.id === "delivery");
+  const finance = premiumGroup.items.find((item) => item.id === "finance_inventory");
   assert.ok(delivery);
   assert.ok(finance);
 
   try {
     pricing.addOnGroups = [
       { monthlyPrice: 29, items: [finance] },
-      { monthlyPrice: 13, items: ninePoundGroup.items },
+      { monthlyPrice: 13, items: standardGroup.items },
       { monthlyPrice: 23, items: [delivery] },
     ];
 
+    // 加購價係上面砌嘅假數（驗「按 ID 查價」唔係位置式），core 用真價 8。
     const prices = getPosFeaturePricing("en");
     assert.equal(prices.delivery, 23);
     assert.equal(prices.finance, 29);
     assert.equal(prices.recipe, 13);
-    assert.equal(prices.corePlusDelivery, 42);
-    assert.equal(prices.corePlusFinance, 48);
-    assert.equal(prices.corePlusFinanceAndRecipe, 61);
+    assert.equal(prices.corePlusDelivery, 31);
+    assert.equal(prices.corePlusFinance, 37);
+    assert.equal(prices.corePlusFinanceAndRecipe, 50);
   } finally {
     pricing.addOnGroups = originalGroups;
   }
@@ -539,11 +542,11 @@ test("every language ships the same premium bullets and boundary sentences", () 
 
 test("premium bundle examples come from canonical prices instead of a copied figure", () => {
   const [single] = getPosFeatureBundleExamples("en", "delivery");
-  assert.equal(single, "Core POS + Online delivery orders: £38/month");
+  assert.equal(single, "Core POS + Online delivery orders: £16/month");
 
   assert.deepEqual(getPosFeatureBundleExamples("en", "finance_inventory"), [
-    "Core POS + Finance and inventory: £38/month",
-    "Core POS + Finance and inventory + Recipe costing: £47/month",
+    "Core POS + Finance and inventory: £16/month",
+    "Core POS + Finance and inventory + Recipe costing: £20/month",
   ]);
 
   const pricing = POS_CONTENT.en.pricing;
@@ -553,9 +556,10 @@ test("premium bundle examples come from canonical prices instead of a copied fig
       { monthlyPrice: 40, items: originalGroups[0].items },
       { monthlyPrice: 19, items: originalGroups[1].items },
     ];
+    // 假數：標準層 40、進階層 19，core 用真價 8。
     assert.deepEqual(getPosFeatureBundleExamples("en", "finance_inventory"), [
-      "Core POS + Finance and inventory: £38/month",
-      "Core POS + Finance and inventory + Recipe costing: £78/month",
+      "Core POS + Finance and inventory: £27/month",
+      "Core POS + Finance and inventory + Recipe costing: £67/month",
     ], "a recipe-costing price change must flow into the finance bundle example");
   } finally {
     pricing.addOnGroups = originalGroups;
@@ -782,11 +786,12 @@ test("POS card-payment wording keeps the restaurant terminal fee boundary in eve
 test("POS public pricing exposes the approved core plan, add-ons, and VAT status in every language", () => {
   for (const lang of languages) {
     const pricing = POS_CONTENT[lang].pricing;
-    assert.equal(pricing.core.originalMonthlyPrice, 29);
-    assert.equal(pricing.core.monthlyPrice, 19);
+    // 2026-09-19 推廣價：核心 8、標準加購 4、進階加購 8；original 係推廣前實收價。
+    assert.equal(pricing.core.originalMonthlyPrice, 19);
+    assert.equal(pricing.core.monthlyPrice, 8);
     assert.equal(pricing.core.included.length, 3);
-    assert.deepEqual(pricing.addOnGroups.map((group) => group.originalMonthlyPrice), [19, 29]);
-    assert.deepEqual(pricing.addOnGroups.map((group) => group.monthlyPrice), [9, 19]);
+    assert.deepEqual(pricing.addOnGroups.map((group) => group.originalMonthlyPrice), [9, 19]);
+    assert.deepEqual(pricing.addOnGroups.map((group) => group.monthlyPrice), [4, 8]);
     assert.equal(pricing.addOnGroups[0].items.length, 8);
     assert.equal(pricing.addOnGroups[1].items.length, 2);
     assert.match(pricing.perItemLabel, /Each add-on|每項功能|每项功能/);
@@ -899,23 +904,185 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
 });
 
 test("all languages preserve the approved trial and first-payment offer", () => {
+  // 三語係 spread 同一個 `OFFER_TERMS`（另有一條 test 驗 `...OFFER_TERMS` 恰好
+  // 出現 3 次，literal type 亦拒絕逐語覆寫），所以逐語 assert 同一個值係**假覆蓋** ——
+  // 睇落驗咗三次，實際上永遠唔可能有其中一語唔同。驗一次就夠。
+  assert.equal(POS_CONTENT.en.trialDays, 30);
+  assert.equal(POS_CONTENT.en.trialNeedsCard, false);
+  assert.equal(POS_CONTENT.en.trialAutoCharges, false);
+  assert.equal(POS_CONTENT.en.freeMonthsAfterActivation, 2);
+  // 唔釘死日期本身 —— 續期係正常操作。只驗格式，值由到期閘守。
+  assert.match(POS_CONTENT.en.promoEndsOn, /^\d{4}-\d{2}-\d{2}$/);
+  assert.ok(POS_CONTENT.en.quoteValidityDays > 0);
+
+  // 首期付款講法固定喺流程最後一步。步數改咗要重新拍板文案，所以釘死長度同位置，
+  // 唔用 `.at(-1)`（加多一步就會靜靜哋驗咗第二段字）。
   for (const lang of languages) {
-    assert.equal(POS_CONTENT[lang].trialDays, 3);
-    assert.equal(POS_CONTENT[lang].trialNeedsCard, false);
-    assert.equal(POS_CONTENT[lang].trialAutoCharges, false);
+    assert.equal(POS_CONTENT[lang].trial.steps.length, 6, `${lang}: 試用流程步數`);
+  }
+
+  // 兩個 boolean 旗標只係資料，客人睇嘅係文字。之前淨係驗旗標 —— 三語改成
+  // 「試用須信用卡、期滿自動收費」都照樣綠（Codex 2026-09-19 實測過）。
+  const trialTerms = Object.fromEntries(
+    languages.map((lang) => [lang, POS_CONTENT[lang].trial.steps[3].detail]),
+  );
+  assert.match(trialTerms.en, /needs no card/i);
+  assert.match(trialTerms.en, /no automatic charge/i);
+  assert.match(trialTerms["zh-Hant"], /毋須信用卡/);
+  assert.match(trialTerms["zh-Hant"], /不會自動收費/);
+  assert.match(trialTerms["zh-Hans"], /无需信用卡/);
+  assert.match(trialTerms["zh-Hans"], /不会自动收费/);
+
+  // 免費期一定要用「月結日」表達（同一日 + 月尾 fallback），唔准退回日數講法。
+  // 呢條規矩嚟自 docs/superpowers/specs/2026-08-02-pos-first-payment-wording-design.md：
+  // 「第 N 天收費」同「按月收費」永遠對唔齊（2 月 28 日、7 月 31 日各自講錯數）。
+  const firstPayment = Object.fromEntries(
+    languages.map((lang) => [lang, POS_CONTENT[lang].trial.steps[5].detail]),
+  );
+  assert.match(firstPayment.en, /same date 2 months after you activate/i);
+  assert.match(firstPayment.en, /last day of that month/i);
+  assert.match(firstPayment["zh-Hant"], /起 2 個月後的同一日/);
+  assert.match(firstPayment["zh-Hant"], /該月最後一日/);
+  assert.match(firstPayment["zh-Hans"], /起 2 个月后的同一日/);
+  assert.match(firstPayment["zh-Hans"], /该月最后一日/);
+
+  // 「限時優惠」喺英國要有真實截止日先講得，所以三語都要寫明；仲要講埋
+  // 「推廣期內取得報價、喺報價有效期內啟用一樣計」，否則 12 月尾攞報價嘅客人
+  // 會以為過咗年就冇咗優惠（同已確認嘅商業安排矛盾）。
+  // 四個語意都要齊：邊個合資格、幾時截、用咩界定、跨期點算。
+  // 淨係驗日期唔夠 —— 縮成「報價優惠截至 2026-12-31。」會照樣過（Codex 2026-09-19 實測）。
+  const [endYear, endMonth, endDay] = POS_CONTENT.en.promoEndsOn.split("-").map(Number);
+  const MONTHS_EN = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+  const expectedEnd = {
+    en: `${endDay} ${MONTHS_EN[endMonth - 1]} ${endYear}`,
+    "zh-Hant": `${endYear} 年 ${endMonth} 月 ${endDay} 日`,
+    "zh-Hans": `${endYear} 年 ${endMonth} 月 ${endDay} 日`,
+  };
+  for (const lang of languages) {
+    const promoNote = POS_CONTENT[lang].pricing.promoNote;
+    // 日期由 promoEndsOn 計出嚟，唔可以三語各寫一份（改期就會分岔）。
+    // 亦唔出 ISO：`2026-12-31` 唔係英國餐廳老闆慣用嘅寫法，而呢個數字
+    // 正正決定佢夠唔夠資格。
+    assert.match(promoNote, new RegExp(expectedEnd[lang]), `${lang}: 推廣截止日要用當地寫法`);
+    assert.doesNotMatch(promoNote, /\d{4}-\d{2}-\d{2}/, `${lang}: 對外唔好出 ISO 日期`);
+    // ⚠️ 聲明要講齊**兩樣**優惠。之前淨係講「優惠價」，而首頁根本冇顯示價 ——
+    // 訪客見到「首 2 個月免費」跟住一段講佢未見過嘅折扣價，等於冇講過條件。
+    assert.match(
+      promoNote,
+      /free months|個月免費|个月免费/,
+      `${lang}: 要講埋免費期，唔可以淨係講優惠價`,
+    );
+    assert.match(promoNote, /new restaurants|新餐廳|新餐厅/, `${lang}: 限新餐廳`);
+    assert.match(promoNote, /activate|啟用|启用/, `${lang}: 用「啟用」界定資格`);
+    assert.match(promoNote, /quote|報價|报价/, `${lang}: 報價有效期內仍然適用`);
+    assert.match(promoNote, /validity|有效期/, `${lang}: 講明係報價嘅有效期`);
+    // 試行一季，唔係永久價。英文本來寫 `you keep this pricing`，讀落似鎖死價錢，
+    // 同中文「同樣適用」分岔，亦同 spec 講嘅「一季後檢討」唔夾。
+    assert.match(
+      promoNote,
+      /standard pricing applies|按標準價|按标准价/,
+      `${lang}: 要講明推廣完之後回復標準價`,
+    );
+  }
+
+  // 兩個頁面都各自係獨立入口，兩邊都要貼住個價講推廣資格。呢度只驗接線，
+  // 真 render 由 tests/pos-features-rendered.test.mjs 驗。
+  // 四個檔各自係一個「講咗優惠價／免費期」嘅獨立出口：
+  //   兩個 pricing section（/pos 同 /pos/features 都入得）、
+  //   TrialJourney（首頁同 /pos 共用，就係講免費期嗰段）、
+  //   兩頁嘅 FAQ 答案（仲會入 JSON-LD，Google 直接顯示）。
+  // ⚠️ 要搵「用咗」唔係「提過」：`TrialJourney.tsx` 個 props 定義本身就有一行
+  // `promoNote: string`，所以淨係 grep 個字，拆走 JSX 入面嗰個 `{promoNote}`
+  // 照樣綠（2026-09-19 mutation 實撞）。所以一定要 match 到花括號入面。
+  for (const file of [
+    "../components/PosPricingSection.tsx",
+    "../components/PosFeaturesLanding.tsx",
+    "../components/TrialJourney.tsx",
+    "../components/CompanyHome.tsx",
+    "../components/PosLanding.tsx",
+  ]) {
+    const page = readFileSync(new URL(file, import.meta.url), "utf8");
+    assert.match(page, /\{[^{}]*promoNote[^{}]*\}/, `${file} 要真係用到推廣資格，唔淨係宣告`);
+  }
+
+  // `TrialJourney` 要再嚴一級：佢個 props 解構本身就係 `{ copy, promoNote, }`，
+  // 滿足咗上面條 regex —— 拆走 JSX 入面嗰個 `{promoNote}` 照樣綠（mutation 實撞兩次）。
+  // 所以要求 marker 同個值出現喺同一段，證明真係 render 咗出嚟。
+  // 首頁 FAQ 嘅「試用之後點」答案會入 FAQPage JSON-LD 畀 Google 直接顯示。
+  // ⚠️ 上面條 grep 已經被同一個檔 291 行嘅 `promoNote={pos.pricing.promoNote}`
+  // 滿足咗，所以拆走 FAQ 答案入面嗰個內插照樣綠 —— 要逐句釘死。
+  const companyHome = readFileSync(new URL("../components/CompanyHome.tsx", import.meta.url), "utf8");
+  assert.match(
+    companyHome,
+    /a: `\$\{pos\.trial\.steps\[4\]\.detail\} \$\{pos\.trial\.steps\[5\]\.detail\} \$\{pos\.pricing\.promoNote\}`/,
+    "首頁 FAQ「試用之後點」嘅答案要帶埋推廣條件（呢句會入 JSON-LD）",
+  );
+
+  const trialJourney = readFileSync(new URL("../components/TrialJourney.tsx", import.meta.url), "utf8");
+  assert.match(
+    trialJourney,
+    /data-pos-promo-note[\s\S]{0,300}\{promoNote\}/,
+    "TrialJourney 個 marker 同推廣資格要喺同一個元素",
+  );
+
+  // 禁語**刻意分兩層**。單層寫法（成個檔 grep 一份嚴格清單）試過會盪去誤擋：
+  // `/day \d+/i` 冇字界，連 `Friday 1 May 2026` 同 `day 1 of service` 都中
+  // （Codex 2026-09-19 實測）。一個會誤殺正常文案嘅 guard，下一個人只會繞過佢。
+  //
+  //   層 1（offer 欄位）：只係試用／付款／推廣三段文字，唔會出現星期名或者日期散文，
+  //                       所以可以用最嚴格嘅 pattern。
+  //   層 2（成個檔）：只擋「無論寫喺邊都一定錯」嘅句式，唔會誤中其他產品文案。
+  const CN_NUM = "[0-9一二三四五六七八九十兩两廿卅]+";
+  const offerText = languages
+    .flatMap((lang) => [
+      ...POS_CONTENT[lang].trial.steps.map((step) => `${step.title} ${step.detail}`),
+      POS_CONTENT[lang].hero.reassurance,
+      POS_CONTENT[lang].pricing.promoNote,
+    ])
+    .join("\n");
+  // 要用**收費語境**分，唔可以齋睇句式：`from day 61`（收費日）同
+  // `from day 1 of service`（正常散文）句式一模一樣，淨擋 `day \d+` 會誤殺後者。
+  const MONEY = "free|charge|charged|pay|pays|paid|payment|billing|bill";
+  // ⚠️ 層 1 掃嘅係 **resolve 咗嘅實際值**，所以要包埋下面層 2 嗰批 pattern。
+  // 層 2 grep 源碼，而呢個檔全部用 `${OFFER_TERMS.trialDays}` 內插 ——
+  // 寫成 `Your first ${OFFER_TERMS.trialDays} days are free` 源碼度冇數字，
+  // 層 2 一定唔中。要防嗰句用 repo 現行寫法寫出嚟就會全綠（2026-09-19 實撞）。
+  const DAY_COUNT_FREE = [
+    /\d+\s*days?\s+(are\s+|is\s+)?free/i,
+    new RegExp(`首\\s*${CN_NUM}\\s*[天日]\\s*免費`),
+    new RegExp(`首\\s*${CN_NUM}\\s*[天日]\\s*免费`),
+    new RegExp(`前\\s*${CN_NUM}\\s*[天日]\\s*免費`),
+    new RegExp(`前\\s*${CN_NUM}\\s*[天日]\\s*免费`),
+  ];
+  for (const strictWording of [
+    new RegExp(`\\bday \\d+\\b[^.]*\\b(${MONEY})\\b`, "i"),
+    new RegExp(`\\b(${MONEY})\\b[^.]*\\bday \\d+\\b`, "i"),
+    new RegExp(`第\\s*${CN_NUM}\\s*[天日][^。]*(免費|免费|收費|收费|繳付|缴付|月費|月费)`),
+    new RegExp(`(免費|免费|收費|收费|繳付|缴付|月費|月费)[^。]*第\\s*${CN_NUM}\\s*[天日]`),
+    ...DAY_COUNT_FREE,
+  ]) {
+    assert.doesNotMatch(offerText, strictWording, "offer 文案唔可以用日數講免費期／收費日");
   }
 
   const source = readFileSync(new URL("../lib/pos-content.ts", import.meta.url), "utf8");
-  assert.match(source, /first monthly payment is charged on the day you activate/i);
-  assert.match(source, /single payment covers your first two months/i);
-  assert.match(source, /正式啟用當日收取首期月費/);
-  assert.match(source, /首期只收 1 個月費用，即可使用首 2 個月/);
-  assert.match(source, /正式启用当日收取首期月费/);
-  assert.match(source, /首期只收 1 个月费用，即可使用前 2 个月/);
-  assert.doesNotMatch(
-    source,
-    /first 30 days are free|day 31|首 30 天免費|第 31 天|首 30 天免费/i,
-  );
+  for (const dayCountWording of [
+    // 空白可有可無、單複數都要、「日」同「天」都要 —— `首三十日免費` 試過漏網。
+    /\d+\s*days?\s+(are\s+|is\s+)?free/i,
+    new RegExp(`首\\s*${CN_NUM}\\s*[天日]\\s*免費`),
+    new RegExp(`首\\s*${CN_NUM}\\s*[天日]\\s*免费`),
+    new RegExp(`前\\s*${CN_NUM}\\s*[天日]\\s*免費`),
+    new RegExp(`前\\s*${CN_NUM}\\s*[天日]\\s*免费`),
+    // 2026-09-19 之前嘅 offer：啟用當日收首期。而家啟用時免費，
+    // 講返舊嗰句就等於向客人收一筆唔應該收嘅錢。
+    /charged on the day you activate/i,
+    /正式啟用當日收取首期月費/, /正式启用当日收取首期月费/,
+    /首期只收 1 個月費用/, /首期只收 1 个月费用/,
+  ]) {
+    assert.doesNotMatch(source, dayCountWording);
+  }
 });
 
 test("shared offer copy is built from one canonical term set", () => {
@@ -948,15 +1115,86 @@ test("POS FAQ uses the shared pricing and direct-order commission facts", () => 
   assert.doesNotMatch(page, /ShopOps is one flat monthly fee with zero commission/);
 });
 
+test("the promotion has not silently expired", () => {
+  // 冇呢條閘，2027-01-01 之後個站會照出推廣價同「喺 X 或之前啟用」，而
+  // `npm run verify` 一樣全綠 —— 冇任何嘢會提你推廣完咗。
+  // 呢個唔可以靠人記得：到期就要紅，逼人返嚟決定「回復標價定續期」。
+  //
+  // 紅咗之後點清：改 `OFFER_TERMS.promoEndsOn`（續期），或者按
+  // docs/superpowers/specs/2026-09-19-promo-pricing-and-free-months-design.md
+  // 嘅「舊價」回復標價、移除 promoNote 同呢條 test。兩條路都行得通 ——
+  // 呢個 guard 綁住嘅係「推廣仲有效」呢個可以改變嘅事實，唔係一件改唔到嘅歷史。
+  // ⛔ **唔加報價有效期做緩衝**（一度加過，係錯嘅）：嗰 `quoteValidityDays` 日
+  // 只對「推廣期內已經攞過報價」嗰批人成立，但個價錢牌係向**所有新訪客**出 £8。
+  // 緩衝期內個站等於一邊話「優惠到 X 為止」一邊照出優惠價畀唔合資格嘅人。
+  // 已報價客人由 sales 跟進，唔靠網站文案兜。截止日一到就要收檔。
+  const endsOn = POS_CONTENT.en.promoEndsOn;
+  const today = new Date().toISOString().slice(0, 10);
+  assert.ok(
+    today <= endsOn,
+    `推廣期 ${endsOn} 已經過咗（今日 ${today}），但個站仲向新訪客出緊推廣價。` +
+      `續期：改 OFFER_TERMS.promoEndsOn 一行（已驗過三語文案同 test 會自動跟）。` +
+      `收檔：按 design doc 嘅舊價回復標價、移除 promoNote／promoNoteShort 同呢條 test。`,
+  );
+});
+
+test("the comic ad may show the trial but never the promotional price or free months", () => {
+  // `/this-is-you` 個漫畫廣告引用 `hero.reassurance`（免費試用 N 天、毋須信用卡、
+  // 不會自動收費）。呢句唔涉及金錢承諾，所以唔要求佢同場講推廣條款 —— 塞一大段
+  // 條款落漫畫度亦都冇人讀。
+  //
+  // 但呢個豁免有前提：佢**唔可以**講優惠價或者免費月數。一旦講咗，就同其他出口
+  // 一樣要同場講資格同截止日。喺度釘死個前提，唔係靠下一個人記得。
+  // ⚠️ 要 grep 嘅係**佢實際出嗰段字**，唔係個 component 檔。
+  // ComicAd.tsx 本身一個錢字都冇 —— 佢全部 offer 文字由 `hero.reassurance` 嚟。
+  // 淨係掃個 component 檔，人哋喺 reassurance 加「首 2 個月免費」照樣綠，
+  // 而 `/this-is-you` 就會喺冇資格冇截止日之下講免費期。
+  const ad = readFileSync(new URL("../app/this-is-you/ComicAd.tsx", import.meta.url), "utf8");
+  assert.match(
+    ad,
+    /POS_CONTENT\[[^\]]+\]\.hero\.reassurance|POS_CONTENT\.\w+\.hero\.reassurance/,
+    "漫畫廣告嘅 offer 文字要嚟自 hero.reassurance（呢條 test 就係掃嗰段字）",
+  );
+  assert.doesNotMatch(ad, /pricing\.|promoNote|£/, "漫畫廣告唔可以自己攞價錢欄位");
+
+  for (const lang of languages) {
+    const shown = POS_CONTENT[lang].hero.reassurance;
+    for (const moneyClaim of [
+      /£/,
+      /個月免費/, /个月免费/, /months are free/i,
+      /\d+\s*months?\s+free/i,
+      /free for \d+ months?/i,
+    ]) {
+      assert.doesNotMatch(
+        shown,
+        moneyClaim,
+        `${lang}: hero.reassurance 會喺 /this-is-you 冇條件咁出現，唔可以講價錢或者免費月數`,
+      );
+    }
+  }
+});
+
 test("POS contact has no shadow offer copy outside the shared content", () => {
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
+  // 寫死任何試用日數／免費月數都擋，唔淨係擋當時嗰個數 —— 舊版寫死 `3` 同 `30`，
+  // 一改推廣期就會漏網。數字用 \d+ 捉，改幾多次都擋得住。
   for (const pattern of [
-    /free 3-day trial/i,
-    /first 30 days are free/i,
-    /免費試用 3 天/,
-    /首 30 天免費/,
-    /免费试用 3 天/,
-    /首 30 天免费/,
+    // 兩種語序都要擋：`free 30-day trial` 同網站本身用緊嘅 `30-day free trial`。
+    // 只擋前者嘅話，抄一句現行文案入嚟寫死反而唔會紅（Codex 2026-09-19 實測）。
+    /free \d+-day trial/i,
+    /\d+-day free trial/i,
+    /\d+ days (are )?free/i,
+    /\d+ months are free/i,
+    /免費試用 \d+ 天/,
+    /免费试用 \d+ 天/,
+    // 中文數字：\d+ 捉唔到「免費試用三十天」。「日」同「天」都要，空白可有可無。
+    /免費試用\s*[0-9一二三四五六七八九十兩两廿卅]+\s*[天日]/,
+    /免费试用\s*[0-9一二三四五六七八九十兩两廿卅]+\s*[天日]/,
+    /首 \d+ 天免費/,
+    /首 \d+ 天免费/,
+    // 四種組合（首／前 × 繁／簡）加中文數字版都要擋 —— 之前只寫咗其中兩種。
+    /[首前]\s*[0-9一二三四五六七八九十兩两]+\s*個月免費/,
+    /[首前]\s*[0-9一二三四五六七八九十兩两]+\s*个月免费/,
   ]) {
     assert.doesNotMatch(page, pattern);
   }
@@ -993,8 +1231,10 @@ test("POS page follows the approved factual product journey", () => {
 
 test("POS FAQ and FAQ schema retain the complete six-step trial timeline", () => {
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
-  assert.match(page, /const trialAnswer = pos\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\);/);
-  assert.match(page, /const englishTrialAnswer = POS_CONTENT\.en\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\);/);
+  // 仍然釘死「六步全部 join」（原本嘅保障），另外要求答案帶埋推廣資格 ——
+  // 呢個答案會入 JSON-LD 由 Google 直接顯示，講咗免費期就要同場講條件。
+  assert.match(page, /const trialAnswer = `\$\{pos\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\)\} \$\{pos\.pricing\.promoNote\}`;/);
+  assert.match(page, /const englishTrialAnswer = `\$\{POS_CONTENT\.en\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\)\} \$\{POS_CONTENT\.en\.pricing\.promoNote\}`;/);
   assert.match(page, /a: trialAnswer/);
   assert.match(page, /a: englishTrialAnswer/);
 });

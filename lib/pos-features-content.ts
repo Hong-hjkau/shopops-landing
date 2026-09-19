@@ -3,8 +3,8 @@ import { POS_CONTENT, type PosAddOnId, type PosAddOnItem } from "./pos-content.t
 
 // 邊個加購用細卡、邊個用大 panel，係 **呢一頁點樣呈現** 嘅決定，唔係定價模型嘅一部分。
 // 所以留喺 Landing 層：`/pos` 根本唔需要知呢件事，寫入 POS_CONTENT 只會污染 canonical
-// 來源。亦都唔可以用「monthlyPrice === 19 就當 premium」—— 價錢 ≠ 內容複雜度，將來一個
-// 簡單嘅 £19 加購未必需要大 panel。
+// 來源。亦都唔可以用價錢反推 layout（例如「monthlyPrice 係進階層嗰個數就當 premium」）
+// —— 價錢 ≠ 內容複雜度，而且價錢會跟推廣改，一個簡單加購將來一樣可以賣到進階層個價。
 export type PosFeatureLayout = "card" | "premium";
 
 type PosFeaturePresentation =

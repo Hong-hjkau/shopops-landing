@@ -139,6 +139,11 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <p data-pos-vat-note className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-hero-text-secondary">
             {pricing.vatNote}
           </p>
+          {/* 推廣資格同 VAT 立場一樣，要貼住個價講：呢頁係獨立入口（有人由搜尋直接入
+              /pos/features），唔可以靠 /pos 嗰邊講咗就當講過。 */}
+          <p data-pos-promo-note className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-hero-text-secondary">
+            {pricing.promoNote}
+          </p>
           <a data-pos-hero-cta href={contactHref} className="mt-8 inline-flex rounded-xl bg-accent px-6 py-3 font-bold text-on-accent transition hover:bg-accent-hover">
             {pricing.cta}
           </a>
@@ -199,6 +204,12 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
       <section id="advanced-operations" className="bg-bg px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.premiumTitle}</h2>
+          {/* 呢個 section 出緊進階加購嘅推廣價，而且係 header 四個 nav link 之一 ——
+              由 nav 或者搜尋直入嗰啲人一樣要摸得到條件。 */}
+          <details data-pos-promo-ref className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+            <summary className="cursor-pointer underline underline-offset-2">{pricing.promoNoteShort}</summary>
+            <p className="mt-2">{pricing.promoNote}</p>
+          </details>
           {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-6 md:grid-cols-2">
             {premiumAddOns.map(({ id, label, monthlyPrice }) => {
@@ -228,6 +239,12 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
           <h2 className="text-3xl font-bold tracking-tight text-text sm:text-4xl">{copy.hero.standardAddOnPriceLabel}</h2>
           <p className="mt-4 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsRequirement}</p>
           <p className="mt-2 max-w-2xl leading-7 text-text-secondary">{pricing.addOnsBillingNote}</p>
+          {/* 呢個 section 有自己嘅錨點（e2e 就係深連結入嚟），由外面直入嘅人
+              見唔到 hero 嗰段條件。用短提示 + 錨點，唔好喺一頁重複全文。 */}
+          <details data-pos-promo-ref className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary">
+            <summary className="cursor-pointer underline underline-offset-2">{pricing.promoNoteShort}</summary>
+            <p className="mt-2">{pricing.promoNote}</p>
+          </details>
           {demoImageCaption}
           <div data-pos-feature-grid className="mt-10 grid gap-5 md:grid-cols-2">
             {standardAddOns.map((item) => (
@@ -276,6 +293,10 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{copy.finalCta.title}</h2>
           <p className="mt-4 leading-7 text-hero-text-secondary">{copy.finalCta.body}</p>
+          <details data-pos-promo-ref className="mx-auto mt-4 max-w-2xl text-left text-sm leading-6 text-hero-text-secondary">
+            <summary className="cursor-pointer underline underline-offset-2">{pricing.promoNoteShort}</summary>
+            <p className="mt-2">{pricing.promoNote}</p>
+          </details>
           <ul className="mx-auto mt-5 grid max-w-2xl gap-2 text-sm font-semibold text-hero-text-secondary">
             <li>{copy.hero.corePriceLabel} + {deliveryAddOn.label}: £{featurePricing.corePlusDelivery}{pricing.monthlyUnit}</li>
             <li>{copy.hero.corePriceLabel} + {financeAddOn.label} + {recipeAddOn.label}: £{featurePricing.corePlusFinanceAndRecipe}{pricing.monthlyUnit}</li>

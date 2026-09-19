@@ -84,6 +84,15 @@ function countMatches(text, pattern) {
   return (text.match(pattern) ?? []).length;
 }
 
+// 推廣截止日嘅對外寫法，由 canonical 值計 —— test 寫死日期就會令「改一行續期」
+// 變成「改一行之後要四圍捉紅字」，而嗰啲紅字唔會提你關推廣事。
+function promoEndDisplay(lang) {
+  const MONTHS = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"];
+  const [year, month, day] = POS_CONTENT[lang].promoEndsOn.split("-").map(Number);
+  return lang === "en" ? `${day} ${MONTHS[month - 1]} ${year}` : `${year} 年 ${month} 月 ${day} 日`;
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -263,10 +272,84 @@ test("hero renders both add-on price bands, the demo CTA, and canonical trial te
   assert.match(text, /ShopOps POS features/);
   assert.match(text, /Choose-your-own operations tools/);
   assert.match(text, /Advanced operations \(Delivery or finance\)/);
-  assert.match(text, /\+£\s*9\s*\/month/);
-  assert.match(text, /\+£\s*19\s*\/month/);
+  assert.match(text, /\+£\s*4\s*\/month/);
+  assert.match(text, /\+£\s*8\s*\/month/);
   assert.match(text, /Book a demo & free trial setup/);
-  assert.match(text, /3-day free trial · No card needed for the trial · We set up your menu for you/);
+  assert.match(text, /30-day free trial · No card needed for the trial · We set up your menu for you/);
+  // 呢頁係獨立入口（搜尋直入 /pos/features），優惠價旁邊一定要同場見到適用條件。
+  assert.match(text, new RegExp(`activate on or before ${escapeRegExp(promoEndDisplay("en"))}`));
+  assert.match(text, new RegExp(`quote's ${POS_CONTENT.en.quoteValidityDays}-day validity period`));
+  assert.match(text, new RegExp(`first ${POS_CONTENT.en.freeMonthsAfterActivation} free months`));
+});
+
+test("every page that shows the promotional price renders the full eligibility note", async () => {
+  // 驗成句 canonical 文字，唔係淨驗個日期 —— 縮水成「優惠截至 2026-12-31」會漏網。
+  // 亦要驗佢真係喺顯示價錢嗰段入面，唔係搬咗去頁尾又或者 hidden。
+  // 首頁淨係驗英文：`app/page.tsx` 冇傳 lang 落 `CompanyHome`，語言係 client 端切嘅，
+  // 所以 SSR 出嚟固定係英文。中文版一樣有呢段字，只係唔喺 SSR HTML 度驗得到。
+  // 每個**有自己錨點兼顯示緊價錢**嘅 section 都要列出嚟 —— 深連結直入嗰啲人
+  // 由頭到尾唔會見到其他 section。`notes.length > 0` 捉唔到呢樣。
+  for (const [path, sections, langs] of [
+    ["/pos", ["pricing"], ["en", "zh-Hant", "zh-Hans"]],
+    // `/pos/features` 四個都有自己錨點兼顯示緊推廣價：hero 直接出全文，
+    // 其餘三個用 `<details>` 收埋（summary 出短提示，撳開喺原位見全文）——
+    // 唔好一頁重複四次全文，亦唔好叫人跳去頁頂。
+    ["/pos/features", ["add-ons", "final-cta", "advanced-operations"], ["en", "zh-Hant", "zh-Hans"]],
+    ["/", [], ["en"]],
+  ]) {
+    for (const language of langs) {
+      const html = await fetchPage(language, path);
+      // ⚠️ 要驗**每一個** marker，唔可以淨係攞第一個。`/pos/features` 而家有三個
+      // （hero／#add-ons／#final-cta），只攞第一個就等於後面兩個永遠冇驗過 ——
+      // 換成 vatNote 都照樣綠（2026-09-19 實測）。
+      const notes = [...html.matchAll(/<p([^>]*data-pos-promo-note[^>]*)>([\s\S]*?)<\/p>/g)];
+      assert.ok(notes.length > 0, `${path}?lang=${language} 要有 data-pos-promo-note`);
+
+      const expected = POS_CONTENT[language].pricing.promoNote.replace(/\s+/g, " ").trim();
+      for (const [index, [, attrs, inner]] of notes.entries()) {
+        // 收埋嘅屬性喺 **tag** 入面唔喺內文，所以要驗 attrs 唔係驗 inner
+        // （之前驗 inner，加 hidden + display:none 成段隱形都照樣全綠）。
+        assert.doesNotMatch(
+          attrs,
+          /\bhidden\b|display:\s*none|visibility:\s*hidden|aria-hidden="true"/,
+          `${path}?lang=${language} 第 ${index + 1} 段推廣聲明唔可以收埋`,
+        );
+        assert.equal(
+          visibleText(inner).replace(/\s+/g, " ").trim(),
+          expected,
+          `${path}?lang=${language} 第 ${index + 1} 段要出完整推廣聲明`,
+        );
+      }
+
+      for (const section of sections) {
+        const block = html.match(new RegExp(`<section[^>]*id="${section}"[\\s\\S]*?</section>`))?.[0];
+        assert.ok(block, `${path} 要有 #${section} section`);
+        // 全文或者「短提示 + 連返全文」都收貨，但一定要有其中一樣。
+        assert.match(
+          block,
+          /data-pos-promo-note|data-pos-promo-ref/,
+          `${path}?lang=${language} 嘅 #${section} 顯示緊價錢，要同場摸到推廣條件`,
+        );
+        const ref = block.match(/<details[^>]*data-pos-promo-ref[^>]*>([\s\S]*?)<\/details>/)?.[1];
+        if (ref) {
+          // inline 展開（唔係跳去頁頂）：summary 出短提示，撳開喺原位見全文。
+          // 手機上喺 final CTA 撳完唔會彈走，啱啱要落單嗰刻唔會失去位置。
+          const summary = ref.match(/<summary[^>]*>([\s\S]*?)<\/summary>/)?.[1];
+          assert.ok(summary, `${path} #${section} 要有 summary`);
+          assert.equal(
+            visibleText(summary),
+            POS_CONTENT[language].pricing.promoNoteShort,
+            `${path}?lang=${language} #${section} 短提示文字`,
+          );
+          assert.equal(
+            visibleText(ref.replace(/<summary[^>]*>[\s\S]*?<\/summary>/, "")).replace(/\s+/g, " ").trim(),
+            POS_CONTENT[language].pricing.promoNote.replace(/\s+/g, " ").trim(),
+            `${path}?lang=${language} #${section} 撳開要見到完整條件`,
+          );
+        }
+      }
+    }
+  }
 });
 
 test("both POS pages show only the current monthly price", async () => {
@@ -283,11 +366,11 @@ test("both POS pages show only the current monthly price", async () => {
         assert.doesNotMatch(currentPriceHtml, /<del\b/, `${path}?lang=${language} should not show an original price`);
         currentPrices.push(text);
       }
-      assert.equal(currentPrices[0], "£19", `${path}?lang=${language} should show £19 for Core`);
+      assert.equal(currentPrices[0], "£8", `${path}?lang=${language} should show £8 for Core`);
       assert.deepEqual(
         currentPrices.slice(1).sort(),
-        [...Array(3).fill("+£19"), ...Array(9).fill("+£9")].sort(),
-        `${path}?lang=${language} should show +£19 or +£9 for every add-on price`,
+        [...Array(3).fill("+£8"), ...Array(9).fill("+£4")].sort(),
+        `${path}?lang=${language} should show +£8 or +£4 for every add-on price`,
       );
     }
   }
@@ -642,7 +725,7 @@ test("screenshot copy claims only what the screenshot actually shows", async () 
 
 test("feature copy never hardcodes a product price", async () => {
   // Spec 驗收 #3：價錢只從 POS_CONTENT 讀，頁面唔另寫產品價錢常量。
-  // 之前 recipeBoundary 三語各自寫死咗 "+£9"，改價會靜靜哋講錯數。
+  // 之前 recipeBoundary 三語各自寫死咗當時嘅加購價，改價會靜靜哋講錯數。
   for (const language of ["en", "zh-Hant", "zh-Hans"]) {
     assert.doesNotMatch(
       JSON.stringify(POS_FEATURES_CONTENT[language]),
@@ -692,7 +775,7 @@ test("the feature-help CTA follows all eight standard add-ons", async () => {
   assert.ok(main.indexOf(addOns) < main.indexOf(help));
 });
 
-test("rendered £9 cards include every approved capability and the allergen safety steps", async () => {
+test("rendered standard add-on cards include every approved capability and the allergen safety steps", async () => {
   const main = await render("en");
   assert.equal(sectionById(main, "add-ons").match(/<article\b/g)?.length, 8);
   const expectedById = {
@@ -796,9 +879,9 @@ test("rendered outline and final CTA keep premium sections independent and prici
   assert.ok(finalSection, "rendered page should end with the final CTA section");
   const finalText = visibleText(finalSection);
   assert.match(finalText, /Start with Core POS, then add each tool individually/);
-  assert.match(finalText, /Core POS \+ Online delivery orders\s*:\s*£\s*38\s*\/month/);
-  assert.match(finalText, /Core POS \+ Finance and inventory \+ Recipe costing\s*:\s*£\s*47\s*\/month/);
-  assert.match(finalText, /3-day free trial · No card needed for the trial · We set up your menu for you/);
+  assert.match(finalText, /Core POS \+ Online delivery orders\s*:\s*£\s*16\s*\/month/);
+  assert.match(finalText, /Core POS \+ Finance and inventory \+ Recipe costing\s*:\s*£\s*20\s*\/month/);
+  assert.match(finalText, /30-day free trial · No card needed for the trial · We set up your menu for you/);
 });
 
 test("Traditional and Simplified pages render their fixed canonical names and English-screen caption", async () => {
