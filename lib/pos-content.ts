@@ -150,6 +150,12 @@ if (EXAMPLE_DUE_MONTH > 12) {
   );
 }
 
+/**
+ * ⚠️ **中文版回傳值以中文字「日」收尾**（`2026 年 12 月 31 日`），所以 caller
+ * 後面接中文時**唔好加半形空格**（「…日 或之前」係錯，「…日或之前」先啱）。
+ * 半形空格嘅規矩係「中文遇到英文／數字」先加，呢度兩邊都係中文。
+ * 英文版回傳 `31 December 2026`，後面照正常英文寫法留空格。
+ */
 function formatPromoEnd(lang: Lang): string {
   const [year, month, day] = OFFER_TERMS.promoEndsOn.split("-").map(Number);
   // ⚠️ 一定要喺呢度驗，唔可以留返畀 test：兩邊嘅 test 都係抄同一份計法去砌
@@ -170,6 +176,18 @@ function formatPromoEnd(lang: Lang): string {
   return lang === "en"
     ? `${day} ${MONTHS_EN[month - 1]} ${year}`
     : `${year} 年 ${month} 月 ${day} 日`;
+}
+
+/**
+ * 把幾句完整句子駁埋一段（FAQ 答案、JSON-LD 用）。
+ *
+ * 🩸 點解要 helper 唔直接 `join(" ")`：中文句子本身以全形句號「。」收尾，
+ * 再加半形空格就會出「…付款資料。 新餐廳正式啟用時…」—— 每個句號後面一個
+ * 多餘空格。呢段字會出喺首頁同 `/pos` 嘅 FAQ，仲會入 FAQPage JSON-LD 畀
+ * Google 直接顯示。英文相反：句號之後**要**有空格。
+ */
+export function joinSentences(lang: Lang, parts: readonly string[]): string {
+  return parts.filter(Boolean).join(lang === "en" ? " " : "");
 }
 
 export const POS_CONTENT: Record<Lang, PosSharedContent> = {
@@ -354,7 +372,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       cta: "預約示範及免費試用設定",
       vatNote: "不另收 VAT。ShopOps 目前未登記 VAT，所示價格就是現時每月實際收費。",
       promoNoteShort: "優惠價 —— 適用資格及截止日",
-      promoNote: `優惠價及首 ${OFFER_TERMS.freeMonthsAfterActivation} 個月免費，適用於 ${formatPromoEnd("zh-Hant")} 或之前正式啟用的新餐廳；在推廣期內取得報價的話，只要在報價有效期（${OFFER_TERMS.quoteValidityDays} 天）內啟用，同樣適用。推廣期結束後，新餐廳按標準價收費。`,
+      promoNote: `優惠價及首 ${OFFER_TERMS.freeMonthsAfterActivation} 個月免費，適用於 ${formatPromoEnd("zh-Hant")}或之前正式啟用的新餐廳；在推廣期內取得報價的話，只要在報價有效期（${OFFER_TERMS.quoteValidityDays} 天）內啟用，同樣適用。推廣期結束後，新餐廳按標準價收費。`,
       feeNote: "ShopOps 可記錄信用卡付款；實際收款使用餐廳自己的卡機，卡機供應商費用另計。",
     },
     commission: {
@@ -446,7 +464,7 @@ export const POS_CONTENT: Record<Lang, PosSharedContent> = {
       cta: "预约演示及免费试用设置",
       vatNote: "不另收 VAT。ShopOps 目前未登记 VAT，所示价格就是目前每月实际收费。",
       promoNoteShort: "优惠价 —— 适用资格及截止日",
-      promoNote: `优惠价及前 ${OFFER_TERMS.freeMonthsAfterActivation} 个月免费，适用于 ${formatPromoEnd("zh-Hans")} 或之前正式启用的新餐厅；在推广期内取得报价的话，只要在报价有效期（${OFFER_TERMS.quoteValidityDays} 天）内启用，同样适用。推广期结束后，新餐厅按标准价收费。`,
+      promoNote: `优惠价及前 ${OFFER_TERMS.freeMonthsAfterActivation} 个月免费，适用于 ${formatPromoEnd("zh-Hans")}或之前正式启用的新餐厅；在推广期内取得报价的话，只要在报价有效期（${OFFER_TERMS.quoteValidityDays} 天）内启用，同样适用。推广期结束后，新餐厅按标准价收费。`,
       feeNote: "ShopOps 可记录银行卡付款；实际收款使用餐厅自己的刷卡机，刷卡机供应商费用另计。",
     },
     commission: {

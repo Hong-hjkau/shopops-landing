@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { POS_CONTENT } from "../lib/pos-content.ts";
+import { joinSentences, POS_CONTENT } from "../lib/pos-content.ts";
 import * as posFeaturesModule from "../lib/pos-features-content.ts";
 const {
   POS_FEATURES_CONTENT,
@@ -903,6 +903,30 @@ test("POS uses its dedicated pricing section without changing the shared Rota ca
   assert.match(section, /href="#contact"/);
 });
 
+// 中文排版：中文字（含全形標點）之間唔應該有半形空格。
+// 🩸 第一版個 class 只寫 `[\u4e00-\u9fff]`（漢字），唔包全形標點 ——
+//    而最顯眼嗰個 case 正正就係句號後面：「…付款資料。 新餐廳正式啟用時…」
+//    （FAQ 答案由幾句 `join(" ")` 駁成，仲會入 FAQPage JSON-LD 畀 Google 顯示）。
+//    即係第一版對佢完全冇效。而家包埋 CJK 標點（U+3000–303F）同全形字（U+FF00–FFEF）。
+// ⚠️ 半形空格嘅規矩係「中文遇到英文／數字」先加（`我有 3 台 iPhone`），
+//    所以呢條只捉「中文 空格 中文」，唔會誤殺 `2026 年 12 月 31 日` 嗰啲。
+const CJK = "[\\u4e00-\\u9fff\\u3000-\\u303f\\uff00-\\uffef]";
+// 🩸 第一版要求空格**兩邊都係 CJK**，所以「。 ShopOps」（全形標點 + 空格 + 拉丁字）
+//    完全捉唔到 —— 而 `/pos/features` 嗰四處真實 bug 正正就係呢個 shape。
+//    全形標點自己已經含住視覺留白，後面唔應該再有半形空格，接乜都一樣。
+// ⚠️ 刻意唔包破折號 `—`：「首期月費…繳付 —— 例如 3 月 1 日啟用」呢種前後留白
+//    係合理中文排版，擋咗就係誤擋。包嘅係「後面唔應該再有空白」嗰批收句標點。
+const FULLWIDTH_PUNCT = "[。、，；：！？」』）】》〉…]";
+function assertNoStrayCjkSpace(text, where) {
+  const hit =
+    new RegExp(`${FULLWIDTH_PUNCT} `).exec(text) ?? new RegExp(`${CJK} ${CJK}`).exec(text);
+  assert.equal(
+    hit,
+    null,
+    `${where}: 兩個中文字／全形標點之間唔應該有半形空格${hit ? `（「…${text.slice(Math.max(0, hit.index - 8), hit.index + 10)}…」）` : ""}`,
+  );
+}
+
 test("all languages preserve the approved trial and first-payment offer", () => {
   // 三語係 spread 同一個 `OFFER_TERMS`（另有一條 test 驗 `...OFFER_TERMS` 恰好
   // 出現 3 次，literal type 亦拒絕逐語覆寫），所以逐語 assert 同一個值係**假覆蓋** ——
@@ -968,6 +992,7 @@ test("all languages preserve the approved trial and first-payment offer", () => 
     // 正正決定佢夠唔夠資格。
     assert.match(promoNote, new RegExp(expectedEnd[lang]), `${lang}: 推廣截止日要用當地寫法`);
     assert.doesNotMatch(promoNote, /\d{4}-\d{2}-\d{2}/, `${lang}: 對外唔好出 ISO 日期`);
+    if (lang !== "en") assertNoStrayCjkSpace(promoNote, `${lang}: promoNote`);
     // ⚠️ 聲明要講齊**兩樣**優惠。之前淨係講「優惠價」，而首頁根本冇顯示價 ——
     // 訪客見到「首 2 個月免費」跟住一段講佢未見過嘅折扣價，等於冇講過條件。
     assert.match(
@@ -1005,7 +1030,12 @@ test("all languages preserve the approved trial and first-payment offer", () => 
     "../components/PosLanding.tsx",
   ]) {
     const page = readFileSync(new URL(file, import.meta.url), "utf8");
-    assert.match(page, /\{[^{}]*promoNote[^{}]*\}/, `${file} 要真係用到推廣資格，唔淨係宣告`);
+    // JSX 直接出（`{pricing.promoNote}`）或者經 joinSentences 駁入 FAQ 答案，兩種都算用到。
+    assert.match(
+      page,
+      /\{[^{}]*promoNote[^{}]*\}|joinSentences\([\s\S]{0,160}promoNote/,
+      `${file} 要真係用到推廣資格，唔淨係宣告`,
+    );
   }
 
   // `TrialJourney` 要再嚴一級：佢個 props 解構本身就係 `{ copy, promoNote, }`，
@@ -1017,8 +1047,8 @@ test("all languages preserve the approved trial and first-payment offer", () => 
   const companyHome = readFileSync(new URL("../components/CompanyHome.tsx", import.meta.url), "utf8");
   assert.match(
     companyHome,
-    /a: `\$\{pos\.trial\.steps\[4\]\.detail\} \$\{pos\.trial\.steps\[5\]\.detail\} \$\{pos\.pricing\.promoNote\}`/,
-    "首頁 FAQ「試用之後點」嘅答案要帶埋推廣條件（呢句會入 JSON-LD）",
+    /a: joinSentences\(lang, \[pos\.trial\.steps\[4\]\.detail, pos\.trial\.steps\[5\]\.detail, pos\.pricing\.promoNote\]\)/,
+    "首頁 FAQ「試用之後點」嘅答案要帶埋推廣條件（呢句會入 JSON-LD），而且要經 joinSentences 駁",
   );
 
   const trialJourney = readFileSync(new URL("../components/TrialJourney.tsx", import.meta.url), "utf8");
@@ -1113,6 +1143,71 @@ test("POS FAQ uses the shared pricing and direct-order commission facts", () => 
   assert.match(page, /<PosPricingSection copy=\{pos\.pricing\} trial=\{pos\.trial\.title\} detailsHref=\{`\/pos\/features\?lang=\$\{lang\}`\} detailsLabel=\{t\.viewFeatures\} \/>/);
   assert.match(page, /pos\.commission\.body/);
   assert.doesNotMatch(page, /ShopOps is one flat monthly fee with zero commission/);
+});
+
+test("FAQ 答案駁句子唔可以留低半形空格（會入 JSON-LD 畀 Google 顯示）", () => {
+  // 🩸 `${a} ${b}` 駁中文句子 → 每個「。」後面一個多餘半形空格。
+  //    呢段字出喺首頁同 /pos 嘅 FAQ，仲會入 FAQPage JSON-LD。
+  //    英文相反：句號之後**要**有空格，所以用 joinSentences(lang, …) 按語言決定。
+  for (const lang of languages) {
+    const parts = [
+      POS_CONTENT[lang].trial.steps[4].detail,
+      POS_CONTENT[lang].trial.steps[5].detail,
+      POS_CONTENT[lang].pricing.promoNote,
+    ];
+    const joined = joinSentences(lang, parts);
+    if (lang !== "en") assertNoStrayCjkSpace(joined, `${lang}: FAQ 答案`);
+  }
+
+  // 🩸 英文分支本來寫 `assert.match(joined, /\. [A-Z]/)` —— **假綠**：
+  //    把 joinSentences 改成永遠 `join("")`（英文冇咗空格）照樣全綠，
+  //    因為原文入面本來就有其他「句號 + 大寫」。要直接驗接縫先守得住。
+  assert.equal(joinSentences("en", ["A.", "B."]), "A. B.", "英文句子之間要有一個空格");
+  assert.equal(joinSentences("zh-Hant", ["甲。", "乙。"]), "甲。乙。", "中文句子之間唔可以有空格");
+  assert.equal(joinSentences("zh-Hans", ["甲。", "乙。"]), "甲。乙。", "中文句子之間唔可以有空格");
+  assert.equal(joinSentences("en", ["A.", "", "B."]), "A. B.", "空字串唔應該駁出多餘空格");
+
+  // 🩸 只重砌一兩組答案守唔住：喺 `commission.body` 尾加個空格，
+  //    joinSentences 照駁出「。 直接」而全套 test 仍然綠。
+  //    所以直接掃晒 POS_CONTENT 每一個字串值。
+  for (const lang of languages) {
+    if (lang === "en") continue;
+    const walk = (node, path) => {
+      if (typeof node === "string") return assertNoStrayCjkSpace(node, `${lang}: ${path}`);
+      if (Array.isArray(node)) return node.forEach((v, i) => walk(v, `${path}[${i}]`));
+      if (node && typeof node === "object") {
+        for (const [k, v] of Object.entries(node)) walk(v, path ? `${path}.${k}` : k);
+      }
+    };
+    walk(POS_CONTENT[lang], "");
+  }
+
+  // 三個 component 都要用 helper，唔准自己 `join(" ")` 或者 `${a} ${b}`。
+  for (const file of [
+    "../components/CompanyHome.tsx",
+    "../components/PosLanding.tsx",
+    "../components/PosFeaturesLanding.tsx",
+  ]) {
+    const page = readFileSync(new URL(file, import.meta.url), "utf8");
+    assert.match(page, /joinSentences\(/, `${file} 駁 FAQ 句子要用 joinSentences()`);
+    assert.doesNotMatch(
+      page,
+      /trial\.steps[\s\S]{0,80}\.join\(" "\)/,
+      `${file} 唔准用 join(" ") 駁 trial steps —— 中文會留低多餘空格`,
+    );
+    // 🩸 真正嘅 bug 形狀係 `${a} ${b}` 模板內插，唔係 `.join(" ")`。
+    //    第一版個閘只擋 join，所以七處現役違規（硬件 FAQ、佣金 FAQ、contact
+    //    subtitle…）全部過骨 —— 其中首頁硬件 FAQ 仲直接入咗 JSON-LD。
+    //    擋「兩個內插之間夾一個空格」就覆蓋得到，而且以後加新 FAQ 一樣擋得住。
+    // ⚠️ 只擋「第二個內插係**文案來源**」嗰種，唔可以全檔封殺 `} ${` ——
+    //    `className={`mt-4 ${a} ${b}`}` 係好平常嘅寫法，擋咗就係誤擋，
+    //    而錯誤訊息仲會講「中文之間會留低半形空格」，誤導下一個人。
+    assert.doesNotMatch(
+      page,
+      /\} \$\{(pos\.|t\.faq|dict\.en|POS_CONTENT\.|copy\.|pricing\.)/,
+      `${file} 唔准用 \`\${a} \${b}\` 駁兩段文案 —— 中文之間會留低半形空格，要用 joinSentences()`,
+    );
+  }
 });
 
 test("the promotion has not silently expired", () => {
@@ -1233,8 +1328,16 @@ test("POS FAQ and FAQ schema retain the complete six-step trial timeline", () =>
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
   // 仍然釘死「六步全部 join」（原本嘅保障），另外要求答案帶埋推廣資格 ——
   // 呢個答案會入 JSON-LD 由 Google 直接顯示，講咗免費期就要同場講條件。
-  assert.match(page, /const trialAnswer = `\$\{pos\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\)\} \$\{pos\.pricing\.promoNote\}`;/);
-  assert.match(page, /const englishTrialAnswer = `\$\{POS_CONTENT\.en\.trial\.steps\.map\(\(step\) => step\.detail\)\.join\(" "\)\} \$\{POS_CONTENT\.en\.pricing\.promoNote\}`;/);
+  // 仍然釘死「六步全部 map 入去」＋「帶埋推廣資格」，只係駁法由 `join(" ")`
+  // 改成 `joinSentences(lang, …)` —— 中文句號後面唔應該有半形空格（會入 JSON-LD）。
+  assert.match(
+    page,
+    /const trialAnswer = joinSentences\(lang, \[\.\.\.pos\.trial\.steps\.map\(\(step\) => step\.detail\), pos\.pricing\.promoNote\]\);/,
+  );
+  assert.match(
+    page,
+    /const englishTrialAnswer = joinSentences\("en", \[\.\.\.POS_CONTENT\.en\.trial\.steps\.map\(\(step\) => step\.detail\), POS_CONTENT\.en\.pricing\.promoNote\]\);/,
+  );
   assert.match(page, /a: trialAnswer/);
   assert.match(page, /a: englishTrialAnswer/);
 });
@@ -1252,7 +1355,7 @@ test("POS core features and commission FAQ keep the approved capability and fee 
 
   const page = readFileSync(new URL("../components/PosLanding.tsx", import.meta.url), "utf8");
   assert.match(page, /providerFeesA/);
-  assert.match(page, /pos\.commission\.body\} \$\{pos\.commission\.disclaimer\} \$\{t\.faq\.providerFeesA\}/);
+  assert.match(page, /joinSentences\(lang, \[pos\.commission\.body, pos\.commission\.disclaimer, t\.faq\.providerFeesA\]\)/);
   assert.match(page, /the same order in Chinese/);
   assert.match(page, /同一張訂單/);
   assert.match(page, /同一张订单/);
