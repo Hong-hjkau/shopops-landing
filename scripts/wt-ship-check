@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# `wt ship` 預檢：喺工作枱、已 commit 嘅 HEAD 上面跑成套 `npm run verify`
+# （content test ＋ lint ＋ typegen ＋ tsc ＋ contrast ＋ build ＋ Playwright e2e）。
+# `~/.claude/scripts/wt` 嘅 `ship` 喺 push 前呼叫（淨係跑 commit 咗嘅版本）；exit≠0 就唔推。
+#
+# 點解要有（2026-09-12）：呢個 repo 冇 CI、冇 pre-push hook —— 呢度係推上 Vercel 之前唯一一道閘。
+# 清單唔抄：直接叫 package.json 嘅 `verify`。
+# ⚠️ `verify` 入面 `test:e2e` 嘅 `pretest:e2e` 會 `playwright install chromium`：部機冇就會落載
+#    （幾百 MB、要網）。ship 唔應該靜靜落載 —— 所以冇 chromium 就即刻紅，叫人自己裝。
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if ! node -e 'const fs=require("fs");const {chromium}=require("@playwright/test");process.exit(fs.existsSync(chromium.executablePath())?0:1)'; then
+  echo "🔴 ship 預檢：部機冇 Playwright chromium —— 唔會喺 ship 途中落載。"
+  echo "   先裝：npx playwright install chromium   然後再 wt ship"
+  exit 1
+fi
+
+npm run verify
