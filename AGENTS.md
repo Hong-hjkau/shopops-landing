@@ -45,6 +45,23 @@ ShopOps 嘅 marketing site（Next.js 16 App Router + React 19 + TypeScript + Tai
 - Focus：SEO 正確性、form / rate-limit 安全、env 缺失 fallback、對比度 / 可讀性。
 - 驗證基準：`npm run verify` 過到先算 clean（= content tests → ESLint → typegen → tsc → WCAG 對比閘 → production build → Playwright 互動測試）。
 
+🔬 **審「源碼掃描類」嘅嘢（契約閘／drift 偵測／lint 式規則）：自己實跑對數，再報**（2026-09-29 加）。
+嗰啲 gate 通常 export 一個「餵源碼字串（或者檔路徑）、回違規清單」嘅函數。唔好只讀碼推演 ——
+寫個一次性 script（放 `/tmp`，唔改 repo 檔案，維持唯讀）`import` 佢、餵你嘅反例、**貼實際輸出**：
+
+```sh
+printf '%s\n' \
+  "import { <個 audit function> } from '<你審嗰個 repo／worktree 嘅絕對路徑>/<個閘嘅檔>'" \
+  "console.log(JSON.stringify(<個 audit function>(\`<你個反例>\`)))" \
+  > /tmp/probe.mts
+npx tsx /tmp/probe.mts      # 喺該 worktree 跑（要嗰度嘅 node_modules）
+# ⚠️ import 一個 `*.test.mts` 會順手跑埋佢自己嗰幾條 test（`ℹ pass N`），正常，唔係壞咗
+```
+
+⚠️ 讀碼推演會**兩個方向都錯**（2026-09-28／29 POS 一道源碼閘實撞，連審 13 輪報 18 條）：一次報
+「呢度漏擋」而實跑已經報到（**假陽性**）；反方向亦有「以為呢個位冇 test 守」而實際上游檢查早已兜到。
+**只報實跑 confirm、而且係「正常人會咁寫」嘅形狀，連 snippet 同輸出一齊貼。**
+
 ## 測試分兩層，唔好混
 
 | 層 | 位置 | 跑法 | 驗到咩 |
