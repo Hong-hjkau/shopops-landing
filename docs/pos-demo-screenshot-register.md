@@ -16,23 +16,34 @@
 - New Core/add-on assets: copied unchanged from the isolated POS screenshot harness handoff. Its 2026-08-06 review opened all 14 files at original size and approved English UI, fictional data, PII/commercial-data safety and readability. `bilingual` intentionally shows fictional Chinese dish names in a labelled translation preview.
 - Hashes and byte counts below are recalculated from the Landing copies, not copied from prose.
 - The last two columns are a **manual approval gate**, not automated detection. A reviewer opens each asset at original size and ticks it only after confirming, with their own eyes, that (a) no third-party logo, wordmark or other trademark is visible and (b) every pixel is ShopOps-owned product UI or ShopOps-generated imagery that we are licensed to publish. `tests/pos-demo-assets.test.mjs` can only check that all 18 rows are ticked — it cannot recognise a trademark. Re-tick the row whenever an asset is recaptured, and note the reason below if a gate is ever set to anything other than `PASS`.
+- **2026-08-15 recapture (5 assets):** `order-entry`, `checkout-report`, `finance_inventory`, `scheduling` and
+  `reviews` were regenerated after two harness changes. (a) The harness now derives every fixture timestamp from a
+  single capture clock (`tools/screenshot-harness/fixtures/capture-clock.mjs`) instead of a hard-coded
+  `2026-08-06`, so the dates the rota and the feedback list genuinely have to show now track the capture day; the
+  `LEGACY_DATE_SCENES` allowlist that used to exempt those two scenes from the date gate is gone. (b) The staff
+  ordering screen now renders the real `UnpaidList` against a fixture ledger, so the right-hand column shows the
+  collect-payment list that production shows there, instead of empty space. The other 13 assets are
+  byte-identical to the previous capture, which is the evidence that the clock change did not disturb them.
+  All five were opened at original size and checked by Claude during that session: English UI, fictional demo
+  data only, no PII, no third-party logo or wordmark, no unlicensed imagery, readable text. HONG re-confirmed
+  these five with their own eyes on 2026-10-27 before they shipped, so the last two columns are ticked.
 - 2026-08-11 review: all 18 assets re-opened at original size. Every visible surface is ShopOps POS UI. The food photographs in `order-entry.webp` are originals generated for ShopOps and carry no third-party branding. The NVIDIA-branded artwork that an earlier capture contained was replaced before this review, and no replacement asset reintroduces a third-party mark.
 
 | Asset | Stable ID | Public path | Language | Dimensions | Bytes | SHA-256 | English / PII / commercial data / readability | No third-party logo or trademark | Asset licence and ownership confirmed |
 |---|---|---|---|---:|---:|---|---|---|---|
-| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 84910 | `ecb2fb95f08689e8962914816c9c282681ada5ad7b9180bf152b12d41b607712` | PASS | PASS | PASS |
+| `order-entry.webp` | `order-entry` | `public/pos-demo/order-entry.webp` | EN | 1280 × 900 | 88092 | `abfc735bd41eab0c8cce71fe739051bf95962b5f8872fe754532693c8657a363` | PASS | PASS | PASS |
 | `kitchen-order.webp` | `kitchen-order` | `public/pos-demo/kitchen-order.webp` | EN | 1280 × 900 | 43656 | `6eaf35e4bf5a96d1215f2dc32744ca93a6f9b579fe40dd0fb83259fca65c18df` | PASS | PASS | PASS |
 | `floor-progress.webp` | `floor-progress` | `public/pos-demo/floor-progress.webp` | EN | 1280 × 900 | 50286 | `e82d39e0f7a9d0f6f8cfc8de0df59c613edb5f65ccc618368c916dca4817fce4` | PASS | PASS | PASS |
-| `checkout-report.webp` | `checkout-report` | `public/pos-demo/checkout-report.webp` | EN | 1280 × 900 | 56560 | `249d41b32dd9b325665bf7458553e166ac6882ad77c3e6a11620233f378e0602` | PASS | PASS | PASS |
+| `checkout-report.webp` | `checkout-report` | `public/pos-demo/checkout-report.webp` | EN | 1280 × 900 | 59202 | `1b584e517966bee4b3add0700ab1b0caf7cb245613c3a9e43d22448a2e78e980` | PASS | PASS | PASS |
 | `bilingual.webp` | `bilingual` | `public/pos-demo/core/bilingual.webp` | EN | 1280 × 900 | 23570 | `1dc82c8e606df2ed591fdfef97f7bfd46d4545b3c990242fff9bb201733426ab` | PASS | PASS | PASS |
 | `offline_backup.webp` | `offline_backup` | `public/pos-demo/core/offline_backup.webp` | EN | 1280 × 900 | 20822 | `584e739c609bb03d2e8308299402e249c78362ea25b2b122dd28e1774de479b1` | PASS | PASS | PASS |
 | `menu_management.webp` | `menu_management` | `public/pos-demo/core/menu_management.webp` | EN | 1280 × 900 | 17232 | `2379cae92217af7e1e156aace7ffc9083bc45374676a083a6b986cd14fca9ee7` | PASS | PASS | PASS |
 | `sold_out.webp` | `sold_out` | `public/pos-demo/core/sold_out.webp` | EN | 1280 × 900 | 15952 | `d8723e6e8f4d97386a7c98839db6183a2444c80da8ef918b5cbc417e754e3158` | PASS | PASS | PASS |
 | `delivery.webp` | `delivery` | `public/pos-demo/add-ons/delivery.webp` | EN | 1280 × 900 | 45122 | `a51c02bd437f9672b1975c1be62c40a2e5a1b47572a7457404cd16e424f6c529` | PASS | PASS | PASS |
-| `finance_inventory.webp` | `finance_inventory` | `public/pos-demo/add-ons/finance_inventory.webp` | EN | 1280 × 900 | 50356 | `35fa610c34e7bb6421ebee3ffcc621a2189fd8f72b27d7a5e7163dd7a81de6d8` | PASS | PASS | PASS |
-| `scheduling.webp` | `scheduling` | `public/pos-demo/add-ons/scheduling.webp` | EN | 1280 × 900 | 20240 | `d34c6ef9bcfd657fa82a55808c41228ea97b73398946b8630c6cc2529bb8911f` | PASS | PASS | PASS |
+| `finance_inventory.webp` | `finance_inventory` | `public/pos-demo/add-ons/finance_inventory.webp` | EN | 1280 × 900 | 50304 | `ed0388c2fce456a30d6818c05cfab9507551776b6c635466c610656dc6365e47` | PASS | PASS | PASS |
+| `scheduling.webp` | `scheduling` | `public/pos-demo/add-ons/scheduling.webp` | EN | 1280 × 900 | 20216 | `2bcdaba7a36b45728732087715f36db0ca4ba34227a7c38935bbfbc8c6328480` | PASS | PASS | PASS |
 | `reservations.webp` | `reservations` | `public/pos-demo/add-ons/reservations.webp` | EN | 1280 × 900 | 20626 | `43ee5a3ab8139e3d6dcfef8c68a847f4e311da3f8f7bee942c2d7aad37a423e6` | PASS | PASS | PASS |
-| `reviews.webp` | `reviews` | `public/pos-demo/add-ons/reviews.webp` | EN | 1280 × 900 | 27256 | `3cac651a7cdb4c2dc315ebdda24418bbbfced6b4d21c9cb1493a213d56e05787` | PASS | PASS | PASS |
+| `reviews.webp` | `reviews` | `public/pos-demo/add-ons/reviews.webp` | EN | 1280 × 900 | 27472 | `05ce87b08baf700950eade5caf9b5463465fab84289011bf914c3d56ba0db473` | PASS | PASS | PASS |
 | `food_safety.webp` | `food_safety` | `public/pos-demo/add-ons/food_safety.webp` | EN | 1280 × 900 | 21172 | `a16186f27972d51bad3b2af212bca43076deebcd7842a74a2260f3c1facb1869` | PASS | PASS | PASS |
 | `allergens.webp` | `allergens` | `public/pos-demo/add-ons/allergens.webp` | EN | 1280 × 900 | 24266 | `4ab27958341c4b1127f31088df6e769cfb2563ccec7b975b0e4c2bc65feef7e4` | PASS | PASS | PASS |
 | `recipe_costing.webp` | `recipe_costing` | `public/pos-demo/add-ons/recipe_costing.webp` | EN | 1280 × 900 | 26514 | `48aa5067c1dac90aab85c61ed0f714146df5b6124580f389131cf6dec3154087` | PASS | PASS | PASS |
