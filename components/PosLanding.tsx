@@ -13,7 +13,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader, { type NavLink } from "@/components/SiteHeader";
 import TrialJourney from "@/components/TrialJourney";
 import { useLang } from "@/components/LangProvider";
-import { POS_CONTENT } from "@/lib/pos-content";
+import { POS_CONTENT, joinSentences } from "@/lib/pos-content";
 
 const dict = {
   en: {
@@ -112,25 +112,25 @@ export default function PosLanding() {
   const { lang } = useLang();
   const t = dict[lang];
   const pos = POS_CONTENT[lang];
-  const trialAnswer = `${pos.trial.steps.map((step) => step.detail).join(" ")} ${pos.pricing.promoNote}`;
-  const englishTrialAnswer = `${POS_CONTENT.en.trial.steps.map((step) => step.detail).join(" ")} ${POS_CONTENT.en.pricing.promoNote}`;
+  const trialAnswer = joinSentences(lang, [...pos.trial.steps.map((step) => step.detail), pos.pricing.promoNote]);
+  const englishTrialAnswer = joinSentences("en", [...POS_CONTENT.en.trial.steps.map((step) => step.detail), POS_CONTENT.en.pricing.promoNote]);
   const faqItems = [
-    { q: t.faq.hardwareQ, a: `${t.faq.hardwareA} ${pos.hardware.readyHardwareCopy}` },
+    { q: t.faq.hardwareQ, a: joinSentences(lang, [t.faq.hardwareA, pos.hardware.readyHardwareCopy]) },
     { q: t.faq.trialQ, a: trialAnswer },
     { q: t.faq.offlineQ, a: t.faq.offlineA },
     { q: t.faq.availabilityQ, a: t.faq.availabilityA },
-    { q: t.faq.commissionQ, a: `${pos.commission.body} ${pos.commission.disclaimer} ${t.faq.providerFeesA}` },
+    { q: t.faq.commissionQ, a: joinSentences(lang, [pos.commission.body, pos.commission.disclaimer, t.faq.providerFeesA]) },
   ];
   const schemaItems = [
-    { q: dict.en.faq.hardwareQ, a: `${dict.en.faq.hardwareA} ${POS_CONTENT.en.hardware.readyHardwareCopy}` },
+    { q: dict.en.faq.hardwareQ, a: joinSentences("en", [dict.en.faq.hardwareA, POS_CONTENT.en.hardware.readyHardwareCopy]) },
     { q: dict.en.faq.trialQ, a: englishTrialAnswer },
     { q: dict.en.faq.offlineQ, a: dict.en.faq.offlineA },
     { q: dict.en.faq.availabilityQ, a: dict.en.faq.availabilityA },
-    { q: dict.en.faq.commissionQ, a: `${POS_CONTENT.en.commission.body} ${POS_CONTENT.en.commission.disclaimer} ${dict.en.faq.providerFeesA}` },
+    { q: dict.en.faq.commissionQ, a: joinSentences("en", [POS_CONTENT.en.commission.body, POS_CONTENT.en.commission.disclaimer, dict.en.faq.providerFeesA]) },
   ];
   const contact = {
     ...t.contact,
-    subtitle: `${pos.trial.steps[1].detail} ${pos.trial.steps[2].detail} ${pos.trial.steps[3].detail}`,
+    subtitle: joinSentences(lang, [pos.trial.steps[1].detail, pos.trial.steps[2].detail, pos.trial.steps[3].detail]),
     reassure: pos.hero.reassurance,
   };
 

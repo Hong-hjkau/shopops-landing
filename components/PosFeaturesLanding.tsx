@@ -14,7 +14,7 @@ import {
   getStandardPosFeatureAddOns,
   type PosFeaturesContent,
 } from "@/lib/pos-features-content";
-import { POS_CONTENT, type PosAddOnId } from "@/lib/pos-content";
+import { joinSentences, POS_CONTENT, type PosAddOnId } from "@/lib/pos-content";
 import { POS_FEATURE_IMAGES, type PosFeatureImageId } from "@/lib/pos-feature-images";
 import type { Lang } from "@/lib/i18n";
 
@@ -224,7 +224,7 @@ export default function PosFeaturesLanding({ lang }: { lang: Lang }) {
                   monthlyPrice={monthlyPrice}
                   monthlyUnit={pricing.monthlyUnit}
                   benefits={panel.benefits}
-                  boundary={Object.values(panel.boundaries).join(" ")}
+                  boundary={joinSentences(lang, Object.values(panel.boundaries))}
                   bundleExamples={getPosFeatureBundleExamples(lang, id)}
                   image={buildDemoImage(copy, id)}
                 />

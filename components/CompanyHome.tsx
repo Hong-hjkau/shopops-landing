@@ -11,7 +11,7 @@ import PosWorkflow from "@/components/PosWorkflow";
 import PosBenefits from "@/components/PosBenefits";
 import HardwareOptions from "@/components/HardwareOptions";
 import TrialJourney from "@/components/TrialJourney";
-import { POS_CONTENT } from "@/lib/pos-content";
+import { POS_CONTENT, joinSentences } from "@/lib/pos-content";
 import type { IconName } from "@/components/icons";
 
 type Feature = { icon: IconName; title: string; desc: string };
@@ -230,10 +230,10 @@ export default function CompanyHome() {
   const contact: ContactCopy = { ...t.contact, reassure: pos.hero.reassurance };
   const faqItems = [
     { q: t.faq.questions.trial, a: pos.trial.steps[3].detail },
-    { q: t.faq.questions.afterTrial, a: `${pos.trial.steps[4].detail} ${pos.trial.steps[5].detail} ${pos.pricing.promoNote}` },
-    { q: t.faq.questions.hardware, a: `${pos.hardware.existingDeviceCopy} ${pos.hardware.readyHardwareCopy}` },
+    { q: t.faq.questions.afterTrial, a: joinSentences(lang, [pos.trial.steps[4].detail, pos.trial.steps[5].detail, pos.pricing.promoNote]) },
+    { q: t.faq.questions.hardware, a: joinSentences(lang, [pos.hardware.existingDeviceCopy, pos.hardware.readyHardwareCopy]) },
     { q: t.faq.questions.area, a: t.faq.areaAnswer },
-    { q: t.faq.questions.menu, a: `${pos.trial.steps[1].detail} ${pos.trial.steps[2].detail}` },
+    { q: t.faq.questions.menu, a: joinSentences(lang, [pos.trial.steps[1].detail, pos.trial.steps[2].detail]) },
   ];
 
   return (
