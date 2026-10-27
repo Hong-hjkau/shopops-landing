@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLang } from "@/components/LangProvider";
 import { POS_CONTENT } from "@/lib/pos-content";
 import type { Lang } from "@/lib/i18n";
 import SocialLinks from "@/components/SocialLinks";
@@ -42,8 +42,10 @@ const L: Record<Lang, { label: string; img: string; alt: string; w: number; h: n
 
 const ORDER: Lang[] = ["zh-Hant", "zh-Hans", "en"];
 
-export default function ComicAd({ initialLang }: { initialLang: Lang }) {
-  const [lang, setLang] = useState<Lang>(initialLang);
+export default function ComicAd() {
+  // 用共用 provider，唔好再喺呢度開第二份 state —— 兩份就會出現「畫面轉咗語言，
+  // 但 <html lang> 仲係舊嗰個」，screen reader 用錯語言讀成頁。
+  const { lang, setLang } = useLang();
   const t = L[lang];
 
   return (
@@ -82,7 +84,7 @@ export default function ComicAd({ initialLang }: { initialLang: Lang }) {
         />
 
         <Link
-          href="/pos#contact"
+          href={`/pos?lang=${lang}#contact`}
           className="mt-7 px-10 py-4 bg-accent hover:bg-accent-hover text-on-accent text-lg font-bold rounded-xl transition"
         >
           {t.cta}

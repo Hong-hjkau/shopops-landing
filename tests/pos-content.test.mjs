@@ -397,7 +397,7 @@ test("POS feature pricing looks up delivery, finance, and recipe prices by their
 
 // 呢條以前叫「POS features route **renders** localized content…」，但 body 由頭到尾
 // 只係 existsSync + grep source，一次都冇 render 過。真正嘅 render 行為（route 出唔出到、
-// <main lang>、三語連結帶唔帶語言）搬咗去 tests/pos-features-rendered.test.mjs 對真
+// <main lang>、三語連結帶唔帶語言）搬咗去 tests/rendered/pos-features-rendered.test.mjs 對真
 // output 驗；留喺呢度嘅淨係 source contract：頁面用共享層，唔自己另起一套。
 test("POS features page source contract: language and pricing come from the shared layer", () => {
   const root = new URL("../", import.meta.url);
@@ -495,7 +495,7 @@ test("source contract: every page showing the demo screenshots goes through the 
 // 刪走咗：「POS feature story cards sit below their workflow section heading」。
 // 佢個名講標題層級，實際只係 grep 死 PosFeatureStory 入面一串 Tailwind class ——
 // 改樣就紅、改壞結構反而唔紅，零行為價值。標題層級由
-// tests/pos-features-rendered.test.mjs 對住真 output 驗。
+// tests/rendered/pos-features-rendered.test.mjs 對住真 output 驗。
 
 test("the presentation contract covers every priced add-on exactly once", () => {
   const pricedIds = POS_CONTENT.en.pricing.addOnGroups.flatMap((group) => group.items.map((item) => item.id));
@@ -1014,7 +1014,7 @@ test("all languages preserve the approved trial and first-payment offer", () => 
   }
 
   // 兩個頁面都各自係獨立入口，兩邊都要貼住個價講推廣資格。呢度只驗接線，
-  // 真 render 由 tests/pos-features-rendered.test.mjs 驗。
+  // 真 render 由 tests/rendered/pos-features-rendered.test.mjs 驗。
   // 四個檔各自係一個「講咗優惠價／免費期」嘅獨立出口：
   //   兩個 pricing section（/pos 同 /pos/features 都入得）、
   //   TrialJourney（首頁同 /pos 共用，就係講免費期嗰段）、
@@ -1538,23 +1538,33 @@ test("this-is-you opens in the language carried from the homepage", () => {
   );
 
   assert.match(page, /parseQueryLang\(lang\)/);
-  assert.match(page, /<ComicAd initialLang=\{initialLang\} \/>/);
-  assert.match(comic, /initialLang: Lang/);
-  assert.match(comic, /useState<Lang>\(initialLang\)/);
+  // 初始語言仍然由 server 睇 `?lang=` 定，但而家交俾 route-level provider 揸（同
+  // `/pos` 一樣），唔再係 ComicAd 自己開多份 state —— 兩份 state 就係「畫面轉咗
+  // 語言但 `<html lang>` 冇跟」嗰個 bug 嘅根源。
+  assert.match(page, /<LangProvider key=\{initialLang\} initialLang=\{initialLang\} ownsDocumentLang>/);
+  assert.match(comic, /useLang\(\)/);
+  assert.doesNotMatch(comic.replace(/\/\/.*$/gm, ""), /useState/);
 });
 
-test("homepage keeps POS demo enquiries distinct and delays the full nav until wide screens", () => {
+test("source contract: homepage keeps POS demo enquiries distinct, and narrow screens get a menu instead of no nav", () => {
   const home = readFileSync(
     new URL("../components/CompanyHome.tsx", import.meta.url),
     "utf8",
   );
+  // ⚠️ 一定要剝走註解先夾 —— 解釋規矩嘅註解本身會提到嗰啲 attribute 名,唔剝就會
+  // 自己中自己:component 就算真係刪走咗個掣,test 都會照綠。
   const header = readFileSync(
     new URL("../components/SiteHeader.tsx", import.meta.url),
     "utf8",
-  );
+  ).replace(/\{\/\*[\s\S]*?\*\/\}/g, "").replace(/\/\/.*$/gm, "");
 
   assert.match(home, /<ContactSection copy=\{contact\} source="pos" \/>/);
+  // 完整 nav 仍然係 `lg` 先出。
   assert.match(header, /hidden lg:flex items-center gap-6/);
+  // 但 `lg` 以下唔可以就咁冇導覽 —— 要有個掣,而且要指住個抽屜。
+  assert.match(header, /aria-controls="site-mobile-navigation"/);
+  assert.match(header, /id="site-mobile-navigation"/);
+  assert.match(header, /aria-expanded=\{open\}/);
 });
 
 test("homepage preserves the approved dark header palette", () => {

@@ -82,15 +82,15 @@ test("Space opens the dialog and clicking the backdrop returns focus to the trig
 
 test("every screenshot opens its own dialog and closes again", async ({ page }) => {
   // 由真頁面問返有邊啲圖，唔喺度另存一份 18 個 id。「係咪啱啱 18 張、次序啱
-  // 唔啱」係 tests/pos-features-rendered.test.mjs 嘅職責；呢條淨係負責「頁面上
+  // 唔啱」係 tests/rendered/pos-features-rendered.test.mjs 嘅職責；呢條淨係負責「頁面上
   // 每張圖都撳得開、關得返」。
   const ids = await page.locator("[data-pos-image-id]").evaluateAll((nodes) =>
     nodes.map((node) => node.getAttribute("data-pos-image-id") ?? ""),
   );
-  // 數量唔可以慳 —— rendered suite 睇嘅係 `next dev`，呢度睇嘅係 production
-  // build，兩個 server mode 唔同。只寫 `toBeGreaterThan(0)` 嘅話，一個 production
-  // 專有嘅流失（得返 1 張圖）會兩邊一齊假綠：rendered 見到 18 張照過，e2e 掃到
-  // 嗰 1 張開關成功都照過。
+  // 數量唔可以慳 —— rendered suite 驗嘅係靜態 HTML，呢度驗嘅係 hydrate 咗嘅
+  // 真瀏覽器頁面。只寫 `toBeGreaterThan(0)` 嘅話，一個 client 端先出現嘅流失
+  // （得返 1 張圖）會兩邊一齊假綠：rendered 見到 18 張照過，e2e 掃到嗰 1 張開關
+  // 成功都照過。
   // 個數由 content 推導，唔硬編 —— 每個 story／核心卡／加購各配一張圖，加多一項
   // 就自動跟住升，唔使記住兩處要一齊改。
   expect(ids.length).toBe(EXPECTED_SCREENSHOT_COUNT);

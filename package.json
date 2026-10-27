@@ -11,10 +11,13 @@
     "contrast": "node scripts/check-contrast.mjs",
     "social": "node scripts/gen-social.mjs",
     "assets:age": "node scripts/check-asset-age.mjs",
-    "test:content": "node --test --test-concurrency=1 tests/*.test.mjs",
-    "verify": "npm run test:content && npm run lint && next typegen && tsc --noEmit && npm run contrast && npm run test:e2e",
-    "pretest:e2e": "playwright install chromium",
-    "test:e2e": "npm run build && playwright test"
+    "test:content:static": "node --test tests/*.test.mjs",
+    "test:content:rendered": "node --test --test-concurrency=1 tests/rendered/*.test.mjs",
+    "test:content": "npm run test:content:static && npm run build && npm run test:content:rendered",
+    "verify": "npm run test:content:static && npm run lint && next typegen && tsc --noEmit && npm run contrast && npm run build && npm run test:content:rendered && npm run test:e2e:built",
+    "pretest:e2e:built": "playwright install chromium",
+    "test:e2e:built": "playwright test",
+    "test:e2e": "npm run build && npm run test:e2e:built"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",

@@ -16,6 +16,17 @@ type LangProviderProps = {
   ownsDocumentLang?: boolean;
 };
 
+// 會 nest 自己 route-level provider 嘅 route（初始語言由 server 睇 `?lang=` 定）。
+const NESTED_PROVIDER_ROUTES = ["/pos", "/this-is-you"];
+
+function isNestedProviderRoute(pathname: string): boolean {
+  // 要夾正 segment 邊界 —— 淨係 `startsWith` 嘅話，將來開一條 `/this-is-you-2026`
+  // 就會被當成 nest 咗 provider，root provider 讓咗位，但其實冇人負責改 <html lang>。
+  return NESTED_PROVIDER_ROUTES.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
+}
+
 export function LangProvider({
   children,
   initialLang,
@@ -32,7 +43,7 @@ export function LangProvider({
   useEffect(() => {
     // /pos 由 nested route provider 處理 query / storage。root provider 喺呢度
     // restore 舊 storage 會同 route 指定嘅 initial language 競爭。
-    if (initialLang !== undefined || (parentContext === null && pathname.startsWith("/pos"))) {
+    if (initialLang !== undefined || (parentContext === null && isNestedProviderRoute(pathname))) {
       return;
     }
 
@@ -92,9 +103,11 @@ export function LangProvider({
   // 要明確設返 "en" 而唔係「跳過唔設」—— 由 /pos（繁體）client-side navigate
   // 入 /blog，唔設就會殘留住 zh-Hant。
   useEffect(() => {
-    // /pos 會嵌套 route-level provider。root provider 喺呢條 route 跳過，避免
-    // 兩個 effect 爭住改 <html lang>；內層 provider 則唯一負責同步。
-    if (!ownsDocumentLang || (pathname.startsWith("/pos") && parentContext === null)) return;
+    // 呢啲 route 會嵌套自己嘅 route-level provider（要由 server 決定初始語言）。
+    // root provider 喺嗰度跳過，避免兩個 effect 爭住改 <html lang>；內層 provider
+    // 則唯一負責同步。⚠️ 新開一條會 nest provider 嘅 route，記住加入呢個清單，
+    // 否則 root 個 effect 行喺後面，會用佢自己嗰個語言蓋走你。
+    if (!ownsDocumentLang || (isNestedProviderRoute(pathname) && parentContext === null)) return;
 
     document.documentElement.lang = pathname.startsWith("/blog") ? "en" : lang;
   }, [lang, ownsDocumentLang, parentContext, pathname]);

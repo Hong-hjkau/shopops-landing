@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { createServer } from "node:net";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = fileURLToPath(new URL("../../", import.meta.url));
@@ -19,7 +21,7 @@ async function reservePort() {
 }
 
 // 一定要等到 process 真係 exit 先返 —— 送完信號就走嘅話，下一個 test 檔可以喺舊
-// server 完全退出之前開始，於是撞返「同一個目錄已經有 dev server」嗰個坑。
+// server 完全退出之前開始。
 async function terminate(child) {
   if (child.exitCode !== null || child.signalCode !== null) return;
   const exited = new Promise((resolve) => child.once("exit", resolve));
@@ -38,19 +40,28 @@ async function terminate(child) {
 }
 
 /**
- * 開一個 `next dev` 畀成個 test 檔用，回傳 { baseUrl, stop }。
+ * 開一個 `next start`（production build）畀成個 test 檔用，回傳 { baseUrl, stop }。
  *
- * ⚠️ 同一個 project 目錄唔可以同時開兩個 dev server —— Next 見到已經有一個就會
- * 即刻退出，個 test 檔會收到「Next dev exited before rendering the page」。所以
- * `test:content` 行 `--test-concurrency=1`，每個 test 檔各自 `start()` 一次、
- * `after()` 入面 `stop()`。
+ * 點解係 production 唔係 `next dev`：呢層 test 驗嘅係對外 HTML / metadata，而真正
+ * ship 出去嗰個係 production build。兩層 test（rendered + Playwright e2e）行同一個
+ * mode，先至冇「dev 綠、production 紅」呢種假綠。
+ *
+ * ⚠️ 要先有 build。入口一律行 `npm run test:content` / `npm run verify`（佢哋自己
+ * 會 build）；`.next/BUILD_ID` 只證明「build 過」，證明唔到「係最新」。
  */
-export async function startNextDev({ readyPath = "/", timeoutMs = 45_000 } = {}) {
+export async function startNextProduction({ readyPath = "/", timeoutMs = 45_000 } = {}) {
+  if (!existsSync(join(projectRoot, ".next", "BUILD_ID"))) {
+    throw new Error(
+      "rendered test 要 production build，而家搵唔到 .next/BUILD_ID。" +
+      "跑 `npm run test:content`（佢會自己 build）或者 `npm run verify`。",
+    );
+  }
+
   const port = await reservePort();
   const baseUrl = `http://127.0.0.1:${port}`;
   let output = "";
 
-  const child = spawn("node_modules/.bin/next", ["dev", "--hostname", "127.0.0.1", "--port", String(port)], {
+  const child = spawn("node_modules/.bin/next", ["start", "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: projectRoot,
     env: { ...process.env, NEXT_TELEMETRY_DISABLED: "1" },
     stdio: ["ignore", "pipe", "pipe"],
@@ -62,7 +73,7 @@ export async function startNextDev({ readyPath = "/", timeoutMs = 45_000 } = {})
   try {
     const deadline = Date.now() + timeoutMs;
     while (Date.now() < deadline) {
-      if (child.exitCode !== null) throw new Error(`Next dev exited before rendering the page.\n${output}`);
+      if (child.exitCode !== null) throw new Error(`Next production server exited before rendering the page.\n${output}`);
       try {
         const response = await fetch(`${baseUrl}${readyPath}`);
         if (response.ok) {
@@ -79,8 +90,7 @@ export async function startNextDev({ readyPath = "/", timeoutMs = 45_000 } = {})
     }
     throw new Error(`Timed out waiting for rendered page.\n${output}`);
   } catch (error) {
-    // 起唔到就要親手收拾：caller 攞唔到 handle，冇人停得到個 process，而佢會一路
-    // 霸住個 project 嘅 dev lock，令跟住嗰個 test 檔無辜咁紅。
+    // 起唔到就要親手收拾：caller 攞唔到 handle，冇人停得到個 process。
     await terminate(child);
     throw error;
   }

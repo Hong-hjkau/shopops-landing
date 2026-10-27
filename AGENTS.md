@@ -66,11 +66,15 @@ npx tsx /tmp/probe.mts      # 喺該 worktree 跑（要嗰度嘅 node_modules）
 
 | 層 | 位置 | 跑法 | 驗到咩 |
 |---|---|---|---|
-| Content / rendered | `tests/*.test.mjs`（`node --test`）| `npm run test:content` | 靜態 HTML。自己 spawn `next dev`，`fetch()` 返 HTML 用 regex 驗。**冇 DOM、冇 JS、冇互動。** |
+| Source / 資產契約 | `tests/*.test.mjs`（`node --test`）| `npm run test:content:static` | 唔使 server 嘅嘢：content 常數、import graph 契約、圖片 register 對數。**秒級，寫嘢時嘅快 loop。** |
+| Rendered | `tests/rendered/*.test.mjs`（`node --test`）| `npm run test:content` | 靜態 HTML。spawn `next start`（production build），`fetch()` 返 HTML 用 regex 驗。**冇 DOM、冇 JS、冇互動。** |
 | 互動 | `e2e/*.spec.ts`（`@playwright/test`）| `npm run test:e2e` | 真 Chromium 食 production build（`next start`）。鍵盤、focus、native `<dialog>`、accessibility tree。 |
 
-- **`test:content` 行 `--test-concurrency=1`，唔好拎走。** 會 spawn `next dev` 嘅 test 檔而家有兩個（`pos-features-rendered` / `og-images`），而 **同一個 project 目錄唔可以同時開兩個 dev server** —— Next 見到已經有一個就即刻退出，第二個檔會收到「Next dev exited before rendering the page」，睇落似 test 壞咗其實係撞 server。Server 由 `tests/helpers/next-server.mjs` 統一開。
-- **Test 名出現 `render` 就必須真係 render。** 一條叫「… route renders …」但 body 只係 `existsSync()` / grep source 嘅 test，係喺度講大話：改壞 route 佢照綠。Source-level 嘅 test 唔係唔准寫 —— 架構契約（「唔准直接 import `../public/pos-demo`」嗰類）本來就應該喺 source 層驗 —— 但個名要老實叫 `… source contract …`，行為就搬去 `tests/pos-features-rendered.test.mjs` 對真 output 驗。
+- **三層全部食同一個 production build。** rendered 層以前行 `next dev`，即係驗緊一個**唔會 ship** 嘅版本 —— production 專有嘅 regression 可以喺嗰層假綠。而家兩層都行 `next start`（`tests/helpers/next-server.mjs` 嘅 `startNextProduction()`），冇咗個縫。
+- **檔案擺邊個資料夾就決定咗佢點跑，唔好用清單維護。** `tests/` = 唔使 server；`tests/rendered/` = 要 server。新加一個 test 檔唔會靜靜冇人跑（用明列檔名嘅 script 就會）。
+- **`test:content:rendered` 先至行 `--test-concurrency=1`，唔好推返去成個 suite。** 原本嗰個 flag 係為咗 `next dev` 嘅 project 目錄鎖，但佢連累埋三個純 source 檔陪住排隊。而家：static 三個檔並行跑（~1 秒），只有 `tests/rendered/` 入面開 server 嘅檔序列化 —— 保守做法，避免兩個 `next start` 同時讀寫同一份 `.next`。
+- **`:built` 尾嘅 script 係內部用嘅**（`test:e2e:built` / `test:content:rendered`）：佢哋假設你已經 build 咗。日常入口係 `test:content:static`、`test:content`、`test:e2e`、`verify`。`verify` 全程只 build 一次。
+- **Test 名出現 `render` 就必須真係 render。** 一條叫「… route renders …」但 body 只係 `existsSync()` / grep source 嘅 test，係喺度講大話：改壞 route 佢照綠。Source-level 嘅 test 唔係唔准寫 —— 架構契約（「唔准直接 import `../public/pos-demo`」嗰類）本來就應該喺 source 層驗 —— 但個名要老實叫 `… source contract …`，行為就搬去 `tests/rendered/pos-features-rendered.test.mjs` 對真 output 驗。
 - **`npm run test:e2e` 自己會先 `npm run build`**，唔使你手動 build（手動 build 多一次係浪費）。咁樣保證一定測緊最新 source —— `playwright.config.ts` 頂部個 `.next/BUILD_ID` guard **只**證明「build 過」，證明唔到「係最新」，所以唔好靠佢，要行 npm script。
 - **`showModal()` 冇得用 jsdom 驗**（[jsdom#3294](https://github.com/jsdom/jsdom/issues/3294) 由 2021 開到而家仲未實作）。所以呢個 repo **唔會**加 vitest + jsdom 去測 dialog —— 一定要真瀏覽器。
 - Playwright 唔設 retry：flaky 要即刻見到，唔好用重試冚住。

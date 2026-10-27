@@ -1,12 +1,12 @@
 import test, { after, before } from "node:test";
 import assert from "node:assert/strict";
-import { startNextDev } from "./helpers/next-server.mjs";
+import { startNextProduction } from "../helpers/next-server.mjs";
 
 let server;
 let baseUrl;
 
 before(async () => {
-  server = await startNextDev();
+  server = await startNextProduction();
   baseUrl = server.baseUrl;
 });
 

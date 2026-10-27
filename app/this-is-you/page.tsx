@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { LangProvider } from "@/components/LangProvider";
 import { parseQueryLang } from "@/lib/language";
 import ComicAd from "./ComicAd";
 
@@ -27,5 +28,11 @@ export default async function Page({
   const { lang } = await searchParams;
   const initialLang = parseQueryLang(lang) ?? "zh-Hant";
 
-  return <ComicAd initialLang={initialLang} />;
+  // 同 /pos 一樣 nest 一個 route-level provider：呢頁嘅初始語言由 server 睇 `?lang=` 定
+  // （預設繁體），而 `<html lang>` 要跟住語言掣走。ComicAd 唔再自己揸一份語言 state。
+  return (
+    <LangProvider key={initialLang} initialLang={initialLang} ownsDocumentLang>
+      <ComicAd />
+    </LangProvider>
+  );
 }

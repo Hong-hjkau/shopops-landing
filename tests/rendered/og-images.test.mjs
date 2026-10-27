@@ -1,8 +1,8 @@
 import test, { after, before } from "node:test";
 import assert from "node:assert/strict";
-import { startNextDev } from "./helpers/next-server.mjs";
+import { startNextProduction } from "../helpers/next-server.mjs";
 
-// `/pos/features` 嗰張由 tests/pos-features-rendered.test.mjs 逐語言驗（嗰度仲要
+// `/pos/features` 嗰張由 tests/rendered/pos-features-rendered.test.mjs 逐語言驗（嗰度仲要
 // 對埋三語分享文案）。呢個檔補返其餘四條 —— 佢哋由頭到尾冇 test 驗過張分享圖
 // 出唔出到，宣告咗 summary_large_image 但分享出去係白卡都唔會有人知。
 const ROUTES = [
@@ -15,7 +15,7 @@ const ROUTES = [
 let server;
 
 before(async () => {
-  server = await startNextDev();
+  server = await startNextProduction();
 }, { timeout: 50_000 });
 
 after(async () => {

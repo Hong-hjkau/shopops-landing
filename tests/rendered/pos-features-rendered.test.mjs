@@ -1,12 +1,12 @@
 import test, { after, before } from "node:test";
 import assert from "node:assert/strict";
-import { startNextDev } from "./helpers/next-server.mjs";
+import { startNextProduction } from "../helpers/next-server.mjs";
 import {
   POS_FEATURES_CONTENT,
   getPosFeatureAddOnPriceText,
   getPremiumPosFeatureAddOns,
-} from "../lib/pos-features-content.ts";
-import { POS_CONTENT } from "../lib/pos-content.ts";
+} from "../../lib/pos-features-content.ts";
+import { POS_CONTENT } from "../../lib/pos-content.ts";
 
 let server;
 let baseUrl;
@@ -164,7 +164,7 @@ function imageDescriptions(content) {
 }
 
 before(async () => {
-  server = await startNextDev({ readyPath: "/pos/features?lang=en" });
+  server = await startNextProduction({ readyPath: "/pos/features?lang=en" });
   baseUrl = server.baseUrl;
 }, { timeout: 50_000 });
 
@@ -172,7 +172,7 @@ after(async () => {
   await server?.stop();
 });
 
-// 全檔共用同一個 next dev process；`path` 令入口頁（`/`、`/pos`）都可以對住真
+// 全檔共用同一個 next start process；`path` 令入口頁（`/`、`/pos`）都可以對住真
 // output 驗，唔使各自再開一個 server。
 async function render(language, path = "/pos/features") {
   return visibleMain(await fetchPage(language, path));
